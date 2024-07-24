@@ -95,12 +95,14 @@ namespace MvcMovie.Controllers
             [Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie
         )
         {
+            // check whether the movie has any validation errors to save in database
             if (ModelState.IsValid)
             {
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            // if there is errors the Create method redisplay the form
             return View(movie);
         }
 
