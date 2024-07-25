@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using GameManagementMvc.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<GameManagementMvcContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("GameManagementMvcContext") ?? throw new InvalidOperationException("Connection string 'GameManagementMvcContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -6,10 +6,9 @@ ASP.NET Core MVC Project
 
 <details>
     <summary>Click me</summary>
-
 </details>
 
-## [Demo]()
+## [Demo](https://github.com/minhhoccode111)
 
 ## Features
 
@@ -51,9 +50,6 @@ dotnet run
 ```
 
 ## Design choices and tradeoffs
-
-- Use array in models for faster development
-  - Tradeoff: Not good for scale
 
 ## Navigation
 
