@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using MvcMovie.Models;
+using GameManagementMvc.Models;
 
-namespace MvcMovie.Controllers;
+namespace GameManagementMvc.Controllers;
 
 public class HomeController : Controller
 {
