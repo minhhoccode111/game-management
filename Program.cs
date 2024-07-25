@@ -13,15 +13,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// what is this?
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
+// what is this?
 app.UseRouting();
 
+// what is this?
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

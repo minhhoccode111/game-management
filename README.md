@@ -7,8 +7,6 @@ ASP.NET Core MVC Project
 <details>
     <summary>Click me</summary>
 
-    -
-
 </details>
 
 ## [Demo]()
@@ -60,7 +58,3 @@ dotnet run
 ## Navigation
 
 - All [projects](https://github.com/minhhoccode111)
-
-```
-
-```
