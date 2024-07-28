@@ -1,14 +1,24 @@
+using GameManagementMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using GameManagementMvc.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<GameManagementMvcContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("GameManagementMvcContext") ?? throw new InvalidOperationException("Connection string 'GameManagementMvcContext' not found.")));
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("GameManagementMvcContext")
+            ?? throw new InvalidOperationException(
+                "Connection string 'GameManagementMvcContext' not found."
+            )
+    )
+);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// TODO: add check development or production to use database and seed database
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

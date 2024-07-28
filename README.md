@@ -1,6 +1,6 @@
 # Game Management App Mvc
 
-ASP.NET Core MVC Project
+ASP.NET Core MVC
 
 ## Screenshot
 
@@ -17,20 +17,18 @@ ASP.NET Core MVC Project
 ## Outcome
 
 - C#
-- ASP.NET Core MVC
+- MVC
+- Razor
 - SQLite
 - EF Core
-
-## Models
-
-- Developer Entity
-- Game
-- Genre
+- ASP.NET Core
+- ...
 
 ## To-do
 
 - Use MS SQL instead of SQLite
 - Upload images instead of hard coded links
+- Deploy
 
 ## Getting started
 
@@ -51,6 +49,4 @@ dotnet run
 
 ## Design choices and tradeoffs
 
-## Navigation
-
-- All [projects](https://github.com/minhhoccode111)
+-
