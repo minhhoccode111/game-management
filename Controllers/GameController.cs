@@ -1,12 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Threading.Tasks;
+// using Microsoft.AspNetCore.Mvc.Rendering;
+using GameManagementMvc.Data;
+using GameManagementMvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GameManagementMvc.Data;
-using GameManagementMvc.Models;
 
 namespace GameManagementMvc.Controllers
 {
@@ -20,9 +21,60 @@ namespace GameManagementMvc.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string searchTitle,
+            string searchCompany,
+            string searchGenre
+        )
         {
-            return View(await _context.Game.ToListAsync());
+            if (_context.Game == null)
+            {
+                return Problem("Entity set 'GameManagementMvc.Game' is null.");
+            }
+
+            IQueryable<string> genreQuery =
+                from genre in _context.Genre
+                orderby genre.Title
+                select genre.Title;
+            IQueryable<string> companyQuery =
+                from company in _context.Company
+                orderby company.Title
+                select company.Title;
+
+            var games =
+                from game in _context
+                    .Game
+                    // include work list .populate in mongoose
+                    .Include(g => g.Company)
+                    .Include(g => g.Genres)
+                select game;
+
+            if (!String.IsNullOrEmpty(searchTitle))
+            {
+                games = games.Where(game => game.Title!.ToUpper().Contains(searchTitle.ToUpper()));
+            }
+
+            if (!String.IsNullOrEmpty(searchCompany))
+            {
+                games = games.Where(game => game.Company!.Title == searchCompany);
+            }
+
+            if (!String.IsNullOrEmpty(searchGenre))
+            {
+                games = games.Where(game => game.Genres!.Any(genre => genre.Title == searchGenre));
+            }
+
+            var gameVM = new GameViewModel
+            {
+                SearchTitle = searchTitle,
+                SearchCompany = searchCompany,
+                SearchGenre = searchGenre,
+                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                Companies = new SelectList(await companyQuery.Distinct().ToListAsync()),
+                Games = await games.ToListAsync()
+            };
+
+            return View(gameVM);
         }
 
         // GET: Game/Details/5
@@ -33,8 +85,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
             if (game == null)
             {
                 return NotFound();
@@ -54,7 +105,9 @@ namespace GameManagementMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Body,Image,Rating,ReleaseDate")] Game game)
+        public async Task<IActionResult> Create(
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate")] Game game
+        )
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +139,10 @@ namespace GameManagementMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,Image,Rating,ReleaseDate")] Game game)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate")] Game game
+        )
         {
             if (id != game.Id)
             {
@@ -124,8 +180,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
             if (game == null)
             {
                 return NotFound();
