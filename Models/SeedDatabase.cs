@@ -25,6 +25,7 @@ namespace GameManagementMvc.Models
                     // context.Company.RemoveRange(context.Company);
                     // context.Genre.RemoveRange(context.Genre);
                     // context.SaveChanges();
+                    // Console.WriteLine("Database clear!");
 
                     return;
                 }
@@ -95,129 +96,29 @@ namespace GameManagementMvc.Models
                     new Genre { Title = "FPS", Body = "FPS is a very greate genre" },
                 };
 
-                Game[] games = new Game[]
+                int numGames = 20;
+                Game[] games = new Game[numGames];
+                for (int i = 0; i < numGames; i++)
                 {
-                    new Game
+                    Game currGame = new Game
                     {
-                        Title = "Game 0",
-                        Body = "Game 0 is a very greate game",
+                        Title = $"Game {i}",
+                        Body = $"Game {i} is a very greate game",
                         // Image= "",
                         Rating = ran.Next(1, 5),
                         ReleaseDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
                         ),
-                        Company = companies[0],
-                        Genres = new List<Genre> { genres[0], genres[1] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 1",
-                        Body = "Game 1 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[1],
-                        Genres = new List<Genre> { genres[1], genres[2] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 2",
-                        Body = "Game 2 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[2],
-                        Genres = new List<Genre> { genres[2], genres[3] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 3",
-                        Body = "Game 3 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[3],
-                        Genres = new List<Genre> { genres[3], genres[4] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 4",
-                        Body = "Game 4 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[4],
-                        Genres = new List<Genre> { genres[4], genres[5] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 5",
-                        Body = "Game 5 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[0],
-                        Genres = new List<Genre> { genres[0], genres[1], genres[2] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 6",
-                        Body = "Game 6 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[1],
-                        Genres = new List<Genre> { genres[1], genres[2], genres[3] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 7",
-                        Body = "Game 7 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[2],
-                        Genres = new List<Genre> { genres[2], genres[3], genres[4] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 8",
-                        Body = "Game 8 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[3],
-                        Genres = new List<Genre> { genres[3], genres[4], genres[5] },
-                    },
-                    new Game
-                    {
-                        Title = "Game 9",
-                        Body = "Game 9 is a very greate game",
-                        // Image= "",
-                        Rating = ran.Next(1, 5),
-                        ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
-                        ),
-                        Company = companies[4],
-                        Genres = new List<Genre> { genres[4], genres[5], genres[0] },
-                    },
-                };
+                        Company = companies[ran.Next(0, companies.Length - 1)],
+                        Genres = new List<Genre>
+                        {
+                            genres[ran.Next(0, genres.Length - 1)],
+                            genres[ran.Next(0, genres.Length - 1)],
+                            genres[ran.Next(0, genres.Length - 1)]
+                        },
+                    };
+                    games[i] = currGame;
+                }
 
                 context.Company.AddRange(companies);
                 context.Genre.AddRange(genres);
