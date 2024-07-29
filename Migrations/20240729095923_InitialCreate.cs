@@ -33,12 +33,13 @@ namespace GameManagementMvc.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Rating = table.Column<int>(type: "INTEGER", nullable: false),
                     Title = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
                     Body = table.Column<string>(type: "TEXT", maxLength: 2048, nullable: false),
                     Image = table.Column<string>(type: "TEXT", maxLength: 2048, nullable: true),
+                    Rating = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReleaseDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CompanyId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    GenreIds = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

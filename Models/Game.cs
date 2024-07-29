@@ -29,6 +29,9 @@ namespace GameManagementMvc.Models
         public Company? Company { get; set; }
 
         [Required]
-        public ICollection<Genre>? Genres { get; set; }
+        public List<int>? GenreIds { get; set; } = new List<int>();
+
+        // [NotMapped]
+        public List<Genre> Genres { get; set; } = new List<Genre>();
     }
 }

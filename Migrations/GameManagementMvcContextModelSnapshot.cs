@@ -59,6 +59,10 @@ namespace GameManagementMvc.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("GenreIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Image")
                         .HasMaxLength(2048)
                         .HasColumnType("TEXT");

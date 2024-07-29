@@ -41,13 +41,7 @@ namespace GameManagementMvc.Controllers
                 orderby company.Title
                 select company.Title;
 
-            var games =
-                from game in _context
-                    .Game
-                    // include work list .populate in mongoose
-                    .Include(g => g.Company)
-                    .Include(g => g.Genres)
-                select game;
+            var games = _context.Game.Include(game => game.Company).AsQueryable();
 
             if (!String.IsNullOrEmpty(searchTitle))
             {
@@ -61,7 +55,23 @@ namespace GameManagementMvc.Controllers
 
             if (!String.IsNullOrEmpty(searchGenre))
             {
-                games = games.Where(game => game.Genres!.Any(genre => genre.Title == searchGenre));
+                games = games.Where(game =>
+                    game.GenreIds!.Contains(
+                        _context
+                            .Genre.Where(genre => genre.Title == searchGenre)
+                            .Select(g => g.Id)
+                            .FirstOrDefault()
+                    )
+                );
+            }
+
+            var gameList = await games.ToListAsync();
+
+            var genreList = await _context.Genre.ToListAsync();
+
+            foreach (var game in gameList)
+            {
+                game.Genres = genreList.Where(genre => game.GenreIds!.Contains(genre.Id)).ToList();
             }
 
             var gameVM = new GameViewModel
@@ -71,7 +81,7 @@ namespace GameManagementMvc.Controllers
                 SearchGenre = searchGenre,
                 Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
                 Companies = new SelectList(await companyQuery.Distinct().ToListAsync()),
-                Games = await games.ToListAsync()
+                Games = gameList
             };
 
             return View(gameVM);

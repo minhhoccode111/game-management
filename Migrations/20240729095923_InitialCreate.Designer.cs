@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameManagementMvc.Migrations
 {
     [DbContext(typeof(GameManagementMvcContext))]
-    [Migration("20240728144904_InitialCreate")]
+    [Migration("20240729095923_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -61,6 +61,10 @@ namespace GameManagementMvc.Migrations
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("GenreIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Image")
                         .HasMaxLength(2048)

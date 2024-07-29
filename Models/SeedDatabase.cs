@@ -110,11 +110,11 @@ namespace GameManagementMvc.Models
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
                         ),
                         Company = companies[ran.Next(0, companies.Length - 1)],
-                        Genres = new List<Genre>
+                        GenreIds = new List<int>
                         {
-                            genres[ran.Next(0, genres.Length - 1)],
-                            genres[ran.Next(0, genres.Length - 1)],
-                            genres[ran.Next(0, genres.Length - 1)]
+                            genres[ran.Next(0, genres.Length - 1)].Id,
+                            genres[ran.Next(0, genres.Length - 1)].Id,
+                            genres[ran.Next(0, genres.Length - 1)].Id
                         },
                     };
                     games[i] = currGame;
