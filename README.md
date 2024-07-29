@@ -49,4 +49,54 @@ dotnet run
 
 ## Design choices and tradeoffs
 
--
+- Avoid using a `ICollection<>` field in Models for scalability and use ViewModels to pass needed data to Views instead
+
+Example connection between Game and Genre is many-to-many
+
+```csharp
+// Bad
+public class Game
+{
+    // ... fields
+}
+public class Genre
+{
+    // ... fields
+    public ICollection<Game>? Games {get; set;}
+}
+// Good: Because the likelihood that a Game Model has infinite genres is low
+public class Game
+{
+    // ... fields
+    public ICollection<Genre>? Genres {get; set;}
+}
+public class Genre
+{
+    // ... fields
+}
+```
+
+Similarly, connection between Company and Game is one-to-many
+
+```csharp
+// Bad
+public class Game
+{
+    // ... fields
+}
+public class Company
+{
+    // ... fields
+    public ICollection<Game>? Games {get; set;}
+}
+// Good
+public class Game
+{
+    // ... fields
+    public Company Company {get; set;}
+}
+public class Company
+{
+    // ... fields
+}
+```
