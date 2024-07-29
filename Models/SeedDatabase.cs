@@ -30,14 +30,15 @@ namespace GameManagementMvc.Models
                     return;
                 }
 
-                Random ran = new Random();
+                var ran = new Random();
 
                 // if no movie exists
-                Company[] companies = new Company[]
+                var companies = new Company[]
                 {
                     // MAANG
                     new Company
                     {
+                        // Id = 0,
                         Title = "Meta Corp",
                         Body = "Meta Corp is a very greate company",
                         Image = "https://images.cnbctv18.com/wp-content/uploads/2022/09/Meta.jpg",
@@ -47,6 +48,7 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
+                        // Id = 1,
                         Title = "Apple Corp",
                         Body = "Apple Corp is a very great company",
                         Image =
@@ -57,6 +59,7 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
+                        // Id = 2,
                         Title = "Amazon Corp",
                         Body = "Amazon Corp is a very greate company",
                         Image =
@@ -67,6 +70,7 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
+                        // Id = 3,
                         Title = "Netflix Corp",
                         Body = "Netflix Corp is a very greate company",
                         Image =
@@ -77,6 +81,7 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
+                        // Id = 4,
                         Title = "Google Corp",
                         Body = "Google Corp is a very greate company",
                         Image = "https://wallpapercave.com/wp/kmmXJbb.jpg",
@@ -86,20 +91,65 @@ namespace GameManagementMvc.Models
                     }
                 };
 
-                Genre[] genres = new Genre[]
+                context.Company.AddRange(companies);
+
+                var genres = new Genre[]
                 {
-                    new Genre { Title = "Action", Body = "Action is a very greate genre" },
-                    new Genre { Title = "Sport", Body = "Sport is a very greate genre" },
-                    new Genre { Title = "Horror", Body = "Horror is a very greate genre" },
-                    new Genre { Title = "Humor", Body = "Humor is a very greate genre" },
-                    new Genre { Title = "Romantic", Body = "Romantic is a very greate genre" },
-                    new Genre { Title = "FPS", Body = "FPS is a very greate genre" },
+                    new Genre
+                    {
+                        Id = 6,
+                        Title = "Action",
+                        Body = "Action is a very greate genre"
+                    },
+                    new Genre
+                    {
+                        Id = 7,
+                        Title = "Sport",
+                        Body = "Sport is a very greate genre"
+                    },
+                    new Genre
+                    {
+                        Id = 8,
+                        Title = "Horror",
+                        Body = "Horror is a very greate genre"
+                    },
+                    new Genre
+                    {
+                        Id = 9,
+                        Title = "Humor",
+                        Body = "Humor is a very greate genre"
+                    },
+                    new Genre
+                    {
+                        Id = 10,
+                        Title = "Romantic",
+                        Body = "Romantic is a very greate genre"
+                    },
+                    new Genre
+                    {
+                        Id = 11,
+                        Title = "FPS",
+                        Body = "FPS is a very greate genre"
+                    },
                 };
 
-                int numGames = 20;
-                Game[] games = new Game[numGames];
+                // BUG: must call this before init game models so that the genres automatically initialize its Ids
+                // so that we can use to store it in GenreIds field in game models
+                // and don't have to hard code it
+                // Myth? fuck gpt-4
+                context.Genre.AddRange(genres);
+
+                var numGames = 20;
+                var games = new Game[numGames];
                 for (int i = 0; i < numGames; i++)
                 {
+                    var genreIds = new List<int>();
+                    var genre0 = ran.Next(0, genres.Length - 1);
+                    var genre1 = ran.Next(0, genres.Length - 1);
+                    var genre2 = ran.Next(0, genres.Length - 1);
+                    genreIds.Add(genres[genre0].Id);
+                    genreIds.Add(genres[genre1].Id);
+                    genreIds.Add(genres[genre2].Id);
                     Game currGame = new Game
                     {
                         Title = $"Game {i}",
@@ -110,18 +160,11 @@ namespace GameManagementMvc.Models
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
                         ),
                         Company = companies[ran.Next(0, companies.Length - 1)],
-                        GenreIds = new List<int>
-                        {
-                            genres[ran.Next(0, genres.Length - 1)].Id,
-                            genres[ran.Next(0, genres.Length - 1)].Id,
-                            genres[ran.Next(0, genres.Length - 1)].Id
-                        },
+                        GenreIds = genreIds,
                     };
                     games[i] = currGame;
                 }
 
-                context.Company.AddRange(companies);
-                context.Genre.AddRange(genres);
                 context.Game.AddRange(games);
 
                 // save changes make to _context

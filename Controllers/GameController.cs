@@ -13,11 +13,14 @@ namespace GameManagementMvc.Controllers
 {
     public class GameController : Controller
     {
+        private readonly ILogger<GameController> _logger;
+
         private readonly GameManagementMvcContext _context;
 
-        public GameController(GameManagementMvcContext context)
+        public GameController(ILogger<GameController> logger, GameManagementMvcContext context)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Game
@@ -32,16 +35,15 @@ namespace GameManagementMvc.Controllers
                 return Problem("Entity set 'GameManagementMvc.Game' is null.");
             }
 
-            IQueryable<string> genreQuery =
-                from genre in _context.Genre
-                orderby genre.Title
-                select genre.Title;
-            IQueryable<string> companyQuery =
+            var genreQuery = from genre in _context.Genre orderby genre.Title select genre.Title;
+
+            var companyQuery =
                 from company in _context.Company
                 orderby company.Title
                 select company.Title;
 
             var games = _context.Game.Include(game => game.Company).AsQueryable();
+            // var games = from game in _context.Game select game;
 
             if (!String.IsNullOrEmpty(searchTitle))
             {
@@ -55,19 +57,18 @@ namespace GameManagementMvc.Controllers
 
             if (!String.IsNullOrEmpty(searchGenre))
             {
-                games = games.Where(game =>
-                    game.GenreIds!.Contains(
-                        _context
-                            .Genre.Where(genre => genre.Title == searchGenre)
-                            .Select(g => g.Id)
-                            .FirstOrDefault()
-                    )
-                );
+                // find the genre has title match searchGenre, then extract id
+                int searchGenreId = _context
+                    .Genre.FirstOrDefault(genre => genre.Title == searchGenre)!
+                    .Id;
+                games = games.Where(game => game.GenreIds!.Contains(searchGenreId));
             }
 
-            var gameList = await games.ToListAsync();
+            var genres = from g in _context.Genre select g;
 
-            var genreList = await _context.Genre.ToListAsync();
+            var genreList = await genres.ToListAsync();
+
+            var gameList = await games.ToListAsync();
 
             foreach (var game in gameList)
             {

@@ -30,19 +30,24 @@
     <thead>
         <tr>
             <th>
-                Name
+                <!-- Name -->
+                @Html.DisplayNameFor(model => model.Games![0].Title)
             </th>
             <th>
-                Rating
+                <!-- Rating -->
+                @Html.DisplayNameFor(model => model.Games![0].Rating)
             </th>
             <th>
-                Release Date
+                <!-- Release Date -->
+                @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
             </th>
             <th>
-                Company
+                <!-- Company -->
+                @Html.DisplayNameFor(model => model.Games![0].Company)
             </th>
             <th>
-                Genres
+                <!-- Genres -->
+                @Html.DisplayNameFor(model => model.Games![0].Genres)
             </th>
             <th></th>
         </tr>
@@ -70,7 +75,7 @@
                 {
                     <a asp-controller="Genre" asp-action="Details" asp-route-id="@genre.Id">
                         @Html.DisplayFor(modelItem => genre.Title)
-                    </a>
+                    </a><span> - </span>
                 }
             </td>
             <td>
