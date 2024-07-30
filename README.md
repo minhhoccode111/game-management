@@ -21,6 +21,7 @@ ASP.NET Core MVC
 - Razor
 - SQLite
 - EF Core
+- Bootstrap
 - ASP.NET Core
 - ...
 

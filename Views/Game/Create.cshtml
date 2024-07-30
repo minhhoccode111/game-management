@@ -1,13 +1,17 @@
 @model GameManagementMvc.Models.Game
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Game";
 }
 
-<h1>Create</h1>
+<!-- WARN: must have at least 1 company and 1 genre to create a new game -->
 
-<h4>Game</h4>
+<h1>@ViewData["Title"]</h1>
+
+<!-- <h4>Game</h4> -->
+
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">

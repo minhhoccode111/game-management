@@ -1,13 +1,15 @@
 @model GameManagementMvc.Models.Game
 
 @{
-    ViewData["Title"] = "Edit";
+ViewData["Title"] = "Edit Game";
 }
 
-<h1>Edit</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Game</h4>
+<!-- <h4>Game</h4> -->
+
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -40,13 +42,10 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

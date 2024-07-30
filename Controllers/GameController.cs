@@ -49,7 +49,8 @@ namespace GameManagementMvc.Controllers
             // var games = from game in _context.Game select game;
 
             // if search rating is provided then we try convert it to int
-            // if success then it will return true and a variable value to use
+            // if success then it will return true and a variable SearchRating
+            // type int to use
             if (int.TryParse(searchRating, out int SearchRating))
             {
                 // filter search rating
@@ -84,18 +85,17 @@ namespace GameManagementMvc.Controllers
             // make all games left a list
             var gameList = await games.ToListAsync();
 
-            // populate all ids in GenreIds with real Genre model
+            // populate all ids in GenreIds with real Genre models
             foreach (var game in gameList)
             {
                 game.Genres = await PopulateGenreIdsInGame(game);
             }
 
-            // create ViewModel to pass to game view
+            // create a view mode to pass to game index view
             var gameVM = new GameViewModel
             {
                 SearchCompany = searchCompany,
-                SearchTitle = searchTitle,
-                SearchGenre = searchGenre,
+                SearchGenre = searchGenre, // default value of search input
                 SearchRating = SearchRating,
                 Companies = await GetContextCompaniesSelectList(),
                 Genres = await GetContextGenresSelectList(),
@@ -128,19 +128,14 @@ namespace GameManagementMvc.Controllers
             // populate GenreIds field with real genres
             game.Genres = await PopulateGenreIdsInGame(game);
 
-            // make a list to reuse in GameViewModel
-            var gameList = new List<Game>();
-            gameList.Add(game);
-
-            // create ViewModel to pass to game view
-            var gameVM = new GameViewModel { Games = gameList };
-
-            return View(gameVM);
+            return View(game);
         }
 
         // GET: Game/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["Genres"] = await GetContextGenresSelectList();
+            ViewData["Companies"] = await GetContextCompaniesSelectList();
             return View();
         }
 
@@ -219,16 +214,25 @@ namespace GameManagementMvc.Controllers
         // GET: Game/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            // if id not provided
             if (id == null)
             {
                 return NotFound();
             }
 
-            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
+            // find the game match the id in current context
+            var game = await _context
+                .Game.Include(g => g.Company)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            // if game not found
             if (game == null)
             {
                 return NotFound();
             }
+
+            // populate GenreIds field with real genres
+            game.Genres = await PopulateGenreIdsInGame(game);
 
             return View(game);
         }

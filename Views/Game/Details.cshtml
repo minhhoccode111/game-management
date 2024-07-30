@@ -1,19 +1,15 @@
-@model GameManagementMvc.Models.GameViewModel
+@model GameManagementMvc.Models.Game
 
 @{
     ViewData["Title"] = "Game Details";
-    var game = Model.Games![0];
+    var game = Model;
 }
 
 <h1>@ViewData["Title"]</h1>
 
+<hr>
+
 <div class="container">
-    <h4>
-        <a asp-controller="Game" asp-action="Index" class="text-black">Game</a>
-    </h4>
-
-    <hr />
-
     <div class="row justify-content-start">
         <div class="col-2">
             @if (String.IsNullOrEmpty(game.Image))
@@ -28,39 +24,39 @@
 
         <dl class="row col-10">
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => game.Title)
+                @Html.DisplayNameFor(_ => game.Title)
             </dt>
             <dd class = "col-sm-10">
-                @Html.DisplayFor(model => game.Title)
+                @Html.DisplayFor(_ => game.Title)
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => game.Body)
+                @Html.DisplayNameFor(_ => game.Body)
             </dt>
             <dd class = "col-sm-10">
-                @Html.DisplayFor(model => game.Body)
+                @Html.DisplayFor(_ => game.Body)
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => game.Rating)
+                @Html.DisplayNameFor(_ => game.Rating)
             </dt>
             <dd class = "col-sm-10">
-                @Html.DisplayFor(model => game.Rating)
+                @Html.DisplayFor(_ => game.Rating)
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => game.ReleaseDate)
+                @Html.DisplayNameFor(_ => game.ReleaseDate)
             </dt>
             <dd class = "col-sm-10">
-                @Html.DisplayFor(model => game.ReleaseDate)
+                @Html.DisplayFor(_ => game.ReleaseDate)
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => game.Company)
+                @Html.DisplayNameFor(_ => game.Company)
             </dt>
             <dd class = "col-sm-10">
                 <a asp-controller="Company" asp-action="Details" asp-route-id="@game.Company!.Id">
-                    @Html.DisplayFor(model => game.Company!.Title)
+                    @Html.DisplayFor(_ => game.Company!.Title)
                 </a>
             </dd>
             <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => game.Genres)
+                @Html.DisplayNameFor(_ => game.Genres)
             </dt>
             <dd class = "col-sm-10">
                 @for (var i = 0; i < game.Genres!.Count; i++)
@@ -70,16 +66,16 @@
                         <span> | </span>
                     }
                     <a asp-controller="Genre" asp-action="Details" asp-route-id="@game.Genres![i].Id">
-                        @Html.DisplayFor(model => game.Genres![i].Title)
+                        @Html.DisplayFor(_ => game.Genres![i].Title)
                     </a>
                 }
             </dd>
         </dl>
     </div>
-</div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@game?.Id">Edit</a> |
-    <a asp-action="Delete" asp-route-id="@game?.Id">Delete</a> |
-    <a asp-action="Index">Back to List</a>
+    <div>
+        <a asp-action="Edit" asp-route-id="@game?.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Delete" asp-route-id="@game?.Id" class="btn btn-primary">Delete</a>
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    </div>
 </div>
