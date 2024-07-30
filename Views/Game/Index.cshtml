@@ -21,13 +21,22 @@
 
 <form asp-controller="Game" asp-action="Index" method="get">
     <p>
-        Company: 
+        Company:
         <select asp-for="SearchCompany" asp-items="Model.Companies">
             <option value="">All</option>
         </select>
-        Genre: 
+        Genre:
         <select asp-for="SearchGenre" asp-items="Model.Genres">
             <option value="">All</option>
+        </select>
+        Rating:
+        <select asp-for="SearchRating">
+            <option value="">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
         </select>
         <!--keep the search string display with @Model.SearchTitle-->
         Title: <input type="text" name="SearchTitle" value="@Model.SearchTitle">

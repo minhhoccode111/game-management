@@ -27,9 +27,10 @@ namespace GameManagementMvc.Controllers
 
         // GET: Game
         public async Task<IActionResult> Index(
+            string searchRating,
             string searchTitle,
-            string searchCompany,
-            string searchGenre
+            string searchGenre,
+            string searchCompany
         )
         {
             // if Game model not exists in current context
@@ -41,23 +42,21 @@ namespace GameManagementMvc.Controllers
 
             // use `var` to infer the type in case we change in the future
             // so that we don't have to change everywhere
-            // select every genres' title in current context (to make a select list filter)
-            // this make the variable queryable
-            var genreQuery = from genre in _context.Genre orderby genre.Title select genre.Title;
-
-            // select every company' title in current context (to make a select list filter)
-            // this make the variable queryable
-            var companyQuery =
-                from company in _context.Company
-                orderby company.Title
-                select company.Title;
 
             // select all game in current context, include its company
             // and make as queryable
             var games = _context.Game.Include(game => game.Company).AsQueryable();
             // var games = from game in _context.Game select game;
 
-            // if search title it provided
+            // if search rating is provided then we try convert it to int
+            // if success then it will return true and a variable value to use
+            if (int.TryParse(searchRating, out int SearchRating))
+            {
+                // filter search rating
+                games = games.Where(game => game.Rating == SearchRating);
+            }
+
+            // if search title is provided
             if (!String.IsNullOrEmpty(searchTitle))
             {
                 // filter search title
@@ -94,11 +93,12 @@ namespace GameManagementMvc.Controllers
             // create ViewModel to pass to game view
             var gameVM = new GameViewModel
             {
-                SearchTitle = searchTitle,
                 SearchCompany = searchCompany,
+                SearchTitle = searchTitle,
                 SearchGenre = searchGenre,
-                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
-                Companies = new SelectList(await companyQuery.Distinct().ToListAsync()),
+                SearchRating = SearchRating,
+                Companies = await GetContextCompaniesSelectList(),
+                Genres = await GetContextGenresSelectList(),
                 Games = gameList
             };
 
@@ -248,6 +248,7 @@ namespace GameManagementMvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // ############################## HELPERS ##############################
         private bool GameExists(int id)
         {
             return _context.Game.Any(e => e.Id == id);
@@ -263,6 +264,27 @@ namespace GameManagementMvc.Controllers
 
             // return a list a genres
             return genreList.Where(genre => game.GenreIds!.Contains(genre.Id)).ToList();
+        }
+
+        private async Task<SelectList> GetContextGenresSelectList()
+        {
+            // select every genres' title in current context (to make a select list filter)
+            // this make the variable queryable
+            var genreQuery = from genre in _context.Genre orderby genre.Title select genre.Title;
+
+            return new SelectList(await genreQuery.Distinct().ToListAsync());
+        }
+
+        private async Task<SelectList> GetContextCompaniesSelectList()
+        {
+            // select every company' title in current context (to make a select list filter)
+            // this make the variable queryable
+            var companyQuery =
+                from company in _context.Company
+                orderby company.Title
+                select company.Title;
+
+            return new SelectList(await companyQuery.Distinct().ToListAsync());
         }
     }
 }
