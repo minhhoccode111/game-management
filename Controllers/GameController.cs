@@ -46,15 +46,14 @@ namespace GameManagementMvc.Controllers
             // select all game in current context, include its company
             // and make as queryable
             var games = _context.Game.Include(game => game.Company).AsQueryable();
-            // var games = from game in _context.Game select game;
 
             // if search rating is provided then we try convert it to int
             // if success then it will return true and a variable SearchRating
             // type int to use
-            if (int.TryParse(searchRating, out int SearchRating))
+            if (int.TryParse(searchRating, out int value))
             {
                 // filter search rating
-                games = games.Where(game => game.Rating == SearchRating);
+                games = games.Where(game => game.Rating == value);
             }
 
             // if search title is provided
@@ -95,7 +94,7 @@ namespace GameManagementMvc.Controllers
             var gameVM = new GameViewModel
             {
                 SearchCompany = searchCompany,
-                SearchRating = SearchRating,
+                SearchRating = searchRating,
                 SearchGenre = searchGenre,
                 SearchTitle = searchTitle, // default value of search input
                 Companies = await GetContextCompaniesSelectList(null),
@@ -135,6 +134,7 @@ namespace GameManagementMvc.Controllers
         // GET: Game/Create
         public async Task<IActionResult> Create()
         {
+            // TODO: fix genres to MultiSelectList
             ViewData["Genres"] = await GetContextGenresSelectList(null);
             ViewData["Companies"] = await GetContextCompaniesSelectList(null);
             return View();
@@ -168,8 +168,10 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // find game with id in current context
-            var game = await _context.Game.FindAsync(id);
+            // find game with provided id in current context
+            var game = await _context
+                .Game.Include(g => g.Company)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             // if game not found
             if (game == null)
@@ -177,14 +179,13 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // populate game Genres field, to default check the checkboxes
-            game.Genres = await PopulateGenreIdsInGame(game);
-
-            // var genres = await GetContextGenresSelectList(null); // TODO: MultiSelectList
+            // genres must be a <MultiSelectList>
+            var genres = await GetContextGenresMultiSelectList(game.GenreIds!);
+            // companies must be a <SelectList>
             var companies = await GetContextCompaniesSelectList(game.Company!.Title);
 
             // pass to genres and companies to update
-            ViewData["Genres"] = genres; // TODO: fix this
+            ViewData["Genres"] = genres;
             ViewData["Companies"] = companies;
 
             return View(game);
@@ -248,7 +249,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // populate GenreIds field with real genres
+            // populate Genres field using GenreIds field
             game.Genres = await PopulateGenreIdsInGame(game);
 
             return View(game);
@@ -277,58 +278,55 @@ namespace GameManagementMvc.Controllers
         }
 
         // ############################## HELPERS ##############################
+
+        // use to check if a game exists in current context
         private bool GameExists(int id)
         {
             return _context.Game.Any(e => e.Id == id);
         }
 
+        // use to populate Genres field in game model base on GenreIds field
         private async Task<List<Genre>> PopulateGenreIdsInGame(Game game)
         {
-            // get all genres in current context (include id)
-            var genres = from g in _context.Genre select g;
-
-            // make it a list
-            var genreList = await genres.ToListAsync();
-
-            // return a list a genres
-            return genreList.Where(genre => game.GenreIds!.Contains(genre.Id)).ToList();
+            // return a list of genres in game's GenreIds
+            return await _context
+                .Genre.Where(genre => game.GenreIds!.Contains(genre.Id))
+                .ToListAsync();
         }
 
+        // use to generate select dropdown when filter games' company
         private async Task<SelectList> GetContextGenresSelectList(string? selected)
         {
             // select every genres' title in current context (to make a select list filter)
-            // this make the variable queryable
-            var genreQuery = from genre in _context.Genre orderby genre.Title select genre.Title;
+            var genres = await _context
+                .Genre.OrderBy(g => g.Title)
+                .Select(g => g.Title)
+                .Distinct()
+                .ToListAsync();
 
-            IEnumerable<string> genres = await genreQuery.Distinct().ToListAsync();
-
-            if (String.IsNullOrEmpty(selected))
-            {
-                return new SelectList(genres);
-            }
-
+            // if selected is provided then it will be default selected
             return new SelectList(genres, selected);
         }
 
+        // use to generate select dropdown when create, edit and filter games' company
         private async Task<SelectList> GetContextCompaniesSelectList(string? selected)
         {
             // select every company' title in current context (to make a select list filter)
-            // this make the variable queryable
-            var companyQuery =
-                from company in _context.Company
-                orderby company.Title
-                select company.Title;
+            var companies = await _context
+                .Company.OrderBy(c => c.Title)
+                .Select(c => c.Title)
+                .Distinct()
+                .ToListAsync();
 
-            IEnumerable<string> companies = await companyQuery.Distinct().ToListAsync();
-
-            if (String.IsNullOrEmpty(selected))
-            {
-                return new SelectList(companies);
-            }
-
+            // if selected is provided then it will be default selected
             return new SelectList(companies, selected);
         }
 
-        // TODO: GetContextGenresMultiSelectList
+        // use to generate checkboxes when create and edit games' genres
+        private async Task<MultiSelectList> GetContextGenresMultiSelectList(List<int> selected)
+        {
+            var genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
+            return new MultiSelectList(genres, "Id", "Title", selected);
+        }
     }
 }

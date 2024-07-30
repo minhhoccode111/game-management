@@ -2,10 +2,21 @@
 
 @{
     ViewData["Title"] = "All Games";
+    bool isSearchTitle = !String.IsNullOrEmpty(Model.SearchTitle);
+    bool isSearchGenre = !String.IsNullOrEmpty(Model.SearchGenre);
+    bool isSearchCompany = !String.IsNullOrEmpty(Model.SearchCompany);
+    bool isSearchRating = !String.IsNullOrEmpty(Model.SearchRating);
 }
 
 <h1>
-    <a asp-action="Index" class="text-black">@ViewData["Title"]</a>
+    @if (isSearchTitle || isSearchGenre || isSearchCompany || isSearchRating)
+    {
+        <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
+    }
+    else
+    {
+    <p>@ViewData["Title"]</p>
+    }
 </h1>
 
 <p>
