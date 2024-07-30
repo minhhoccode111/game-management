@@ -4,7 +4,16 @@
     ViewData["Title"] = "Games";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>
+    @if (String.IsNullOrEmpty(Model.SearchGenre) && String.IsNullOrEmpty(Model.SearchTitle) && String.IsNullOrEmpty(Model.SearchCompany))
+    {
+        @ViewData["Title"]
+    }
+    else 
+    {
+        <a asp-action="Index" class="text-black">@ViewData["Title"]</a>
+    }
+</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -71,11 +80,16 @@
                 </a>
             </td>
             <td>
-                @foreach (var genre in item.Genres!)
+                @for (var i = 0; i < item.Genres!.Count; i++)
                 {
-                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@genre.Id">
-                        @Html.DisplayFor(modelItem => genre.Title)
-                    </a><span> - </span>
+                    <!-- item.Genres![i] -->
+                    if (i != 0)
+                    {
+                        <span> | </span>
+                    }
+                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@item.Genres![i].Id">
+                        @Html.DisplayFor(modelItem => item.Genres![i].Title)
+                    </a>
                 }
             </td>
             <td>

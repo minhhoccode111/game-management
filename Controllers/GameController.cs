@@ -13,8 +13,10 @@ namespace GameManagementMvc.Controllers
 {
     public class GameController : Controller
     {
+        // logging
         private readonly ILogger<GameController> _logger;
 
+        // db context
         private readonly GameManagementMvcContext _context;
 
         public GameController(ILogger<GameController> logger, GameManagementMvcContext context)
@@ -30,51 +32,66 @@ namespace GameManagementMvc.Controllers
             string searchGenre
         )
         {
+            // if Game model not exists in current context
             if (_context.Game == null)
             {
+                // produce a problem detail response
                 return Problem("Entity set 'GameManagementMvc.Game' is null.");
             }
 
+            // use `var` to infer the type in case we change in the future
+            // so that we don't have to change everywhere
+            // select every genres' title in current context (to make a select list filter)
+            // this make the variable queryable
             var genreQuery = from genre in _context.Genre orderby genre.Title select genre.Title;
 
+            // select every company' title in current context (to make a select list filter)
+            // this make the variable queryable
             var companyQuery =
                 from company in _context.Company
                 orderby company.Title
                 select company.Title;
 
+            // select all game in current context, include its company
+            // and make as queryable
             var games = _context.Game.Include(game => game.Company).AsQueryable();
             // var games = from game in _context.Game select game;
 
+            // if search title it provided
             if (!String.IsNullOrEmpty(searchTitle))
             {
+                // filter search title
                 games = games.Where(game => game.Title!.ToUpper().Contains(searchTitle.ToUpper()));
             }
 
+            // if search company is provided
             if (!String.IsNullOrEmpty(searchCompany))
             {
+                // filter search company
                 games = games.Where(game => game.Company!.Title == searchCompany);
             }
 
+            // if search genre is provided
             if (!String.IsNullOrEmpty(searchGenre))
             {
-                // find the genre has title match searchGenre, then extract id
+                // find the genre has title match searchGenre, then extract its id
                 int searchGenreId = _context
                     .Genre.FirstOrDefault(genre => genre.Title == searchGenre)!
                     .Id;
+                // filter base on search genre
                 games = games.Where(game => game.GenreIds!.Contains(searchGenreId));
             }
 
-            var genres = from g in _context.Genre select g;
-
-            var genreList = await genres.ToListAsync();
-
+            // make all games left a list
             var gameList = await games.ToListAsync();
 
+            // populate all ids in GenreIds with real Genre model
             foreach (var game in gameList)
             {
-                game.Genres = genreList.Where(genre => game.GenreIds!.Contains(genre.Id)).ToList();
+                game.Genres = await PopulateGenreIdsInGame(game);
             }
 
+            // create ViewModel to pass to game view
             var gameVM = new GameViewModel
             {
                 SearchTitle = searchTitle,
@@ -91,18 +108,34 @@ namespace GameManagementMvc.Controllers
         // GET: Game/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            // if id not provided
             if (id == null)
             {
                 return NotFound();
             }
 
-            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
+            // find the game match the id in current context
+            var game = await _context
+                .Game.Include(g => g.Company)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            // if game not found
             if (game == null)
             {
                 return NotFound();
             }
 
-            return View(game);
+            // populate GenreIds field with real genres
+            game.Genres = await PopulateGenreIdsInGame(game);
+
+            // make a list to reuse in GameViewModel
+            var gameList = new List<Game>();
+            gameList.Add(game);
+
+            // create ViewModel to pass to game view
+            var gameVM = new GameViewModel { Games = gameList };
+
+            return View(gameVM);
         }
 
         // GET: Game/Create
@@ -218,6 +251,18 @@ namespace GameManagementMvc.Controllers
         private bool GameExists(int id)
         {
             return _context.Game.Any(e => e.Id == id);
+        }
+
+        private async Task<List<Genre>> PopulateGenreIdsInGame(Game game)
+        {
+            // get all genres in current context (include id)
+            var genres = from g in _context.Genre select g;
+
+            // make it a list
+            var genreList = await genres.ToListAsync();
+
+            // return a list a genres
+            return genreList.Where(genre => game.GenreIds!.Contains(genre.Id)).ToList();
         }
     }
 }

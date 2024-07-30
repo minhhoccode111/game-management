@@ -38,9 +38,9 @@ namespace GameManagementMvc.Models
                     // MAANG
                     new Company
                     {
-                        // Id = 0,
+                        Id = 0,
                         Title = "Meta Corp",
-                        Body = "Meta Corp is a very greate company",
+                        Body = "Meta Corp is a very great company",
                         Image = "https://images.cnbctv18.com/wp-content/uploads/2022/09/Meta.jpg",
                         FoundingDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
@@ -48,7 +48,7 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        // Id = 1,
+                        Id = 1,
                         Title = "Apple Corp",
                         Body = "Apple Corp is a very great company",
                         Image =
@@ -59,9 +59,9 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        // Id = 2,
+                        Id = 2,
                         Title = "Amazon Corp",
-                        Body = "Amazon Corp is a very greate company",
+                        Body = "Amazon Corp is a very great company",
                         Image =
                             "https://www.wealthandfinance-news.com/wp-content/uploads/2020/01/amazon.jpg",
                         FoundingDate = DateTime.Parse(
@@ -70,9 +70,9 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        // Id = 3,
+                        Id = 3,
                         Title = "Netflix Corp",
-                        Body = "Netflix Corp is a very greate company",
+                        Body = "Netflix Corp is a very great company",
                         Image =
                             "https://s.aolcdn.com/hss/storage/midas/dae3c205f61d252afbea973ef0409803/206200911/Netflix+Media_0193+2.jpg",
                         FoundingDate = DateTime.Parse(
@@ -81,9 +81,9 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        // Id = 4,
+                        Id = 4,
                         Title = "Google Corp",
-                        Body = "Google Corp is a very greate company",
+                        Body = "Google Corp is a very great company",
                         Image = "https://wallpapercave.com/wp/kmmXJbb.jpg",
                         FoundingDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
@@ -99,44 +99,40 @@ namespace GameManagementMvc.Models
                     {
                         Id = 6,
                         Title = "Action",
-                        Body = "Action is a very greate genre"
+                        Body = "Action is a very great genre"
                     },
                     new Genre
                     {
                         Id = 7,
                         Title = "Sport",
-                        Body = "Sport is a very greate genre"
+                        Body = "Sport is a very great genre"
                     },
                     new Genre
                     {
                         Id = 8,
                         Title = "Horror",
-                        Body = "Horror is a very greate genre"
+                        Body = "Horror is a very great genre"
                     },
                     new Genre
                     {
                         Id = 9,
                         Title = "Humor",
-                        Body = "Humor is a very greate genre"
+                        Body = "Humor is a very great genre"
                     },
                     new Genre
                     {
                         Id = 10,
                         Title = "Romantic",
-                        Body = "Romantic is a very greate genre"
+                        Body = "Romantic is a very great genre"
                     },
                     new Genre
                     {
                         Id = 11,
                         Title = "FPS",
-                        Body = "FPS is a very greate genre"
+                        Body = "FPS is a very great genre"
                     },
                 };
 
-                // BUG: must call this before init game models so that the genres automatically initialize its Ids
-                // so that we can use to store it in GenreIds field in game models
-                // and don't have to hard code it
-                // Myth? fuck gpt-4
                 context.Genre.AddRange(genres);
 
                 var numGames = 20;
@@ -144,16 +140,16 @@ namespace GameManagementMvc.Models
                 for (int i = 0; i < numGames; i++)
                 {
                     var genreIds = new List<int>();
-                    var genre0 = ran.Next(0, genres.Length - 1);
-                    var genre1 = ran.Next(0, genres.Length - 1);
-                    var genre2 = ran.Next(0, genres.Length - 1);
+                    var genre0 = ran.Next(0, genres.Length);
+                    var genre1 = ran.Next(0, genres.Length);
+                    var genre2 = ran.Next(0, genres.Length);
                     genreIds.Add(genres[genre0].Id);
                     genreIds.Add(genres[genre1].Id);
                     genreIds.Add(genres[genre2].Id);
                     Game currGame = new Game
                     {
                         Title = $"Game {i}",
-                        Body = $"Game {i} is a very greate game",
+                        Body = $"Game {i} is a very great game",
                         // Image= "",
                         Rating = ran.Next(1, 5),
                         ReleaseDate = DateTime.Parse(

@@ -1,48 +1,85 @@
-@model GameManagementMvc.Models.Game
+@model GameManagementMvc.Models.GameViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Game Details";
+    var game = Model.Games![0];
 }
 
-<h1>Details</h1>
+<h1>@ViewData["Title"]</h1>
+
+<div class="container">
+    <h4>
+        <a asp-controller="Game" asp-action="Index" class="text-black">Game</a>
+    </h4>
+
+    <hr />
+
+    <div class="row justify-content-start">
+        <div class="col-2">
+            @if (String.IsNullOrEmpty(game.Image))
+            {
+                <img src="~/img/default.png" alt="No image" class="img-thumbnail">
+            }
+            else
+            {
+                <img src="@game.Image" alt="Game image" class="img-thumbnail">
+            }
+        </div>
+
+        <dl class="row col-10">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => game.Title)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => game.Title)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => game.Body)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => game.Body)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => game.Rating)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => game.Rating)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => game.ReleaseDate)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => game.ReleaseDate)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => game.Company)
+            </dt>
+            <dd class = "col-sm-10">
+                <a asp-controller="Company" asp-action="Details" asp-route-id="@game.Company!.Id">
+                    @Html.DisplayFor(model => game.Company!.Title)
+                </a>
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => game.Genres)
+            </dt>
+            <dd class = "col-sm-10">
+                @for (var i = 0; i < game.Genres!.Count; i++)
+                {
+                    if (i != 0)
+                    {
+                        <span> | </span>
+                    }
+                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@game.Genres![i].Id">
+                        @Html.DisplayFor(model => game.Genres![i].Title)
+                    </a>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
 
 <div>
-    <h4>Game</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Body)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Body)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@game?.Id">Edit</a> |
+    <a asp-action="Delete" asp-route-id="@game?.Id">Delete</a> |
     <a asp-action="Index">Back to List</a>
 </div>
