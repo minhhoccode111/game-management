@@ -5,14 +5,7 @@
 }
 
 <h1>
-    @if (String.IsNullOrEmpty(Model.SearchGenre) && String.IsNullOrEmpty(Model.SearchTitle) && String.IsNullOrEmpty(Model.SearchCompany))
-    {
-        @ViewData["Title"]
-    }
-    else 
-    {
-        <a asp-action="Index" class="text-black">@ViewData["Title"]</a>
-    }
+    <a asp-action="Index" class="text-black">@ViewData["Title"]</a>
 </h1>
 
 <p>
@@ -22,11 +15,11 @@
 <form asp-controller="Game" asp-action="Index" method="get">
     <p>
         Company:
-        <select asp-for="SearchCompany" asp-items="Model.Companies">
+        <select asp-for="SearchCompany" asp-items="@Model.Companies">
             <option value="">All</option>
         </select>
         Genre:
-        <select asp-for="SearchGenre" asp-items="Model.Genres">
+        <select asp-for="SearchGenre" asp-items="@Model.Genres">
             <option value="">All</option>
         </select>
         Rating:
