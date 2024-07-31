@@ -28,20 +28,6 @@ namespace GameManagementMvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Genre",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", maxLength: 32, nullable: false),
-                    Body = table.Column<string>(type: "TEXT", maxLength: 2048, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genre", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Game",
                 columns: table => new
                 {
@@ -58,31 +44,34 @@ namespace GameManagementMvc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Game", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Game_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Game_CompanyId",
-                table: "Game",
-                column: "CompanyId");
+            migrationBuilder.CreateTable(
+                name: "Genre",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 32, nullable: false),
+                    Body = table.Column<string>(type: "TEXT", maxLength: 2048, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genre", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Company");
+
+            migrationBuilder.DropTable(
                 name: "Game");
 
             migrationBuilder.DropTable(
                 name: "Genre");
-
-            migrationBuilder.DropTable(
-                name: "Company");
         }
     }
 }

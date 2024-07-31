@@ -45,7 +45,7 @@ namespace GameManagementMvc.Controllers
 
             // select all game in current context, include its company
             // and make as queryable
-            var games = _context.Game.Include(game => game.Company).AsQueryable();
+            var games = _context.Game.AsQueryable();
 
             // if search rating is provided then we try convert it to int
             // if success then it will return true and a variable SearchRating
@@ -67,7 +67,7 @@ namespace GameManagementMvc.Controllers
             if (int.TryParse(searchCompany, out int searchCompanyInt))
             {
                 // filter search company
-                games = games.Where(game => game.Company!.Id == searchCompanyInt);
+                games = games.Where(game => game.CompanyId == searchCompanyInt);
             }
 
             // if search genre is provided, and can be converted to int
@@ -80,10 +80,12 @@ namespace GameManagementMvc.Controllers
             // make all games left a list
             var gameList = await games.ToListAsync();
 
-            // populate all ids in GenreIds with real Genre models
             foreach (var game in gameList)
             {
+                // populate Genres with GenreIds
                 game.Genres = await PopulateGenreIdsInGame(game);
+                // populate Company with CompanyId
+                game.Company = PopulateCompanyIdInGame(game);
             }
 
             // create a view mode to pass to game index view
@@ -111,9 +113,7 @@ namespace GameManagementMvc.Controllers
             }
 
             // find the game match the id in current context
-            var game = await _context
-                .Game.Include(g => g.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
 
             // if game not found
             if (game == null)
@@ -123,6 +123,7 @@ namespace GameManagementMvc.Controllers
 
             // populate GenreIds field with real genres
             game.Genres = await PopulateGenreIdsInGame(game);
+            game.Company = PopulateCompanyIdInGame(game);
 
             return View(game);
         }
@@ -165,9 +166,10 @@ namespace GameManagementMvc.Controllers
             }
 
             // find game with provided id in current context
-            var game = await _context
-                .Game.Include(g => g.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
+
+            // TODO: populate .Company
+            // maybe don't need because we already create SelectList using it
 
             // if game not found
             if (game == null)
@@ -178,7 +180,7 @@ namespace GameManagementMvc.Controllers
             // genres must be a <MultiSelectList>
             var genres = await GetContextGenresMultiSelectList(game.GenreIds!);
             // companies must be a <SelectList>
-            var companies = await GetContextCompaniesSelectList(game.Company!.Id);
+            var companies = await GetContextCompaniesSelectList(game.CompanyId);
 
             // pass to genres and companies to update
             ViewData["Genres"] = genres;
@@ -194,8 +196,7 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game,
-            string? Company
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
         )
         {
             // mismatch between game model's id and route's id
@@ -246,9 +247,7 @@ namespace GameManagementMvc.Controllers
             }
 
             // find the game match the id in current context
-            var game = await _context
-                .Game.Include(g => g.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
 
             // if game not found
             if (game == null)
@@ -258,6 +257,8 @@ namespace GameManagementMvc.Controllers
 
             // populate Genres field using GenreIds field
             game.Genres = await PopulateGenreIdsInGame(game);
+            // populate Company field using CompanyId field
+            game.Company = PopulateCompanyIdInGame(game);
 
             return View(game);
         }
@@ -306,6 +307,12 @@ namespace GameManagementMvc.Controllers
             // bool result = genreList.Contains(genreIds);
             // return result;
             return false;
+        }
+
+        // use to populate Company field in game model base on CompanyId field
+        private Company PopulateCompanyIdInGame(Game game)
+        {
+            return _context.Company.First(c => c.Id == game.CompanyId);
         }
 
         // use to populate Genres field in game model base on GenreIds field

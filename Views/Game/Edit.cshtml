@@ -24,7 +24,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
         }
     </div> 
     <div class="col-md-4">
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -53,7 +53,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 <span asp-validation-for="ReleaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Company" class="control-label"></label>
+                <label asp-for="CompanyId" class="control-label"></label>
                 <div>
                     @foreach (var company in companies)
                     {
@@ -63,10 +63,10 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                     </div>
                     }
                 </div>
-                <span asp-validation-for="Company" class="text-danger"></span>
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div> 
             <div class="form-group">
-                <label asp-for="Genres" class="control-label"></label>
+                <label asp-for="GenreIds" class="control-label"></label>
                 <div>
                     @foreach (var genre in genres)
                     {
