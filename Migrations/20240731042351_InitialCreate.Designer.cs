@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameManagementMvc.Migrations
 {
     [DbContext(typeof(GameManagementMvcContext))]
-    [Migration("20240730021125_InitialCreate")]
+    [Migration("20240731042351_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -99,17 +99,12 @@ namespace GameManagementMvc.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("GameId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GameId");
 
                     b.ToTable("Genre");
                 });
@@ -123,18 +118,6 @@ namespace GameManagementMvc.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("GameManagementMvc.Models.Genre", b =>
-                {
-                    b.HasOne("GameManagementMvc.Models.Game", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("GameId");
-                });
-
-            modelBuilder.Entity("GameManagementMvc.Models.Game", b =>
-                {
-                    b.Navigation("Genres");
                 });
 #pragma warning restore 612, 618
         }

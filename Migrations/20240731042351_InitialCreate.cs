@@ -28,6 +28,20 @@ namespace GameManagementMvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Genre",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 32, nullable: false),
+                    Body = table.Column<string>(type: "TEXT", maxLength: 2048, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genre", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Game",
                 columns: table => new
                 {
@@ -52,45 +66,20 @@ namespace GameManagementMvc.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Genre",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", maxLength: 32, nullable: false),
-                    Body = table.Column<string>(type: "TEXT", maxLength: 2048, nullable: false),
-                    GameId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genre", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Genre_Game_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Game",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Game_CompanyId",
                 table: "Game",
                 column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Genre_GameId",
-                table: "Genre",
-                column: "GameId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Genre");
+                name: "Game");
 
             migrationBuilder.DropTable(
-                name: "Game");
+                name: "Genre");
 
             migrationBuilder.DropTable(
                 name: "Company");

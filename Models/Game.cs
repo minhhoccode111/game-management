@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameManagementMvc.Models
 {
@@ -25,13 +26,15 @@ namespace GameManagementMvc.Models
         [Required]
         public DateTime ReleaseDate { get; set; }
 
+        public int CompanyId { get; set; }
+
         [Required]
         public Company? Company { get; set; }
 
         [Required]
         public List<int>? GenreIds { get; set; } = new List<int>();
 
-        // [NotMapped]
+        [NotMapped]
         public List<Genre> Genres { get; set; } = new List<Genre>();
     }
 }

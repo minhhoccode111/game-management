@@ -29,6 +29,7 @@ ASP.NET Core MVC
 
 - Use MS SQL instead of SQLite
 - Upload images instead of hard coded links
+  - Or validate if an image link is valid
 - Deploy
 
 ## Getting started

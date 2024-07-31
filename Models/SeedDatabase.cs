@@ -33,7 +33,7 @@ namespace GameManagementMvc.Models
                 var ran = new Random();
 
                 // if no movie exists
-                var companies = new Company[]
+                var companyList = new Company[]
                 {
                     // MAANG
                     new Company
@@ -86,7 +86,9 @@ namespace GameManagementMvc.Models
                     }
                 };
 
-                context.Company.AddRange(companies);
+                context.Company.AddRange(companyList);
+                context.SaveChanges();
+                var companies = context.Company.ToList();
 
                 var genreList = new Genre[]
                 {
@@ -102,7 +104,6 @@ namespace GameManagementMvc.Models
                 // available to save in GenreIds field in Game Models
                 context.Genre.AddRange(genreList);
                 context.SaveChanges();
-                // Retrieve saved genres with their IDs
                 var genres = context.Genre.ToList();
 
                 var numGames = 20;
@@ -116,6 +117,7 @@ namespace GameManagementMvc.Models
                     genreIds.Add(genres[genre0].Id);
                     genreIds.Add(genres[genre1].Id);
                     genreIds.Add(genres[genre2].Id);
+                    Company company = companies[ran.Next(0, companies.Count - 1)];
                     Game currGame = new Game
                     {
                         Title = $"Game {i}",
@@ -125,7 +127,8 @@ namespace GameManagementMvc.Models
                         ReleaseDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
                         ),
-                        Company = companies[ran.Next(0, companies.Length - 1)],
+                        Company = company,
+                        CompanyId = company.Id,
                         GenreIds = genreIds,
                     };
                     games[i] = currGame;

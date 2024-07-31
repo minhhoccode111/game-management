@@ -24,7 +24,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
         }
     </div> 
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -53,9 +53,30 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 <span asp-validation-for="ReleaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Company.Title" class="control-label"></label>
-                <select asp-for="Company.Title" asp-items="companies" class="form-control">
-                </select>
+                <label asp-for="Company" class="control-label"></label>
+                <div>
+                    @foreach (var company in companies)
+                    {
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" name="CompanyId" value="@company.Value" id="company_@company.Value" @(company.Selected ? "checked" : "") />
+                        <label class="form-check-label" for="company_@company.Value">@company.Text</label>
+                    </div>
+                    }
+                </div>
+                <span asp-validation-for="Company" class="text-danger"></span>
+            </div> 
+            <div class="form-group">
+                <label asp-for="Genres" class="control-label"></label>
+                <div>
+                    @foreach (var genre in genres)
+                    {
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" @(genre.Selected ? "checked" : "") />
+                        <label class="form-check-label" for="genre_@genre.Value">@genre.Text</label>
+                    </div>
+                    }
+                </div>
+                <span asp-validation-for="GenreIds" class="text-danger"></span>
             </div>
             <div class="form-group mt-2">
                 <input type="submit" value="Save" class="btn btn-success" />
