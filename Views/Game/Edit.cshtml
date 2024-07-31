@@ -10,10 +10,14 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
 
 <!-- <h4>Game</h4> -->
 
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
 <hr />
 
 <div class="row">
-    <div class="col-2">
+    <div class="col-4">
         @if (String.IsNullOrEmpty(Model.Image))
         {
         <img src="~/img/default.png" alt="No image" class="img-thumbnail">
@@ -48,12 +52,12 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 <span asp-validation-for="Rating" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ReleaseDate" class="control-label"></label>
+                <label asp-for="ReleaseDate" class="control-label">Release Date</label>
                 <input asp-for="ReleaseDate" class="form-control" />
                 <span asp-validation-for="ReleaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CompanyId" class="control-label"></label>
+                <label asp-for="CompanyId" class="control-label">Company</label>
                 <div>
                     @foreach (var company in companies)
                     {
@@ -66,7 +70,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div> 
             <div class="form-group">
-                <label asp-for="GenreIds" class="control-label"></label>
+                <label asp-for="GenreIds" class="control-label">Genre</label>
                 <div>
                     @foreach (var genre in genres)
                     {
@@ -82,7 +86,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 <input type="submit" value="Save" class="btn btn-success" />
                 <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>
                 <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>
-                <a asp-action="Index" class="btn btn-primary">Back to List</a>
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
             </div>
         </form>
     </div>

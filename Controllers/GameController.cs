@@ -31,6 +31,7 @@ namespace GameManagementMvc.Controllers
             string searchTitle,
             string searchGenre,
             string searchCompany
+            // string sortBy // TODO: 
         )
         {
             // if Game model not exists in current context
@@ -43,16 +44,17 @@ namespace GameManagementMvc.Controllers
             // use `var` to infer the type in case we change in the future
             // so that we don't have to change everywhere
 
-            // select all game in current context, include its company
-            // and make as queryable
+            // select all game in current context and make as queryable
             var games = _context.Game.AsQueryable();
 
+            // TODO: add sortby
+
             // if search rating is provided then we try convert it to int
-            // if success then it will return true and a variable SearchRating
+            // if success it will return true and a variable SearchRatingInt
             // type int to use
             if (int.TryParse(searchRating, out int searchRatingInt))
             {
-                // filter search rating
+                // filter games base on SearchRating
                 games = games.Where(game => game.Rating == searchRatingInt);
             }
 
@@ -123,17 +125,19 @@ namespace GameManagementMvc.Controllers
 
             // populate GenreIds field with real genres
             game.Genres = await PopulateGenreIdsInGame(game);
+            // populate Company field with real CompanyId
             game.Company = PopulateCompanyIdInGame(game);
 
             return View(game);
         }
 
-        // GET: Game/Create
+        // GET: Game/Create TODO:
         public async Task<IActionResult> Create()
         {
-            // TODO: fix genres to MultiSelectList
-            ViewData["Genres"] = await GetContextGenresSelectList();
-            ViewData["Companies"] = await GetContextCompaniesSelectList();
+            var genres = await GetContextGenresMultiSelectList();
+            ViewData["Genres"] = genres;
+            var companies = await GetContextCompaniesSelectList();
+            ViewData["Companies"] = companies;
             return View();
         }
 
@@ -144,7 +148,7 @@ namespace GameManagementMvc.Controllers
         // only execute the method if anti-forgery-token pass
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Title,Body,Image,Rating,ReleaseDate")] Game game
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
         )
         {
             if (ModelState.IsValid)
@@ -167,9 +171,6 @@ namespace GameManagementMvc.Controllers
 
             // find game with provided id in current context
             var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
-
-            // TODO: populate .Company
-            // maybe don't need because we already create SelectList using it
 
             // if game not found
             if (game == null)
@@ -362,7 +363,9 @@ namespace GameManagementMvc.Controllers
         }
 
         // use to generate checkboxes when create and edit games' genres
-        private async Task<MultiSelectList> GetContextGenresMultiSelectList(List<int> selected)
+        private async Task<MultiSelectList> GetContextGenresMultiSelectList(
+            List<int>? selected = null
+        )
         {
             var genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
 

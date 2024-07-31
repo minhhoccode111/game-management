@@ -30,7 +30,6 @@ ASP.NET Core MVC
 - Use MS SQL instead of SQLite
 - Upload images instead of hard coded links
   - Or validate if an [image link is valid](https://stackoverflow.com/questions/11082804/detecting-image-url-in-c-net)
-- Add `Sort by`: Rating, Name, Date, etc.
 - Deploy
 
 ## Getting started
