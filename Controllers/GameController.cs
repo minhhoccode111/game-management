@@ -30,8 +30,8 @@ namespace GameManagementMvc.Controllers
             string searchRating,
             string searchTitle,
             string searchGenre,
-            string searchCompany
-            // string sortBy // TODO: 
+            string searchCompany,
+            string sortBy
         )
         {
             // if Game model not exists in current context
@@ -47,7 +47,7 @@ namespace GameManagementMvc.Controllers
             // select all game in current context and make as queryable
             var games = _context.Game.AsQueryable();
 
-            // TODO: add sortby
+            games = GameSortBy(games, sortBy);
 
             // if search rating is provided then we try convert it to int
             // if success it will return true and a variable SearchRatingInt
@@ -131,7 +131,7 @@ namespace GameManagementMvc.Controllers
             return View(game);
         }
 
-        // GET: Game/Create TODO:
+        // GET: Game/Create
         public async Task<IActionResult> Create()
         {
             var genres = await GetContextGenresMultiSelectList();
@@ -151,12 +151,26 @@ namespace GameManagementMvc.Controllers
             [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
         )
         {
+            // in case race condition
+            if (IsValidCompanyId(game.CompanyId) || IsValidGenreIds(game.GenreIds))
+            {
+                return NotFound();
+            }
+
+            // if everything ok
             if (ModelState.IsValid)
             {
+                // add that game to current context
                 _context.Add(game);
+
+                // save change
                 await _context.SaveChangesAsync();
+
+                // redirect to index
                 return RedirectToAction(nameof(Index));
             }
+
+            // else display view again with that game
             return View(game);
         }
 
@@ -201,7 +215,8 @@ namespace GameManagementMvc.Controllers
         )
         {
             // mismatch between game model's id and route's id
-            if (id != game.Id)
+            // in case race condition
+            if (id != game.Id || IsValidCompanyId(game.CompanyId) || IsValidGenreIds(game.GenreIds))
             {
                 return NotFound();
             }
@@ -288,26 +303,46 @@ namespace GameManagementMvc.Controllers
 
         // ############################## HELPERS ##############################
 
+        // use to sort games base on provided string
+        private IQueryable<Game> GameSortBy(IQueryable<Game> games, string sortBy)
+        {
+            if (sortBy == "name")
+                return games.OrderBy(g => g.Title);
+            if (sortBy == "-name")
+                return games.OrderByDescending(g => g.Title);
+            if (sortBy == "date")
+                return games.OrderBy(g => g.ReleaseDate);
+            if (sortBy == "-date")
+                return games.OrderByDescending(g => g.ReleaseDate);
+            if (sortBy == "rating")
+                return games.OrderBy(g => g.Rating);
+            if (sortBy == "-rating")
+                return games.OrderByDescending(g => g.Rating);
+            return games;
+        }
+
         // use to check if a game exists in current context
         private bool GameExists(int id)
         {
+            // if any mode in current Game context has that id
             return _context.Game.Any(e => e.Id == id);
         }
 
-        // use to get a Company in current context knowing its Id
-        public async Task<Company?> GetCompanyInContext(int id)
+        // use to check if a company's id is valid in create and edit action
+        private bool IsValidCompanyId(int id)
         {
-            return await _context.Company.FirstOrDefaultAsync(g => g.Id == id);
+            // if any model in current Company context has that id
+            return _context.Company.Any(c => c.Id == id);
         }
 
         // use to check a list of GenreIds are valid genres exist in current context
         // to use when create and edit games
-        public async Task<bool> CheckGenreIdsInContext(List<int> genreIds)
+        private bool IsValidGenreIds(List<int> genreIds)
         {
-            // var genreList = await _context.Genre.SelectMany(g=>g.Id).ToListAsync();
-            // bool result = genreList.Contains(genreIds);
-            // return result;
-            return false;
+            // select all genres, only take ids
+            var genres = _context.Genre.Select(g => g.Id);
+            // check if every id in genreIds arg is included in genres
+            return genreIds.All(id => genres.Contains(id));
         }
 
         // use to populate Company field in game model base on CompanyId field

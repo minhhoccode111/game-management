@@ -12,5 +12,6 @@ namespace GameManagementMvc.Models
         public string? SearchGenre { get; set; }
         public string? SearchRating { get; set; }
         public string? SearchCompany { get; set; }
+        public string? SortBy { get; set; }
     }
 }
