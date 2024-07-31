@@ -38,7 +38,6 @@ namespace GameManagementMvc.Models
                     // MAANG
                     new Company
                     {
-                        Id = 0,
                         Title = "Meta",
                         Body = "Meta is a very great company",
                         Image = "https://images.cnbctv18.com/wp-content/uploads/2022/09/Meta.jpg",
@@ -48,7 +47,6 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        Id = 1,
                         Title = "Apple",
                         Body = "Apple is a very great company",
                         Image =
@@ -59,7 +57,6 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        Id = 2,
                         Title = "Amazon",
                         Body = "Amazon is a very great company",
                         Image =
@@ -70,7 +67,6 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        Id = 3,
                         Title = "Netflix",
                         Body = "Netflix is a very great company",
                         Image =
@@ -81,7 +77,6 @@ namespace GameManagementMvc.Models
                     },
                     new Company
                     {
-                        Id = 4,
                         Title = "Google",
                         Body = "Google is a very great company",
                         Image = "https://wallpapercave.com/wp/kmmXJbb.jpg",
@@ -93,56 +88,31 @@ namespace GameManagementMvc.Models
 
                 context.Company.AddRange(companies);
 
-                var genres = new Genre[]
+                var genreList = new Genre[]
                 {
-                    new Genre
-                    {
-                        Id = 6,
-                        Title = "Action",
-                        Body = "Action is a very great genre"
-                    },
-                    new Genre
-                    {
-                        Id = 7,
-                        Title = "Sport",
-                        Body = "Sport is a very great genre"
-                    },
-                    new Genre
-                    {
-                        Id = 8,
-                        Title = "Horror",
-                        Body = "Horror is a very great genre"
-                    },
-                    new Genre
-                    {
-                        Id = 9,
-                        Title = "Humor",
-                        Body = "Humor is a very great genre"
-                    },
-                    new Genre
-                    {
-                        Id = 10,
-                        Title = "Romantic",
-                        Body = "Romantic is a very great genre"
-                    },
-                    new Genre
-                    {
-                        Id = 11,
-                        Title = "FPS",
-                        Body = "FPS is a very great genre"
-                    },
+                    new Genre { Title = "Action", Body = "Action is a very great genre" },
+                    new Genre { Title = "Sport", Body = "Sport is a very great genre" },
+                    new Genre { Title = "Horror", Body = "Horror is a very great genre" },
+                    new Genre { Title = "Humor", Body = "Humor is a very great genre" },
+                    new Genre { Title = "Romantic", Body = "Romantic is a very great genre" },
+                    new Genre { Title = "FPS", Body = "FPS is a very great genre" },
                 };
 
-                context.Genre.AddRange(genres);
+                // NOTE: have to do like this because we have to make the genres' Ids
+                // available to save in GenreIds field in Game Models
+                context.Genre.AddRange(genreList);
+                context.SaveChanges();
+                // Retrieve saved genres with their IDs
+                var genres = context.Genre.ToList();
 
                 var numGames = 20;
                 var games = new Game[numGames];
                 for (int i = 0; i < numGames; i++)
                 {
                     var genreIds = new List<int>();
-                    var genre0 = ran.Next(0, genres.Length);
-                    var genre1 = ran.Next(0, genres.Length);
-                    var genre2 = ran.Next(0, genres.Length);
+                    var genre0 = ran.Next(0, genres.Count);
+                    var genre1 = ran.Next(0, genres.Count);
+                    var genre2 = ran.Next(0, genres.Count);
                     genreIds.Add(genres[genre0].Id);
                     genreIds.Add(genres[genre1].Id);
                     genreIds.Add(genres[genre2].Id);
