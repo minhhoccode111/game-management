@@ -97,8 +97,8 @@ namespace GameManagementMvc.Controllers
                 SearchRating = searchRating,
                 SearchGenre = searchGenre,
                 SearchTitle = searchTitle, // default value of search input
-                Companies = await GetContextCompaniesSelectList(null),
-                Genres = await GetContextGenresSelectList(null),
+                Companies = await GetContextCompaniesSelectList(),
+                Genres = await GetContextGenresSelectList(),
                 Games = gameList
             };
 
@@ -135,8 +135,8 @@ namespace GameManagementMvc.Controllers
         public async Task<IActionResult> Create()
         {
             // TODO: fix genres to MultiSelectList
-            ViewData["Genres"] = await GetContextGenresSelectList(null);
-            ViewData["Companies"] = await GetContextCompaniesSelectList(null);
+            ViewData["Genres"] = await GetContextGenresSelectList();
+            ViewData["Companies"] = await GetContextCompaniesSelectList();
             return View();
         }
 
@@ -295,37 +295,46 @@ namespace GameManagementMvc.Controllers
         }
 
         // use to generate select dropdown when filter games' company
-        private async Task<SelectList> GetContextGenresSelectList(string? selected)
+        private async Task<SelectList> GetContextGenresSelectList(string? selected = null)
         {
             // select every genres' title in current context (to make a select list filter)
             var genres = await _context
                 .Genre.OrderBy(g => g.Title)
-                .Select(g => g.Title)
-                .Distinct()
+                // .Select(g => g.Title)
+                // .DistinctBy(g => g.Title)
                 .ToListAsync();
 
             // if selected is provided then it will be default selected
-            return new SelectList(genres, selected);
+            return new SelectList(genres, "Title", "Title", selected);
         }
 
+        /*
+           new SelectList(items, dataValueField, dataTextField, selectedValue)
+           items: the list of items you want to display in SelectList
+           dataValueField: the field will be used for <option>'s value
+           dataTextField: the field will be used for <option>'s text display
+           selectedValue: the default selected value, have to match one of the dataValueField
+        */
+
         // use to generate select dropdown when create, edit and filter games' company
-        private async Task<SelectList> GetContextCompaniesSelectList(string? selected)
+        private async Task<SelectList> GetContextCompaniesSelectList(string? selected = null)
         {
             // select every company' title in current context (to make a select list filter)
             var companies = await _context
                 .Company.OrderBy(c => c.Title)
-                .Select(c => c.Title)
-                .Distinct()
+                // .Select(c => c.Title)
+                // .DistinctBy(g => g.Title)
                 .ToListAsync();
 
             // if selected is provided then it will be default selected
-            return new SelectList(companies, selected);
+            return new SelectList(companies, "Title", "Title", selected);
         }
 
         // use to generate checkboxes when create and edit games' genres
         private async Task<MultiSelectList> GetContextGenresMultiSelectList(List<int> selected)
         {
             var genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
+
             return new MultiSelectList(genres, "Id", "Title", selected);
         }
     }

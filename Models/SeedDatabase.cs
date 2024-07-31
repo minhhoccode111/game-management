@@ -39,8 +39,8 @@ namespace GameManagementMvc.Models
                     new Company
                     {
                         Id = 0,
-                        Title = "Meta Corp",
-                        Body = "Meta Corp is a very great company",
+                        Title = "Meta",
+                        Body = "Meta is a very great company",
                         Image = "https://images.cnbctv18.com/wp-content/uploads/2022/09/Meta.jpg",
                         FoundingDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
@@ -49,8 +49,8 @@ namespace GameManagementMvc.Models
                     new Company
                     {
                         Id = 1,
-                        Title = "Apple Corp",
-                        Body = "Apple Corp is a very great company",
+                        Title = "Apple",
+                        Body = "Apple is a very great company",
                         Image =
                             "https://dm0qx8t0i9gc9.cloudfront.net/thumbnails/video/UD7CEz6/editorial-apple-inc-logo-on-glass-building_smk22zqcg_thumbnail-1080_01.png",
                         FoundingDate = DateTime.Parse(
@@ -60,8 +60,8 @@ namespace GameManagementMvc.Models
                     new Company
                     {
                         Id = 2,
-                        Title = "Amazon Corp",
-                        Body = "Amazon Corp is a very great company",
+                        Title = "Amazon",
+                        Body = "Amazon is a very great company",
                         Image =
                             "https://www.wealthandfinance-news.com/wp-content/uploads/2020/01/amazon.jpg",
                         FoundingDate = DateTime.Parse(
@@ -71,8 +71,8 @@ namespace GameManagementMvc.Models
                     new Company
                     {
                         Id = 3,
-                        Title = "Netflix Corp",
-                        Body = "Netflix Corp is a very great company",
+                        Title = "Netflix",
+                        Body = "Netflix is a very great company",
                         Image =
                             "https://s.aolcdn.com/hss/storage/midas/dae3c205f61d252afbea973ef0409803/206200911/Netflix+Media_0193+2.jpg",
                         FoundingDate = DateTime.Parse(
@@ -82,8 +82,8 @@ namespace GameManagementMvc.Models
                     new Company
                     {
                         Id = 4,
-                        Title = "Google Corp",
-                        Body = "Google Corp is a very great company",
+                        Title = "Google",
+                        Body = "Google is a very great company",
                         Image = "https://wallpapercave.com/wp/kmmXJbb.jpg",
                         FoundingDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
