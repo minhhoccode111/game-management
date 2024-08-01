@@ -1,15 +1,20 @@
 @model GameManagementMvc.Models.Genre
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Genre";
+    var games = Model!.Games!;
 }
 
-<h1>Edit</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Genre</h4>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -20,19 +25,71 @@
             </div>
             <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
+                <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-success" />
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<br>
+
+<h3 class="">@Model.Title Games</h3>
+
+@if (games.Any())
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <!-- Name -->
+                @Html.DisplayNameFor(_ => games![0].Title)
+            </th>
+            <th>
+                <!-- Rating -->
+                @Html.DisplayNameFor(_ => games![0].Rating)
+            </th>
+            <th>
+                <!-- Release Date -->
+                @Html.DisplayNameFor(_ => games![0].ReleaseDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in games!)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(_ => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(_ => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(_ => item.ReleaseDate)
+            </td>
+            <td>
+                <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+}
+else
+{
+<p class="">Company has no games. <a asp-controller="Game" asp-action="Index" class="">Create a game</a>.</p>
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

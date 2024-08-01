@@ -62,7 +62,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                     @foreach (var company in companies!)
                     {
                     <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" name="CompanyId" value="@company.Value" id="company_@company.Value" @(company.Selected ? "checked" : "") />
+                        <input type="radio" class="form-check-input" name="CompanyId" value="@company.Value" id="company_@company.Value" @(company.Selected ? "checked" : "") required/>
                         <label class="form-check-label" for="company_@company.Value">@company.Text</label>
                     </div>
                     }
@@ -75,7 +75,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                     @foreach (var genre in genres!)
                     {
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" @(genre.Selected ? "checked" : "") />
+                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" @(genre.Selected ? "checked" : "") required/>
                         <label class="form-check-label" for="genre_@genre.Value">@genre.Text</label>
                     </div>
                     }

@@ -1,15 +1,20 @@
 @model GameManagementMvc.Models.Genre
 
 @{
-    ViewData["Title"] = "Details";
+ViewData["Title"] = "Genre Details";
+var games = Model.Games!;
 }
 
-<h1>Details</h1>
+<h1>@ViewData["Title"]</h1>
 
 <div>
-    <h4>Genre</h4>
-    <hr />
-    <dl class="row">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<hr>
+
+<div class="row justify-content-start">
+    <dl class="row col-4 align-self-start">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
@@ -24,7 +29,63 @@
         </dd>
     </dl>
 </div>
+
+<br>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-primary">Delete</a>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
 </div>
+
+<br>
+
+<h3 class="">@Model.Title Games</h3>
+
+@if (games.Any())
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <!-- Name -->
+                @Html.DisplayNameFor(model => model.Games![0].Title)
+            </th>
+            <th>
+                <!-- Rating -->
+                @Html.DisplayNameFor(model => model.Games![0].Rating)
+            </th>
+            <th>
+                <!-- Release Date -->
+                @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model!.Games!)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+}
+else
+{
+<p class="">Genre has no games. <a asp-controller="Game" asp-action="Index" class="">Create a game</a>.</p>
+}

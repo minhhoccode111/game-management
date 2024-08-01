@@ -123,7 +123,7 @@ namespace GameManagementMvc.Models
                         Title = $"Game {i}",
                         Body = $"Game {i} is a very great game",
                         // Image= "",
-                        Rating = ran.Next(1, 5),
+                        Rating = ran.Next(1, 6),
                         ReleaseDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
                         ),

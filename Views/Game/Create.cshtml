@@ -57,7 +57,7 @@
                     @foreach (var company in companies!)
                     {
                     <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" name="CompanyId" value="@company.Value" id="company_@company.Value" />
+                        <input type="radio" class="form-check-input" name="CompanyId" value="@company.Value" id="company_@company.Value" required />
                         <label class="form-check-label" for="company_@company.Value">@company.Text</label>
                     </div>
                     }
@@ -80,7 +80,7 @@
                     @foreach (var genre in genres!)
                     {
                     <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" />
+                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" required/>
                         <label class="form-check-label" for="genre_@genre.Value">@genre.Text</label>
                     </div>
                     }
