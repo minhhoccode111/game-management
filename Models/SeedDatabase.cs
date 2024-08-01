@@ -117,7 +117,7 @@ namespace GameManagementMvc.Models
                     genreIds.Add(genres[genre0].Id);
                     genreIds.Add(genres[genre1].Id);
                     genreIds.Add(genres[genre2].Id);
-                    Company company = companies[ran.Next(0, companies.Count - 1)];
+                    Company company = companies[ran.Next(0, companies.Count)];
                     Game currGame = new Game
                     {
                         Title = $"Game {i}",

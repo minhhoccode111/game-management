@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameManagementMvc.Models
 {
@@ -14,6 +15,8 @@ namespace GameManagementMvc.Models
         [Required]
         public string? Body { get; set; }
 
-        // public ICollection<Game>? Games { get; set; }
+        // use to populate when need to display game belong to this
+        [NotMapped]
+        public List<Game>? Games { get; set; }
     }
 }

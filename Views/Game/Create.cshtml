@@ -4,8 +4,8 @@
     ViewData["Title"] = "Create Game";
     var genres = ViewData["Genres"] as IEnumerable<SelectListItem>;
     var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
-    bool isNoGenre = !genres.Any();
-    bool isNoCompany = !companies.Any();
+    bool isNoGenre = !genres!.Any();
+    bool isNoCompany = !companies!.Any();
 }
 
 <!-- WARN: must have at least 1 company and 1 genre to create a new game -->
@@ -52,7 +52,7 @@
             <div class="form-group">
                 <label asp-for="CompanyId" class="control-label">Company</label>
                 <div>
-                    @foreach (var company in companies)
+                    @foreach (var company in companies!)
                     {
                     <div class="form-check form-check-inline">
                         <input type="radio" class="form-check-input" name="CompanyId" value="@company.Value" id="company_@company.Value" />
@@ -74,7 +74,7 @@
             <div class="form-group">
                 <label asp-for="GenreIds" class="control-label">Genre</label>
                 <div>
-                    @foreach (var genre in genres)
+                    @foreach (var genre in genres!)
                     {
                     <div class="form-check form-check-inline">
                         <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" />

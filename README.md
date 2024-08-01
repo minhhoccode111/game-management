@@ -1,6 +1,6 @@
 # Game Management App Mvc
 
-ASP.NET Core MVC
+Learn ASP.NET Core MVC
 
 ## Screenshot
 
