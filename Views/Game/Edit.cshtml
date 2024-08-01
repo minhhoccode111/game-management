@@ -27,7 +27,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
         <img src="@Model.Image" alt="Game image" class="img-thumbnail">
         }
     </div> 
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -82,7 +82,9 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 </div>
                 <span asp-validation-for="GenreIds" class="text-danger"></span>
             </div>
-            <br>
+            <p class="text-danger">
+                *Note: Must select 1 Company and at least 1 Genre.
+            </p>
             <div class="form-group mt-2">
                 <input type="submit" value="Save" class="btn btn-success" />
                 <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>

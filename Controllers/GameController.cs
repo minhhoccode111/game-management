@@ -155,7 +155,11 @@ namespace GameManagementMvc.Controllers
             // in case race condition
             if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
             {
-                return NotFound();
+                var genres = await GetContextGenresMultiSelectList();
+                ViewData["Genres"] = genres;
+                var companies = await GetContextCompaniesSelectList();
+                ViewData["Companies"] = companies;
+                return View("Create", game);
             }
 
             // if everything ok
@@ -218,13 +222,14 @@ namespace GameManagementMvc.Controllers
         {
             // mismatch between game model's id and route's id
             // in case race condition
-            if (
-                id != game.Id
-                || !IsValidCompanyId(game.CompanyId)
-                || !IsValidGenreIds(game.GenreIds)
-            )
+            if (id != game.Id)
             {
                 return NotFound();
+            }
+
+            if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
+            {
+                return Redirect($"/Game/Edit/{game.Id}");
             }
 
             // form validation state
@@ -343,8 +348,12 @@ namespace GameManagementMvc.Controllers
 
         // use to check a list of GenreIds are valid genres exist in current context
         // to use when create and edit games
-        private bool IsValidGenreIds(List<int> genreIds)
+        private bool IsValidGenreIds(List<int>? genreIds = null)
         {
+            if (genreIds == null)
+            {
+                return false;
+            }
             // select all genres, only take ids
             var genres = _context.Genre.Select(g => g.Id);
             // check if every id in genreIds arg is included in genres
