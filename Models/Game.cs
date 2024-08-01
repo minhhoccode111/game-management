@@ -33,12 +33,12 @@ namespace GameManagementMvc.Models
         public Company? Company { get; set; }
 
         [Required]
-        public List<int> GenreIds { get; set; } = new List<int>();
+        public List<int>? GenreIds { get; set; }
 
         // not mean we don't map the real Genre Model to this field reduce the
         // size but each time we retrieve Game model, we have to populate the
         // Genres with GenreIds
         [NotMapped]
-        public List<Genre> Genres { get; set; } = new List<Genre>();
+        public List<Genre>? Genres { get; set; }
     }
 }

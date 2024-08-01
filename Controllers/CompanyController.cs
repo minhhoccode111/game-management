@@ -102,12 +102,20 @@ namespace GameManagementMvc.Controllers
             [Bind("Id,Title,Body,Image,FoundingDate")] Company company
         )
         {
+            // if validation state is valid
             if (ModelState.IsValid)
             {
+                // add company to current context
                 _context.Add(company);
+
+                // save changes
                 await _context.SaveChangesAsync();
+
+                // redirect to index
                 return RedirectToAction(nameof(Index));
             }
+
+            // else display the view again with invalid data
             return View(company);
         }
 

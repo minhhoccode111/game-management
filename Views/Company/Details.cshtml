@@ -25,7 +25,7 @@ var games = Model.Games!;
         }
     </div>
 
-    <dl class="row col-8">
+    <dl class="row col-8 align-self-start">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
@@ -104,5 +104,5 @@ var games = Model.Games!;
 }
 else
 {
-<p class="">Company has no games.</p>
+<p class="">Company has no games. <a asp-controller="Game" asp-action="Index" class="">Create a game</a>.</p>
 }

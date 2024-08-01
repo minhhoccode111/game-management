@@ -24,7 +24,7 @@
         <img src="@Model.Image" alt="Game image" class="img-thumbnail">
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
+                <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -108,7 +108,7 @@
 }
 else
 {
-<p class="">Company has no games.</p>
+<p class="">Company has no games. <a asp-controller="Game" asp-action="Index" class="">Create a game</a>.</p>
 }
 
 @section Scripts {
