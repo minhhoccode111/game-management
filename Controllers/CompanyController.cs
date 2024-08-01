@@ -74,10 +74,14 @@ namespace GameManagementMvc.Controllers
             }
 
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
+
             if (company == null)
             {
                 return NotFound();
             }
+
+            // populate Games field
+            company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }

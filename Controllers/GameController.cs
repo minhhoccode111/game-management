@@ -87,7 +87,7 @@ namespace GameManagementMvc.Controllers
                 // populate Genres with GenreIds
                 game.Genres = await PopulateGenreIdsInGame(game);
                 // populate Company with CompanyId
-                game.Company = PopulateCompanyIdInGame(game);
+                game.Company = await PopulateCompanyIdInGame(game);
             }
 
             // create a view mode to pass to game index view
@@ -126,7 +126,7 @@ namespace GameManagementMvc.Controllers
             // populate GenreIds field with real genres
             game.Genres = await PopulateGenreIdsInGame(game);
             // populate Company field with real CompanyId
-            game.Company = PopulateCompanyIdInGame(game);
+            game.Company = await PopulateCompanyIdInGame(game);
 
             return View(game);
         }
@@ -280,7 +280,7 @@ namespace GameManagementMvc.Controllers
             // populate Genres field using GenreIds field
             game.Genres = await PopulateGenreIdsInGame(game);
             // populate Company field using CompanyId field
-            game.Company = PopulateCompanyIdInGame(game);
+            game.Company = await PopulateCompanyIdInGame(game);
 
             return View(game);
         }
@@ -352,10 +352,10 @@ namespace GameManagementMvc.Controllers
         }
 
         // use to populate Company field in game model base on CompanyId field
-        private Company PopulateCompanyIdInGame(Game game)
+        private async Task<Company?> PopulateCompanyIdInGame(Game game)
         {
             // return the first one that match the id
-            return _context.Company.First(c => c.Id == game.CompanyId);
+            return await _context.Company.FirstOrDefaultAsync(c => c.Id == game.CompanyId);
         }
 
         // use to populate Genres field in game model base on GenreIds field

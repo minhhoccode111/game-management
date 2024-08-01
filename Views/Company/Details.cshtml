@@ -1,42 +1,101 @@
 @model GameManagementMvc.Models.Company
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Company Details";
+    var games = Model.Games!;
 }
 
-<h1>Details</h1>
+<h1>@ViewData["Title"]</h1>
 
 <div>
-    <h4>Company</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Body)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Body)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FoundingDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FoundingDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+
+<hr>
+
+<div class="container">
+    <div class="row justify-content-start">
+        <div class="col-4">
+            @if (String.IsNullOrEmpty(Model.Image))
+            {
+            <img src="~/img/default.png" alt="No image" class="img-thumbnail">
+            }
+            else
+            {
+            <img src="@Model.Image" alt="Game image" class="img-thumbnail">
+            }
+        </div>
+
+        <dl class="row col-8">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Body)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Body)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.FoundingDate)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.FoundingDate)
+            </dd>
+        </dl>
+    </div>
+
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-primary">Delete</a>
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    </div>
+
+    <br>
+
+    <h2 class="">Company's Games</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <!-- Name -->
+                    @Html.DisplayNameFor(model => model.Games![0].Title)
+                </th>
+                <th>
+                    <!-- Rating -->
+                    @Html.DisplayNameFor(model => model.Games![0].Rating)
+                </th>
+                <th>
+                    <!-- Release Date -->
+                    @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Games!)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseDate)
+                </td>
+                <td>
+                    <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
 </div>
