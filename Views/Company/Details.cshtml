@@ -48,6 +48,8 @@
         </dl>
     </div>
 
+    <br>
+
     <div>
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
         <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-primary">Delete</a>
@@ -58,6 +60,8 @@
 
     <h2 class="">Company's Games</h2>
 
+    @if (games.Any())
+    {
     <table class="table">
         <thead>
             <tr>
@@ -77,7 +81,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Games!)
+            @foreach (var item in Model!.Games!)
             {
             <tr>
                 <td>
@@ -98,4 +102,9 @@
             }
         </tbody>
     </table>
+    }
+    else
+    {
+    <p class="">Company has no games.</p>
+    }
 </div>

@@ -1,14 +1,18 @@
 @model GameManagementMvc.Models.Company
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Company";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Company</h4>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
 <hr />
-<div class="row">
+
+<div class="row justify-content-center">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -19,7 +23,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
+                <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -32,15 +36,12 @@
                 <input asp-for="FoundingDate" class="form-control" />
                 <span asp-validation-for="FoundingDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

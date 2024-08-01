@@ -73,6 +73,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
+            // find the company in current context
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
 
             if (company == null)
@@ -150,7 +151,7 @@ namespace GameManagementMvc.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CompanyExists(company.Id))
+                    if (!IsCompanyExists(company.Id))
                     {
                         return NotFound();
                     }
@@ -172,11 +173,17 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
+            // get company in current context
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
+
+            // if company not found
             if (company == null)
             {
                 return NotFound();
             }
+
+            // populate Games field
+            company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }
@@ -187,12 +194,14 @@ namespace GameManagementMvc.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var company = await _context.Company.FindAsync(id);
-            if (company != null)
+
+            if (company != null && IsCompanyDeletable(id))
             {
                 _context.Company.Remove(company);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -216,8 +225,15 @@ namespace GameManagementMvc.Controllers
             return companies;
         }
 
+        // use to check if a company can be deleted
+        private bool IsCompanyDeletable(int id)
+        {
+            // all Games' CompanyId not match current id
+            return _context.Game.All(g => g.CompanyId != id);
+        }
+
         // use to check if a company exists
-        private bool CompanyExists(int id)
+        private bool IsCompanyExists(int id)
         {
             return _context.Company.Any(e => e.Id == id);
         }

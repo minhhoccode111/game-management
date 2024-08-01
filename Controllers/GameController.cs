@@ -241,7 +241,7 @@ namespace GameManagementMvc.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     // if current context error, probably race condition
-                    if (!GameExists(game.Id))
+                    if (!IsGameExists(game.Id))
                     {
                         return NotFound();
                     }
@@ -328,7 +328,7 @@ namespace GameManagementMvc.Controllers
         }
 
         // use to check if a game exists in current context
-        private bool GameExists(int id)
+        private bool IsGameExists(int id)
         {
             // if any mode in current Game context has that id
             return _context.Game.Any(e => e.Id == id);
