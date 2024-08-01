@@ -45,7 +45,7 @@ namespace GameManagementMvc.Controllers
             // so that we don't have to change everywhere
 
             // select all game in current context and make as queryable
-            var games = _context.Game.AsQueryable();
+            var games = _context.Game.OrderByDescending(g => g.Rating).AsQueryable();
 
             games = GameSortBy(games, sortBy);
 

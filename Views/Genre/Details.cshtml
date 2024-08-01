@@ -40,7 +40,7 @@ var games = Model.Games!;
 
 <br>
 
-<h3 class="">@Model.Title Games</h3>
+<h3 class="">@Model!.Title Games</h3>
 
 @if (games.Any())
 {
@@ -87,5 +87,5 @@ var games = Model.Games!;
 }
 else
 {
-<p class="">Genre has no games. <a asp-controller="Game" asp-action="Index" class="">Create a game</a>.</p>
+<p class="">Genre has no games. <a asp-controller="Game" asp-action="Create" class="">Create a game</a>.</p>
 }
