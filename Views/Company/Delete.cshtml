@@ -1,8 +1,8 @@
 @model GameManagementMvc.Models.Company
 
 @{
-    ViewData["Title"] = "Delete Company";
-    var games = Model.Games!;
+ViewData["Title"] = "Delete Company";
+var games = Model.Games!;
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -13,106 +13,104 @@
 
 <hr>
 
-<div class="container">
-    @if (!games.Any())
-    {
-    <h3 class="text-danger">Are you sure you want to delete this company?</h3>
+@if (!games.Any())
+{
+<h3 class="text-danger">Are you sure you want to delete this company?</h3>
 
-    <br>
-    }
+<br>
+}
 
-    <div class="row justify-content-start">
-        <div class="col-4">
-            @if (String.IsNullOrEmpty(Model.Image))
-            {
-            <img src="~/img/default.png" alt="No image" class="img-thumbnail">
-            }
-            else
-            {
-            <img src="@Model.Image" alt="Company image" class="img-thumbnail">
-            }
-        </div>
-
-        <dl class="row col-8">
-            <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.Title)
-            </dt>
-            <dd class = "col-sm-10">
-                @Html.DisplayFor(model => model.Title)
-            </dd>
-            <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.Body)
-            </dt>
-            <dd class = "col-sm-10">
-                @Html.DisplayFor(model => model.Body)
-            </dd>
-            <dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.FoundingDate)
-            </dt>
-            <dd class = "col-sm-10">
-                @Html.DisplayFor(model => model.FoundingDate)
-            </dd>
-        </dl>
+<div class="row justify-content-start">
+    <div class="col-4">
+        @if (String.IsNullOrEmpty(Model.Image))
+        {
+        <img src="~/img/default.png" alt="No image" class="img-thumbnail">
+        }
+        else
+        {
+        <img src="@Model.Image" alt="Company image" class="img-thumbnail">
+        }
     </div>
 
-    <br>
-
-    <form asp-action="Delete">
-        @if (!games.Any())
-        {
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Confirm" class="btn btn-danger" />
-        }
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>
-        <a asp-action="Index" class="btn btn-primary">Back to List</a>
-    </form>
-
-    @if (games.Any())
-    {
-    <br>
-
-    <h3 class="text-danger">Please remove the following Games before deleting this Company</h3>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    <!-- Name -->
-                    @Html.DisplayNameFor(model => model.Games![0].Title)
-                </th>
-                <th>
-                    <!-- Rating -->
-                    @Html.DisplayNameFor(model => model.Games![0].Rating)
-                </th>
-                <th>
-                    <!-- Release Date -->
-                    @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model!.Games!)
-            {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Rating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReleaseDate)
-                </td>
-                <td>
-                    <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
-    }
+    <dl class="row col-8">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Body)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FoundingDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FoundingDate)
+        </dd>
+    </dl>
 </div>
+
+<br>
+
+<form asp-action="Delete">
+    @if (!games.Any())
+    {
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Confirm" class="btn btn-danger" />
+    }
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+</form>
+
+@if (games.Any())
+{
+<br>
+
+<h3 class="text-danger">Please remove the following Games before deleting this Company</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <!-- Name -->
+                @Html.DisplayNameFor(model => model.Games![0].Title)
+            </th>
+            <th>
+                <!-- Rating -->
+                @Html.DisplayNameFor(model => model.Games![0].Rating)
+            </th>
+            <th>
+                <!-- Release Date -->
+                @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model!.Games!)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+}

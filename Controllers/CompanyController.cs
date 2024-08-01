@@ -119,11 +119,18 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
+            // find that company in current context
             var company = await _context.Company.FindAsync(id);
+
+            // if company not found
             if (company == null)
             {
                 return NotFound();
             }
+
+            // populate the Games field
+            company.Games = await PopulateGamesInCompany(company);
+
             return View(company);
         }
 
@@ -137,16 +144,21 @@ namespace GameManagementMvc.Controllers
             [Bind("Id,Title,Body,Image,FoundingDate")] Company company
         )
         {
+            // mismatch company id
             if (id != company.Id)
             {
                 return NotFound();
             }
 
+            // validate state is valid
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // update that company in current context
                     _context.Update(company);
+
+                    // save changes
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -160,8 +172,12 @@ namespace GameManagementMvc.Controllers
                         throw;
                     }
                 }
+
+                // redirect to index
                 return RedirectToAction(nameof(Index));
             }
+
+            // render view again with that company if data invalid
             return View(company);
         }
 
@@ -193,15 +209,20 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // find company in current context
             var company = await _context.Company.FindAsync(id);
 
+            // company do exist and can be deleted
             if (company != null && IsCompanyDeletable(id))
             {
+                // remove from current context
                 _context.Company.Remove(company);
             }
 
+            // save changes made to current context
             await _context.SaveChangesAsync();
 
+            // redirect to index
             return RedirectToAction(nameof(Index));
         }
 
