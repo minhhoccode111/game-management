@@ -142,8 +142,9 @@ namespace GameManagementMvc.Controllers
         }
 
         // POST: Game/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enable the specific properties you
+        // want to bind to. For more details, see
+        // http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // only execute the method if anti-forgery-token pass
         [ValidateAntiForgeryToken]
@@ -152,7 +153,7 @@ namespace GameManagementMvc.Controllers
         )
         {
             // in case race condition
-            if (IsValidCompanyId(game.CompanyId) || IsValidGenreIds(game.GenreIds))
+            if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
             {
                 return NotFound();
             }
@@ -205,8 +206,9 @@ namespace GameManagementMvc.Controllers
         }
 
         // POST: Game/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, enable the specific properties you
+        // want to bind to. For more details, see
+        // http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
@@ -216,7 +218,11 @@ namespace GameManagementMvc.Controllers
         {
             // mismatch between game model's id and route's id
             // in case race condition
-            if (id != game.Id || IsValidCompanyId(game.CompanyId) || IsValidGenreIds(game.GenreIds))
+            if (
+                id != game.Id
+                || !IsValidCompanyId(game.CompanyId)
+                || !IsValidGenreIds(game.GenreIds)
+            )
             {
                 return NotFound();
             }
@@ -348,6 +354,7 @@ namespace GameManagementMvc.Controllers
         // use to populate Company field in game model base on CompanyId field
         private Company PopulateCompanyIdInGame(Game game)
         {
+            // return the first one that match the id
             return _context.Company.First(c => c.Id == game.CompanyId);
         }
 
@@ -363,7 +370,8 @@ namespace GameManagementMvc.Controllers
         // use to generate select dropdown when filter games' company
         private async Task<SelectList> GetContextGenresSelectList(int? selected = null)
         {
-            // select every genres' title in current context (to make a select list filter)
+            // select every genres' title in current context (to make a select list
+            // filter)
             var genres = await _context
                 .Genre.OrderBy(g => g.Title)
                 // .Select(g => g.Title)
@@ -379,13 +387,15 @@ namespace GameManagementMvc.Controllers
            items: the list of items you want to display in SelectList
            dataValueField: the field will be used for <option>'s value
            dataTextField: the field will be used for <option>'s text display
-           selectedValue: the default selected value, have to match one of the dataValueField
+           selectedValue: the default selected value, have to match one of the
+           dataValueField
         */
 
         // use to generate select dropdown when create, edit and filter games' company
         private async Task<SelectList> GetContextCompaniesSelectList(int? selected = null)
         {
-            // select every company' title in current context to make a select (filter, edit, create)
+            // select every company' title in current context to make a select (filter,
+            // edit, create)
             var companies = await _context
                 .Company.OrderBy(c => c.Title)
                 // .Select(c => c.Title)
