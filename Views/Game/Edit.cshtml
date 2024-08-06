@@ -82,9 +82,9 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
                 </div>
                 <span asp-validation-for="GenreIds" class="text-danger"></span>
             </div>
-            <p class="text-danger">
+            <p class=""><b>
                 *Note: Must select 1 Company and at least 1 Genre.
-            </p>
+            </b></p>
             <div class="form-group mt-2">
                 <input type="submit" value="Save" class="btn btn-success" />
                 <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>

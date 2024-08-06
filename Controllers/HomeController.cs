@@ -28,6 +28,7 @@ namespace GameManagementMvc.Controllers
             return View();
         }
 
+        // Error View must display the lastest state, so don't use cache on it
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

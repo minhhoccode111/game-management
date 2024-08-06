@@ -13,17 +13,16 @@ Learn ASP.NET Core MVC
 ## Features
 
 - CRUD
-- Filters
 
 ## Outcome
 
-- C#
-- MVC
-- Razor
-- SQLite
-- EF Core
-- Bootstrap
-- ASP.NET Core
+- Used C#
+- Used MVC
+- Used Razor
+- Used SQLite
+- Used EF Core
+- Used .NET Core
+- Used Bootstrap
 - ...
 
 ## To-do
@@ -31,7 +30,6 @@ Learn ASP.NET Core MVC
 - Use MS SQL instead of SQLite
 - Upload images instead of hard coded links
   - Or validate if an [image link is valid](https://stackoverflow.com/questions/11082804/detecting-image-url-in-c-net)
-- Deploy on a server
 
 ## Getting started
 

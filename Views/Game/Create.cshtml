@@ -90,15 +90,16 @@
                     @if (isNoGenre)
                     {
                     <span class="text-danger">
-                        No genre yet.
-                        <a asp-controller="Genre" asp-action="Create" class="">Create a genre</a>.
-                    </span>
+                        You need to 
+                        <a asp-controller="Genre" asp-action="Create" class="">create a genre</a>
+                        before creating a game.
+                    </span> 
                     }
                 </p>
             </div>
-            <p class="text-danger">
+            <p class="font-weight-bold"><b>
                 *Note: Must select 1 Company and at least 1 Genre.
-            </p>
+            </b></p>
             <div class="form-group d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-danger">Cancel</a>
                 <input type="submit" value="Create" class="btn btn-primary" />

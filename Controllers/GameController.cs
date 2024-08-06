@@ -411,8 +411,8 @@ namespace GameManagementMvc.Controllers
                 // .DistinctBy(g => g.Title)
                 .ToListAsync();
 
-            // NOTE: this MUST be a string for selected item to work and not
-            // and int or a Company model, which cause me 30 mins to debug
+            // WARN: selected MUST be a string for selected item to work and not
+            // an int or a Company model
             return new SelectList(companies, "Id", "Title", selected?.ToString());
         }
 

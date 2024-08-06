@@ -1,6 +1,6 @@
 # Notes
 
-## database design
+## Database design
 - Company
 	- ID
 	- Title
@@ -25,7 +25,7 @@
 	- Body
 	- Games
 
-## app flow
+## App flow
 - layout header
 	- title 
 	- home
