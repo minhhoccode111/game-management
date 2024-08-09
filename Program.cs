@@ -1,35 +1,17 @@
 // using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using GameManagementMvc.Models;
 using GameManagementMvc.Data;
+using GameManagementMvc.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// inject database context
 builder.Services.AddDbContext<GameManagementMvcContext>(options =>
-    options.UseSqlite(
-        builder.Configuration.GetConnectionString("GameManagementMvcContext")
-            ?? throw new InvalidOperationException(
-                "Connection string 'GameManagementMvcContext' not found."
-            )
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'MyDb' not found.")
     )
 );
-
-// dotnet ef migrations add InitialCreate
-// dotnet ef database update
-if (builder.Environment.IsDevelopment())
-{
-    // use sqlite in development and GameManagementMvcContext string in appsettings.json
-    builder.Services.AddDbContext<GameManagementMvcContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("GameManagementMvcContext"))
-    );
-}
-else
-{
-    // use ms sql in production and ProductionGameManagementMvcContext string in appsettings.json
-    builder.Services.AddDbContext<GameManagementMvcContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("ProductionGameManagementMvcContext"))
-    );
-}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -56,15 +38,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// what is this?
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-// what is this?
 app.UseRouting();
 
-// what is this?
 app.UseAuthorization();
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
