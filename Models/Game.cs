@@ -7,23 +7,31 @@ namespace GameManagementMvc.Models
         // primary key
         public int Id { get; set; }
 
-        // required foreign key property
+        // required, foreign key property
         public int CompanyId { get; set; }
 
-        // required, reference navigation to parent
-        public Company Company { get; set; } = null!;
-
+        // navigation parent
         // not required, populate to display in view
-        public ICollection<Genre>? Genres { get; set; }
+        public Company? Company { get; set; }
 
-        [StringLength(64, MinimumLength = 1)]
+        // many-to-many relationship with Genre through GameGenre class for join
+        // entity
+        public List<Genre> Genres { get; } = [];
+
+        // navigation to join entity
+        public List<GameGenre> GameGenres { get; } = [];
+
+        [Required]
+        [StringLength(64)]
         public required string Title { get; set; }
 
-        [StringLength(2048, MinimumLength = 1)]
+        [Required]
+        [StringLength(2048)]
         public required string Body { get; set; }
 
+        // optional
         [StringLength(2048)]
-        public string? Image { get; set; } // optional
+        public string? Image { get; set; }
 
         [Range(1, 5)]
         public required int Rating { get; set; }

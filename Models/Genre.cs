@@ -6,13 +6,19 @@ namespace GameManagementMvc.Models
     {
         public int Id { get; set; }
 
-        [StringLength(32, MinimumLength = 2)]
-        public string Title { get; set; } = null!;
+        [Required]
+        [StringLength(32)]
+        public required string Title { get; set; }
 
+        [Required]
         [StringLength(2048)]
-        public string Body { get; set; } = null!;
+        public required string Body { get; set; }
 
-        // not required, populate to display in view
-        public ICollection<Game>? Games { get; set; }
+        // many-to-many relationship with Game through GameGenre class for join
+        // entity
+        public List<Game> Games { get; } = [];
+
+        // navigation to join entity
+        public List<GameGenre> GameGenres { get; } = [];
     }
 }

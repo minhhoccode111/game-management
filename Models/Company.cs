@@ -6,19 +6,23 @@ namespace GameManagementMvc.Models
     {
         public int Id { get; set; }
 
-        [StringLength(64, MinimumLength = 2)]
-        public string Title { get; set; } = null!;
+        [Required]
+        [StringLength(64)]
+        public required string Title { get; set; }
 
+        [Required]
         [StringLength(2048)]
-        public string Body { get; set; } = null!;
+        public required string Body { get; set; }
 
+        // optional
         [StringLength(2048)]
-        public string? Image { get; set; } // optional
+        public string? Image { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FoundingDate { get; set; }
+        public required DateTime FoundingDate { get; set; }
 
-        // collection navigation containing children
-        public ICollection<Game> Games { get; set; } = null!;
+        // navigation children
+        // not required, populate to display in view
+        public ICollection<Game>? Games { get; set; }
     }
 }
