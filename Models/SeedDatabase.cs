@@ -32,7 +32,7 @@ namespace GameManagementMvc.Models
 
                 var ran = new Random();
 
-                // if no movie exists
+                // seed companies
                 var companyList = new Company[]
                 {
                     // MAANG
@@ -88,8 +88,9 @@ namespace GameManagementMvc.Models
 
                 context.Company.AddRange(companyList);
                 context.SaveChanges();
-                var companies = context.Company.ToList();
+                List<Company> companies = context.Company.ToList();
 
+                // seed genres
                 var genreList = new Genre[]
                 {
                     new Genre { Title = "Action", Body = "Action is a very great genre" },
@@ -100,23 +101,22 @@ namespace GameManagementMvc.Models
                     new Genre { Title = "FPS", Body = "FPS is a very great genre" },
                 };
 
-                // NOTE: have to do like this because we have to make the genres' Ids
-                // available to save in GenreIds field in Game Models
                 context.Genre.AddRange(genreList);
                 context.SaveChanges();
-                var genres = context.Genre.ToList();
+                List<Genre> genres = context.Genre.ToList();
 
-                var numGames = 20;
-                var games = new Game[numGames];
+                // seed games
+                int numGames = 40;
+                Game[] gameList = new Game[numGames];
                 for (int i = 0; i < numGames; i++)
                 {
-                    var genreIds = new List<int>();
-                    var genre0 = ran.Next(0, genres.Count);
-                    var genre1 = ran.Next(0, genres.Count);
-                    var genre2 = ran.Next(0, genres.Count);
-                    genreIds.Add(genres[genre0].Id);
-                    genreIds.Add(genres[genre1].Id);
-                    genreIds.Add(genres[genre2].Id);
+                    // var genreIds = new List<int>();
+                    // var genre0 = ran.Next(0, genres.Count);
+                    // var genre1 = ran.Next(0, genres.Count);
+                    // var genre2 = ran.Next(0, genres.Count);
+                    // genreIds.Add(genres[genre0].Id);
+                    // genreIds.Add(genres[genre1].Id);
+                    // genreIds.Add(genres[genre2].Id);
                     Company company = companies[ran.Next(0, companies.Count)];
                     Game currGame = new Game
                     {
@@ -125,18 +125,39 @@ namespace GameManagementMvc.Models
                         // Image= "",
                         Rating = ran.Next(1, 6),
                         ReleaseDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
+                            $"{ran.Next(2000, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
-                        Company = company,
+                        // Company = company,
                         CompanyId = company.Id,
-                        GenreIds = genreIds,
+                        // GenreIds = genreIds,
                     };
-                    games[i] = currGame;
+                    gameList[i] = currGame;
                 }
 
-                context.Game.AddRange(games);
+                context.Game.AddRange(gameList);
+                context.SaveChanges();
+                List<Game> games = context.Game.ToList();
 
-                // save changes make to _context
+                // seed game genres
+                int numGameGenres = games.Count;
+                GameGenre[] gameGenreList = new GameGenre[numGameGenres];
+                // loop through all games to add genres
+                for (int i = 0; i < numGameGenres; i++)
+                {
+                    // add 3 genres to current games[i]
+                    for (int j = 0; j < 3; j++)
+                    {
+                        GameGenre currGameGenre = new GameGenre
+                        {
+                            GameId = games[i].Id,
+                            GenreId = genres[ran.Next(0, genres.Count)].Id
+                        };
+
+                        gameGenreList[i] = currGameGenre;
+                    }
+                }
+
+                context.GameGenre.AddRange(gameGenreList);
                 context.SaveChanges();
             }
         }
