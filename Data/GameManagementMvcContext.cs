@@ -1,8 +1,3 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
-// using GameManagementMvc.Models;
 using GameManagementMvc.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +8,13 @@ namespace GameManagementMvc.Data
         // constructor
         public GameManagementMvcContext(DbContextOptions<GameManagementMvcContext> options)
             : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // config explicitly
+
+            base.OnModelCreating(modelBuilder);
+        }
 
         public DbSet<Game> Game { get; set; } = default!;
         public DbSet<Company> Company { get; set; } = default!;
