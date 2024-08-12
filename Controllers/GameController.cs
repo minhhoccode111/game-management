@@ -32,7 +32,12 @@ namespace GameManagementMvc.Controllers
                 return Problem("Entity set 'GameManagementMvc.Game' is null.");
             }
 
-            var games = _context.Game.AsQueryable();
+            var games = _context
+                .Game.Include(g => g.Company)
+                // .Include(g => g.Genres)
+                .Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .AsQueryable();
 
             games = GameSortBy(games, sortBy);
 
@@ -53,13 +58,18 @@ namespace GameManagementMvc.Controllers
 
             if (int.TryParse(searchGenre, out int searchGenreInt))
             {
-                games = games.Where(game => game.GenreIds!.Contains(searchGenreInt));
+                games = games.Where(game =>
+                    _context.GameGenre.Any(gg =>
+                        gg.GameId == game.Id && gg.GenreId == searchGenreInt
+                    )
+                );
             }
 
             var gameList = await games.ToListAsync();
 
             foreach (var game in gameList)
             {
+                game.Genres = game.GameGenres.Select(gg => gg.Genre).ToList();
                 // game.Genres = await PopulateGenreIdsInGame(game);
                 // game.Company = await PopulateCompanyIdInGame(game);
             }
@@ -134,8 +144,8 @@ namespace GameManagementMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                game.Genres = await PopulateGenreIdsInGame(game);
-
+                // game.Genres = await PopulateGenreIdsInGame(game);
+                // TODO: add GameGenre
                 _context.Game.Add(game);
 
                 await _context.SaveChangesAsync();
@@ -195,7 +205,7 @@ namespace GameManagementMvc.Controllers
             {
                 try
                 {
-                    game.Genres = await PopulateGenreIdsInGame(game);
+                    // game.Genres = await PopulateGenreIdsInGame(game);
                     _context.Game.Update(game);
 
                     await _context.SaveChangesAsync();
@@ -312,8 +322,21 @@ namespace GameManagementMvc.Controllers
         private async Task<List<Genre>> PopulateGenreIdsInGame(Game game)
         {
             return await _context
-                .Genre.Where(genre => game.GenreIds!.Contains(genre.Id))
+                .Genre.Where(g =>
+                    _context
+                        .GameGenre.Where(gg => gg.GameId == game.Id)
+                        .Select(gg => gg.GenreId)
+                        .Contains(g.Id)
+                )
                 .ToListAsync();
+
+            /*
+               SELECT g.* FROM Genre g
+               WHERE g.Id IN (
+               SELECT gg.GenreId FROM GameGenre gg
+               WHERE gg.GameId = game.Id
+               );
+            */
         }
 
         // use to generate select dropdown when filter games' company

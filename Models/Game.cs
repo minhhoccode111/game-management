@@ -4,20 +4,17 @@ namespace GameManagementMvc.Models
 {
     public class Game
     {
-        // primary key
         public int Id { get; set; }
 
-        // required, foreign key
+        // one-to-many with Company
         public int CompanyId { get; set; }
-
-        // reference one-to-many relationship with Company
         public Company Company { get; set; } = null!;
 
-        // many-to-many relationship with Genre
-        // collection navigation to Genre
-        public List<Genre> Genres { get; set; } = new();
+        // many-to-many with Genre through GameGenre
+        public List<Genre> Genres { get; set; } = [];
+        public List<GameGenre> GameGenres { get; } = [];
 
-        // not required, handle checkboxes of genre ids form submit
+        // handle form submit GenreIds checkboxes
         public List<int>? GenreIds { get; set; }
 
         [Required]

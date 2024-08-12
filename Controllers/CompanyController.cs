@@ -38,10 +38,10 @@ namespace GameManagementMvc.Controllers
 
             var companyList = await companies.ToListAsync();
 
-            foreach (var company in companyList)
-            {
-                company.Games = await PopulateGamesInCompany(company);
-            }
+            // foreach (var company in companyList)
+            // {
+            //     company.Games = await PopulateGamesInCompany(company);
+            // }
 
             var companyVM = new CompanyViewModel
             {
@@ -68,7 +68,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            company.Games = await PopulateGamesInCompany(company);
+            // company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }
@@ -115,7 +115,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            company.Games = await PopulateGamesInCompany(company);
+            // company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }
@@ -176,7 +176,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            company.Games = await PopulateGamesInCompany(company);
+            // company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }
