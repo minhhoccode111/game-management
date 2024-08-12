@@ -32,12 +32,7 @@ namespace GameManagementMvc.Controllers
                 return Problem("Entity set 'GameManagementMvc.Game' is null.");
             }
 
-            var games = _context
-                .Game.Include(g => g.Company)
-                // .Include(g => g.Genres)
-                .Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Genre)
-                .AsQueryable();
+            var games = _context.Game.Include(g => g.Company).Include(g => g.Genres).AsQueryable();
 
             games = GameSortBy(games, sortBy);
 
@@ -53,25 +48,19 @@ namespace GameManagementMvc.Controllers
 
             if (int.TryParse(searchCompany, out int searchCompanyInt))
             {
-                games = games.Where(game => game.CompanyId == searchCompanyInt);
+                games = games.Where(game => game.Company.Id == searchCompanyInt);
             }
 
             if (int.TryParse(searchGenre, out int searchGenreInt))
             {
-                games = games.Where(game =>
-                    _context.GameGenre.Any(gg =>
-                        gg.GameId == game.Id && gg.GenreId == searchGenreInt
-                    )
-                );
+                // TODO: filter genre
             }
 
             var gameList = await games.ToListAsync();
 
             foreach (var game in gameList)
             {
-                game.Genres = game.GameGenres.Select(gg => gg.Genre).ToList();
-                // game.Genres = await PopulateGenreIdsInGame(game);
-                // game.Company = await PopulateCompanyIdInGame(game);
+                //
             }
 
             // create a view mode to pass to game index view
@@ -128,24 +117,38 @@ namespace GameManagementMvc.Controllers
         // only execute the method if anti-forgery-token pass
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] GameForm gameForm
         )
         {
             // in case race condition
-            if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
+            if (!IsValidCompanyId(gameForm.CompanyId) || !IsValidGenreIds(gameForm.GenreIds))
             {
                 var genres = await GetContextGenresMultiSelectList();
                 ViewData["Genres"] = genres;
                 var companies = await GetContextCompaniesSelectList();
                 ViewData["Companies"] = companies;
                 // the form pre-populated with user's previous input
-                return View("Create", game);
+                return View("Create", gameForm);
             }
 
             if (ModelState.IsValid)
             {
-                // game.Genres = await PopulateGenreIdsInGame(game);
-                // TODO: add GameGenre
+                Company company = await _context.Company.FirstAsync(c =>
+                    c.Id == gameForm.CompanyId
+                );
+                List<Genre> genres = await _context
+                    .Genre.Where(g => gameForm.GenreIds.Any(id => g.Id == id))
+                    .ToListAsync();
+                Game game = new Game
+                {
+                    Company = company,
+                    Genres = genres,
+                    Title = gameForm.Title,
+                    Body = gameForm.Body,
+                    Image = gameForm.Image,
+                    Rating = gameForm.Rating,
+                    ReleaseDate = gameForm.ReleaseDate,
+                };
                 _context.Game.Add(game);
 
                 await _context.SaveChangesAsync();
@@ -153,7 +156,7 @@ namespace GameManagementMvc.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(game);
+            return View(gameForm);
         }
 
         // GET: Game/Edit/5
@@ -172,7 +175,7 @@ namespace GameManagementMvc.Controllers
             }
 
             var genres = await GetContextGenresMultiSelectList(game.Genres);
-            var companies = await GetContextCompaniesSelectList(game.CompanyId);
+            var companies = await GetContextCompaniesSelectList(game.Company.Id);
 
             ViewData["Genres"] = genres;
             ViewData["Companies"] = companies;
@@ -188,31 +191,47 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] GameForm gameForm
         )
         {
-            if (id != game.Id)
+            if (id != gameForm.Id)
             {
                 return NotFound();
             }
 
-            if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
+            if (!IsValidCompanyId(gameForm.CompanyId) || !IsValidGenreIds(gameForm.GenreIds))
             {
-                return Redirect($"/Game/Edit/{game.Id}");
+                return Redirect($"/Game/Edit/{gameForm.Id}");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // game.Genres = await PopulateGenreIdsInGame(game);
+                    Company company = await _context.Company.FirstAsync(c =>
+                        c.Id == gameForm.CompanyId
+                    );
+                    List<Genre> genres = await _context
+                        .Genre.Where(g => gameForm.GenreIds.Any(id => g.Id == id))
+                        .ToListAsync();
+                    Game game = new Game
+                    {
+                        Id = gameForm.Id, // keep id to update
+                        Company = company,
+                        Genres = genres,
+                        Title = gameForm.Title,
+                        Body = gameForm.Body,
+                        Image = gameForm.Image,
+                        Rating = gameForm.Rating,
+                        ReleaseDate = gameForm.ReleaseDate,
+                    };
                     _context.Game.Update(game);
 
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IsGameExists(game.Id))
+                    if (!IsGameExists(gameForm.Id))
                     {
                         return NotFound();
                     }
@@ -225,7 +244,7 @@ namespace GameManagementMvc.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(game);
+            return View(gameForm);
         }
 
         // GET: Game/Delete/5
@@ -315,40 +334,20 @@ namespace GameManagementMvc.Controllers
         // use to populate Company field in game model base on CompanyId field
         private async Task<Company?> PopulateCompanyIdInGame(Game game)
         {
-            return await _context.Company.FirstOrDefaultAsync(c => c.Id == game.CompanyId);
+            return await _context.Company.FirstOrDefaultAsync(c => c.Id == game.Company.Id);
         }
 
         // use to populate Genres field in game model base on GenreIds field
         private async Task<List<Genre>> PopulateGenreIdsInGame(Game game)
         {
-            return await _context
-                .Genre.Where(g =>
-                    _context
-                        .GameGenre.Where(gg => gg.GameId == game.Id)
-                        .Select(gg => gg.GenreId)
-                        .Contains(g.Id)
-                )
-                .ToListAsync();
-
-            /*
-               SELECT g.* FROM Genre g
-               WHERE g.Id IN (
-               SELECT gg.GenreId FROM GameGenre gg
-               WHERE gg.GameId = game.Id
-               );
-            */
+            return await _context.Genre.ToListAsync();
         }
 
         // use to generate select dropdown when filter games' company
         private async Task<SelectList> GetContextGenresSelectList(int? selected = null)
         {
-            var genres = await _context
-                .Genre.OrderBy(g => g.Title)
-                // .Select(g => g.Title)
-                // .DistinctBy(g => g.Title)
-                .ToListAsync();
+            var genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
 
-            // if selected is provided then it will be default selected
             return new SelectList(genres, "Id", "Title", selected?.ToString());
         }
 
@@ -364,14 +363,8 @@ namespace GameManagementMvc.Controllers
         // use to generate select dropdown when create, edit and filter games' company
         private async Task<SelectList> GetContextCompaniesSelectList(int? selected = null)
         {
-            var companies = await _context
-                .Company.OrderBy(c => c.Title)
-                // .Select(c => c.Title)
-                // .DistinctBy(g => g.Title)
-                .ToListAsync();
+            var companies = await _context.Company.OrderBy(c => c.Title).ToListAsync();
 
-            // WARN: selected MUST be a string for selected item to work and not
-            // an int or a Company model
             return new SelectList(companies, "Id", "Title", selected?.ToString());
         }
 

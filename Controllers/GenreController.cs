@@ -221,13 +221,15 @@ namespace GameManagementMvc.Controllers
         // use to populate Games in Genre model base on current Game context
         private async Task<List<Game>> PopulateGamesInGenre(Genre genre)
         {
-            return await _context.Game.Where(g => g.GenreIds!.Contains(genre.Id)).ToListAsync();
+            return await _context
+                .Game.Where(g => g.Id == 0) // FIXME:
+                .ToListAsync();
         }
 
         // use to check if a company can be deleted
         private bool IsGenreDeletable(int id)
         {
-            return _context.Game.All(g => !g.GenreIds!.Contains(id));
+            return _context.Game.All(g => !g.Genres.Select(g => g.Id)!.Contains(id));
         }
     }
 }

@@ -11,12 +11,13 @@ namespace GameManagementMvc.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // config explicitly
-            // GameGenre pick GameId and GenreId to be primary key
+            // one Company-to-many Game relationship
             modelBuilder
-                .Entity<Game>()
-                .HasMany(e => e.Genres)
-                .WithMany(e => e.Games)
-                .UsingEntity<GameGenre>();
+                .Entity<Company>()
+                .HasMany(c => c.Games)
+                .WithOne(g => g.Company)
+                .HasForeignKey("CompanyId")
+                .IsRequired();
 
             base.OnModelCreating(modelBuilder);
         }
@@ -24,6 +25,5 @@ namespace GameManagementMvc.Data
         public DbSet<Game> Game { get; set; } = default!;
         public DbSet<Genre> Genre { get; set; } = default!;
         public DbSet<Company> Company { get; set; } = default!;
-        public DbSet<GameGenre> GameGenre { get; set; } = default!;
     }
 }

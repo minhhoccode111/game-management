@@ -221,7 +221,7 @@ namespace GameManagementMvc.Controllers
         // use to check if a company can be deleted
         private bool IsCompanyDeletable(int id)
         {
-            return _context.Game.All(g => g.CompanyId != id);
+            return _context.Game.All(g => g.Company.Id != id);
         }
 
         // use to check if a company exists
@@ -233,7 +233,7 @@ namespace GameManagementMvc.Controllers
         // use to populate Games in Company model base on current Game context
         private async Task<List<Game>> PopulateGamesInCompany(Company company)
         {
-            return await _context.Game.Where(g => g.CompanyId == company.Id).ToListAsync();
+            return await _context.Game.Where(g => g.Company.Id == company.Id).ToListAsync();
         }
     }
 }

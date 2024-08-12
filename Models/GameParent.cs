@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GameManagementMvc.Models
 {
-    public class Company
+    public class GameParent
     {
         public int Id { get; set; }
 
@@ -18,10 +18,10 @@ namespace GameManagementMvc.Models
         [StringLength(2048)]
         public string? Image { get; set; }
 
-        [DataType(DataType.Date)]
-        public required DateTime FoundingDate { get; set; }
+        [Range(1, 5)]
+        public required int Rating { get; set; }
 
-        // one-to-many relationship with Game
-        public List<Game> Games { get; } = new List<Game>();
+        [DataType(DataType.Date)]
+        public required DateTime ReleaseDate { get; set; }
     }
 }

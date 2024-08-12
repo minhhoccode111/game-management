@@ -54,7 +54,7 @@ var game = Model;
             @Html.DisplayNameFor(_ => Model.Company)
         </dt>
         <dd class = "col-sm-10">
-            <a asp-controller="Company" asp-action="Details" asp-route-id="@Model.CompanyId">
+            <a asp-controller="Company" asp-action="Details" asp-route-id="@Model.Company.Id">
                 @Html.DisplayFor(_ => Model.Company!.Title)
             </a>
         </dd>

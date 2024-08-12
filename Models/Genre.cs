@@ -15,7 +15,6 @@ namespace GameManagementMvc.Models
         public required string Body { get; set; }
 
         // many-to-many with Game through GameGenre
-        public List<Game> Games { get; } = [];
-        public List<GameGenre> GameGenres { get; } = [];
+        public List<Game> Games { get; set; } = null!;
     }
 }

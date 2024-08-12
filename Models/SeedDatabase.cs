@@ -110,13 +110,6 @@ namespace GameManagementMvc.Models
                 Game[] gameList = new Game[numGames];
                 for (int i = 0; i < numGames; i++)
                 {
-                    // var genreIds = new List<int>();
-                    // var genre0 = ran.Next(0, genres.Count);
-                    // var genre1 = ran.Next(0, genres.Count);
-                    // var genre2 = ran.Next(0, genres.Count);
-                    // genreIds.Add(genres[genre0].Id);
-                    // genreIds.Add(genres[genre1].Id);
-                    // genreIds.Add(genres[genre2].Id);
                     Company company = companies[ran.Next(0, companies.Count)];
                     Game currGame = new Game
                     {
@@ -127,9 +120,7 @@ namespace GameManagementMvc.Models
                         ReleaseDate = DateTime.Parse(
                             $"{ran.Next(2000, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
-                        // Company = company,
-                        CompanyId = company.Id,
-                        // GenreIds = genreIds,
+                        Company = company,
                     };
                     gameList[i] = currGame;
                 }
@@ -137,26 +128,6 @@ namespace GameManagementMvc.Models
                 context.Game.AddRange(gameList);
                 context.SaveChanges();
                 List<Game> games = context.Game.ToList();
-
-                // seed game genres
-                int numGameGenres = games.Count;
-                GameGenre[] gameGenreList = new GameGenre[numGameGenres];
-                // loop through all games to add genres
-                for (int i = 0; i < numGameGenres; i++)
-                {
-                    // add 3 genres to current games[i]
-                    for (int j = 0; j < 3; j++)
-                    {
-                        GameGenre currGameGenre = new GameGenre
-                        {
-                            GameId = games[i].Id,
-                            GenreId = genres[ran.Next(0, genres.Count)].Id
-                        };
-                        gameGenreList[i] = currGameGenre;
-                    }
-                }
-                context.GameGenre.AddRange(gameGenreList);
-                context.SaveChanges();
             }
         }
     }
