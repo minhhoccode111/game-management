@@ -30,6 +30,7 @@ var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
     <div class="col-md-6">
         <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!--this help identify the game.Id in [Bind("Id,...")] Game game-->
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>

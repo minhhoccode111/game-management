@@ -14,11 +14,7 @@ namespace GameManagementMvc.Models
         [StringLength(2048)]
         public required string Body { get; set; }
 
-        // many-to-many relationship with Game through GameGenre class for join
-        // entity
-        public List<Game> Games { get; } = [];
-
-        // navigation to join entity
-        public List<GameGenre> GameGenres { get; } = [];
+        // not required, many-to-many relationship with Game
+        public List<Game> Games { get; set; } = null!;
     }
 }

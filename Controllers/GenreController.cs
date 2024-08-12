@@ -1,8 +1,3 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
-// using Microsoft.AspNetCore.Mvc.Rendering;
 using GameManagementMvc.Data;
 using GameManagementMvc.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +7,8 @@ namespace GameManagementMvc.Controllers
 {
     public class GenreController : Controller
     {
-        // logging
         private readonly ILogger<GameController> _logger;
 
-        // db context
         private readonly GameManagementMvcContext _context;
 
         public GenreController(GameManagementMvcContext context, ILogger<GameController> logger)
@@ -36,25 +29,20 @@ namespace GameManagementMvc.Controllers
 
             genres = GenreSortBy(genres, sortBy);
 
-            // if search title is provided
             if (!String.IsNullOrEmpty(searchTitle))
             {
-                // filter search title
                 genres = genres.Where(genre =>
                     genre.Title!.ToUpper().Contains(searchTitle.ToUpper())
                 );
             }
 
-            // make all genre left a list
             var genreList = await genres.ToListAsync();
 
-            foreach (var genre in genreList)
-            {
-                // populate Games of Genre
-                genre.Games = await PopulateGamesInGenre(genre);
-            }
+            // foreach (var genre in genreList)
+            // {
+            //     genre.Games = await PopulateGamesInGenre(genre);
+            // }
 
-            // create a view model to pass to genre index view
             var genreVM = new GenreViewModel
             {
                 SearchTitle = searchTitle,
@@ -80,7 +68,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            genre.Games = await PopulateGamesInGenre(genre);
+            // genre.Games = await PopulateGamesInGenre(genre);
 
             return View(genre);
         }
@@ -125,7 +113,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            genre.Games = await PopulateGamesInGenre(genre);
+            // genre.Games = await PopulateGamesInGenre(genre);
 
             return View(genre);
         }
@@ -182,7 +170,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            genre.Games = await PopulateGamesInGenre(genre);
+            // genre.Games = await PopulateGamesInGenre(genre);
 
             return View(genre);
         }
@@ -239,7 +227,6 @@ namespace GameManagementMvc.Controllers
         // use to check if a company can be deleted
         private bool IsGenreDeletable(int id)
         {
-            // all Games' GenreIds not match current id
             return _context.Game.All(g => !g.GenreIds!.Contains(id));
         }
     }

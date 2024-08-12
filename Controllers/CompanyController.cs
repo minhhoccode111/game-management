@@ -1,8 +1,3 @@
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using System.Threading.Tasks;
-// using Microsoft.AspNetCore.Mvc.Rendering;
 using GameManagementMvc.Data;
 using GameManagementMvc.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +7,8 @@ namespace GameManagementMvc.Controllers
 {
     public class CompanyController : Controller
     {
-        // logging
         private readonly ILogger<GameController> _logger;
 
-        // db context
         private readonly GameManagementMvcContext _context;
 
         public CompanyController(GameManagementMvcContext context, ILogger<GameController> logger)
@@ -36,25 +29,20 @@ namespace GameManagementMvc.Controllers
 
             companies = CompanySortBy(companies, sortBy);
 
-            // if search title is provided
             if (!String.IsNullOrEmpty(searchTitle))
             {
-                // filter search title
                 companies = companies.Where(company =>
                     company.Title!.ToUpper().Contains(searchTitle.ToUpper())
                 );
             }
 
-            // make all company left a list
             var companyList = await companies.ToListAsync();
 
             foreach (var company in companyList)
             {
-                // populate Games of Company
                 company.Games = await PopulateGamesInCompany(company);
             }
 
-            // create a view model to pass to company index view
             var companyVM = new CompanyViewModel
             {
                 SearchTitle = searchTitle,
@@ -73,7 +61,6 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // find the company in current context
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
 
             if (company == null)
@@ -81,7 +68,6 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // populate Games field
             company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
@@ -102,20 +88,15 @@ namespace GameManagementMvc.Controllers
             [Bind("Id,Title,Body,Image,FoundingDate")] Company company
         )
         {
-            // if validation state is valid
             if (ModelState.IsValid)
             {
-                // add company to current context
                 _context.Add(company);
 
-                // save changes
                 await _context.SaveChangesAsync();
 
-                // redirect to index
                 return RedirectToAction(nameof(Index));
             }
 
-            // else display the view again with invalid data
             return View(company);
         }
 
@@ -127,16 +108,13 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // find that company in current context
             var company = await _context.Company.FindAsync(id);
 
-            // if company not found
             if (company == null)
             {
                 return NotFound();
             }
 
-            // populate the Games field
             company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
@@ -152,21 +130,17 @@ namespace GameManagementMvc.Controllers
             [Bind("Id,Title,Body,Image,FoundingDate")] Company company
         )
         {
-            // mismatch company id
             if (id != company.Id)
             {
                 return NotFound();
             }
 
-            // validate state is valid
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // update that company in current context
                     _context.Update(company);
 
-                    // save changes
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -181,11 +155,9 @@ namespace GameManagementMvc.Controllers
                     }
                 }
 
-                // redirect to index
                 return RedirectToAction(nameof(Index));
             }
 
-            // render view again with that company if data invalid
             return View(company);
         }
 
@@ -197,16 +169,13 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // get company in current context
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
 
-            // if company not found
             if (company == null)
             {
                 return NotFound();
             }
 
-            // populate Games field
             company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
@@ -217,20 +186,15 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // find company in current context
             var company = await _context.Company.FindAsync(id);
 
-            // company do exist and can be deleted
             if (company != null && IsCompanyDeletable(id))
             {
-                // remove from current context
                 _context.Company.Remove(company);
             }
 
-            // save changes made to current context
             await _context.SaveChangesAsync();
 
-            // redirect to index
             return RedirectToAction(nameof(Index));
         }
 
@@ -257,7 +221,6 @@ namespace GameManagementMvc.Controllers
         // use to check if a company can be deleted
         private bool IsCompanyDeletable(int id)
         {
-            // all Games' CompanyId not match current id
             return _context.Game.All(g => g.CompanyId != id);
         }
 

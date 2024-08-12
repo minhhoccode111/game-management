@@ -21,8 +21,7 @@ namespace GameManagementMvc.Models
         [DataType(DataType.Date)]
         public required DateTime FoundingDate { get; set; }
 
-        // navigation children
-        // not required, populate to display in view
-        public ICollection<Game>? Games { get; set; }
+        // not required, one-to-many relationship with Game
+        public List<Game> Games { get; set; } = null!;
     }
 }

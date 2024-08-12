@@ -138,27 +138,25 @@ namespace GameManagementMvc.Models
                 context.SaveChanges();
                 List<Game> games = context.Game.ToList();
 
-                // seed game genres
-                int numGameGenres = games.Count;
-                GameGenre[] gameGenreList = new GameGenre[numGameGenres];
-                // loop through all games to add genres
-                for (int i = 0; i < numGameGenres; i++)
-                {
-                    // add 3 genres to current games[i]
-                    for (int j = 0; j < 3; j++)
-                    {
-                        GameGenre currGameGenre = new GameGenre
-                        {
-                            GameId = games[i].Id,
-                            GenreId = genres[ran.Next(0, genres.Count)].Id
-                        };
-
-                        gameGenreList[i] = currGameGenre;
-                    }
-                }
-
-                context.GameGenre.AddRange(gameGenreList);
-                context.SaveChanges();
+                // // seed game genres
+                // int numGameGenres = games.Count;
+                // GameGenre[] gameGenreList = new GameGenre[numGameGenres];
+                // // loop through all games to add genres
+                // for (int i = 0; i < numGameGenres; i++)
+                // {
+                //     // add 3 genres to current games[i]
+                //     for (int j = 0; j < 3; j++)
+                //     {
+                //         GameGenre currGameGenre = new GameGenre
+                //         {
+                //             GameId = games[i].Id,
+                //             GenreId = genres[ran.Next(0, genres.Count)].Id
+                //         };
+                //         gameGenreList[i] = currGameGenre;
+                //     }
+                // }
+                // context.GameGenre.AddRange(gameGenreList);
+                // context.SaveChanges();
             }
         }
     }
