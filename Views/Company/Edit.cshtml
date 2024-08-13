@@ -69,16 +69,20 @@
     <thead>
         <tr>
             <th>
+                <!--
+TODO: currently escape variables with 2 @@s, change back to 
+1 after fix errors in controllers
+-->
                 <!-- Name -->
-                @Html.DisplayNameFor(_ => games![0].Title)
+                @@Html.DisplayNameFor(_ => games![0].Title)
             </th>
             <th>
                 <!-- Rating -->
-                @Html.DisplayNameFor(_ => games![0].Rating)
+                @@Html.DisplayNameFor(_ => games![0].Rating)
             </th>
             <th>
                 <!-- Release Date -->
-                @Html.DisplayNameFor(_ => games![0].ReleaseDate)
+                @@Html.DisplayNameFor(_ => games![0].ReleaseDate)
             </th>
             <th></th>
         </tr>

@@ -65,15 +65,19 @@
             </td>
             <td>
                 @for (var i = 0; i < item.Games!.Count; i++)
-                {
+                    {
                     if (i != 0)
                     {
-                        <span> | </span>
+                    <span> | </span>
                     }
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Games![i].Id">
-                        @Html.DisplayFor(modelItem => item.Games![i].Title)
+                    <!--
+TODO: currently escape variables with 2 @@s, change back to 1 after fix errors 
+in controllers
+-->
+                    <a asp-controller="Game" asp-action="Details" asp-route-id="@@item.Games![i].Id">
+                        @@Html.DisplayFor(modelItem => item.Games![i].Title)
                     </a>
-                }
+                    }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

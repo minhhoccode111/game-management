@@ -4,6 +4,8 @@ namespace GameManagementMvc.Models
 {
     public class Game
     {
+        public int Id { get; set; }
+
         // one-to-many with Company
         public Company Company { get; set; } = null!;
 

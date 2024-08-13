@@ -117,38 +117,39 @@ namespace GameManagementMvc.Controllers
         // only execute the method if anti-forgery-token pass
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] GameForm gameForm
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
         )
         {
             // in case race condition
-            if (!IsValidCompanyId(gameForm.CompanyId) || !IsValidGenreIds(gameForm.GenreIds))
+            if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
             {
                 var genres = await GetContextGenresMultiSelectList();
                 ViewData["Genres"] = genres;
                 var companies = await GetContextCompaniesSelectList();
                 ViewData["Companies"] = companies;
                 // the form pre-populated with user's previous input
-                return View("Create", gameForm);
+                return View("Create", game);
             }
 
             if (ModelState.IsValid)
             {
-                Company company = await _context.Company.FirstAsync(c =>
-                    c.Id == gameForm.CompanyId
-                );
-                List<Genre> genres = await _context
-                    .Genre.Where(g => gameForm.GenreIds.Any(id => g.Id == id))
-                    .ToListAsync();
-                Game game = new Game
-                {
-                    Company = company,
-                    Genres = genres,
-                    Title = gameForm.Title,
-                    Body = gameForm.Body,
-                    Image = gameForm.Image,
-                    Rating = gameForm.Rating,
-                    ReleaseDate = gameForm.ReleaseDate,
-                };
+                // Company company = await _context.Company.FirstAsync(c =>
+                //     c.Id == game.CompanyId
+                // );
+                // List<Genre> genres = await _context
+                //     .Genre.Where(g => game.GenreIds.Any(id => g.Id == id))
+                //     .ToListAsync();
+                // Game game = new Game
+                // {
+                //     Company = company,
+                //     Genres = genres,
+                //     Title = game.Title,
+                //     Body = game.Body,
+                //     Image = game.Image,
+                //     Rating = game.Rating,
+                //     ReleaseDate = game.ReleaseDate,
+                // };
+
                 _context.Game.Add(game);
 
                 await _context.SaveChangesAsync();
@@ -156,7 +157,7 @@ namespace GameManagementMvc.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(gameForm);
+            return View(game);
         }
 
         // GET: Game/Edit/5
@@ -191,47 +192,48 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] GameForm gameForm
+            [Bind("Id,Title,Body,Image,Rating,ReleaseDate,CompanyId,GenreIds")] Game game
         )
         {
-            if (id != gameForm.Id)
+            if (id != game.Id)
             {
                 return NotFound();
             }
 
-            if (!IsValidCompanyId(gameForm.CompanyId) || !IsValidGenreIds(gameForm.GenreIds))
+            if (!IsValidCompanyId(game.CompanyId) || !IsValidGenreIds(game.GenreIds))
             {
-                return Redirect($"/Game/Edit/{gameForm.Id}");
+                return Redirect($"/Game/Edit/{game.Id}");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    Company company = await _context.Company.FirstAsync(c =>
-                        c.Id == gameForm.CompanyId
-                    );
-                    List<Genre> genres = await _context
-                        .Genre.Where(g => gameForm.GenreIds.Any(id => g.Id == id))
-                        .ToListAsync();
-                    Game game = new Game
-                    {
-                        Id = gameForm.Id, // keep id to update
-                        Company = company,
-                        Genres = genres,
-                        Title = gameForm.Title,
-                        Body = gameForm.Body,
-                        Image = gameForm.Image,
-                        Rating = gameForm.Rating,
-                        ReleaseDate = gameForm.ReleaseDate,
-                    };
+                    // Company company = await _context.Company.FirstAsync(c =>
+                    //     c.Id == game.CompanyId
+                    // );
+                    // List<Genre> genres = await _context
+                    //     .Genre.Where(g => game.GenreIds.Any(id => g.Id == id))
+                    //     .ToListAsync();
+                    // Game game = new Game
+                    // {
+                    //     Id = game.Id, // keep id to update
+                    //     Company = company,
+                    //     Genres = genres,
+                    //     Title = game.Title,
+                    //     Body = game.Body,
+                    //     Image = game.Image,
+                    //     Rating = game.Rating,
+                    //     ReleaseDate = game.ReleaseDate,
+                    // };
+
                     _context.Game.Update(game);
 
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IsGameExists(gameForm.Id))
+                    if (!IsGameExists(game.Id))
                     {
                         return NotFound();
                     }
@@ -244,7 +246,7 @@ namespace GameManagementMvc.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(gameForm);
+            return View(game);
         }
 
         // GET: Game/Delete/5
