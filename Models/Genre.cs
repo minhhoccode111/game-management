@@ -6,15 +6,18 @@ namespace GameManagementMvc.Models
     {
         public int Id { get; set; }
 
+        // many-to-many
+        public List<Game> Games { get; } = [];
+
+        // navigation to join entity
+        public List<GameGenre> GameGenres { get; } = [];
+
         [Required]
-        [StringLength(32)]
+        [StringLength(32, MinimumLength = 2)]
         public required string Title { get; set; }
 
         [Required]
         [StringLength(2048)]
         public required string Body { get; set; }
-
-        // many-to-many with Game through GameGenre
-        public List<Game> Games { get; set; } = null!;
     }
 }

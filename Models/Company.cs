@@ -6,8 +6,11 @@ namespace GameManagementMvc.Models
     {
         public int Id { get; set; }
 
+        // collection navigation containing dependents
+        public ICollection<Game> Games { get; } = new List<Game>();
+
         [Required]
-        [StringLength(64)]
+        [StringLength(64, MinimumLength = 2)]
         public required string Title { get; set; }
 
         [Required]
@@ -20,8 +23,5 @@ namespace GameManagementMvc.Models
 
         [DataType(DataType.Date)]
         public required DateTime FoundingDate { get; set; }
-
-        // one-to-many relationship with Game
-        public List<Game> Games { get; } = new List<Game>();
     }
 }

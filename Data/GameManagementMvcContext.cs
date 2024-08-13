@@ -8,22 +8,32 @@ namespace GameManagementMvc.Data
         public GameManagementMvcContext(DbContextOptions<GameManagementMvcContext> options)
             : base(options) { }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // config explicitly
-            // one Company-to-many Game relationship
-            modelBuilder
-                .Entity<Company>()
-                .HasMany(c => c.Games)
-                .WithOne(g => g.Company)
-                .HasForeignKey("CompanyId")
-                .IsRequired();
+        // configured explicitly
 
-            base.OnModelCreating(modelBuilder);
-        }
+        // // one company to many games relationship
+        // protected override void OnModelCreating(ModelBuilder modelBuilder)
+        // {
+        //     modelBuilder
+        //         .Entity<Company>()
+        //         .HasMany(e => e.Games)
+        //         .WithOne(e => e.Company)
+        //         .HasForeignKey(e => e.CompanyId)
+        //         .IsRequired();
+        // }
+
+        // // many games to many genres relationship
+        // protected override void OnModelCreating(ModelBuilder modelBuilder)
+        // {
+        //     modelBuilder
+        //         .Entity<Game>()
+        //         .HasMany(e => e.Genres)
+        //         .WithMany(e => e.Games)
+        //         .UsingEntity<GameGenre>();
+        // }
 
         public DbSet<Game> Game { get; set; } = default!;
         public DbSet<Genre> Genre { get; set; } = default!;
         public DbSet<Company> Company { get; set; } = default!;
+        public DbSet<GameGenre> GameGenre { get; set; } = default!;
     }
 }
