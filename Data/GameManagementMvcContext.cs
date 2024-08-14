@@ -11,25 +11,48 @@ namespace GameManagementMvc.Data
         // configured explicitly
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // one company to many games relationship
+            // set 2 foreign keys to be primary key
+            modelBuilder.Entity<GameGenre>().HasKey(gg => new { gg.GenreId, gg.GameId });
+
+            // Game must have at least one Genre
             modelBuilder
-                .Entity<Company>()
-                .HasMany(e => e.Games)
-                .WithOne(e => e.Company)
-                .HasForeignKey(e => e.CompanyId)
+                .Entity<GameGenre>()
+                .HasOne(gg => gg.Game)
+                .WithMany(g => g.GameGenres)
+                .HasForeignKey(gg => gg.GameId)
                 .IsRequired();
 
-            // many games to many genres relationship
+            // Genre exist independent
             modelBuilder
-                .Entity<Game>()
-                .HasMany(e => e.Genres)
-                .WithMany(e => e.Games)
-                .UsingEntity<GameGenre>();
+                .Entity<GameGenre>()
+                .HasOne(gg => gg.Genre)
+                .WithMany(g => g.GameGenres)
+                .HasForeignKey(gg => gg.GenreId);
+
+            // optional: make delete Genre cascade (auto delete all child)
+
+            // Game must have at least one Company
+            modelBuilder
+                .Entity<GameCompany>()
+                .HasOne(gc => gc.Game)
+                .WithMany(g => g.GameCompanies)
+                .HasForeignKey(gc => gc.GameId)
+                .IsRequired();
+
+            // Company exist independent
+            modelBuilder
+                .Entity<GameCompany>()
+                .HasOne(gc => gc.Company)
+                .WithMany(c => c.GameCompanies)
+                .HasForeignKey(gc => gc.CompanyId);
+
+            // optional: make delete Company cascade (auto delete all child)
         }
 
         public DbSet<Game> Game { get; set; } = default!;
         public DbSet<Genre> Genre { get; set; } = default!;
         public DbSet<Company> Company { get; set; } = default!;
         public DbSet<GameGenre> GameGenre { get; set; } = default!;
+        public DbSet<GameCompany> GameCompany { get; set; } = default!;
     }
 }

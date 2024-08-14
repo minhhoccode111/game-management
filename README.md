@@ -1,4 +1,4 @@
-# Game Management App MVC
+# Game Management MVC
 
 Learn ASP.NET Core MVC
 
@@ -14,20 +14,8 @@ Learn ASP.NET Core MVC
 
 - CRUD
 
-## Outcome
-
-- Used C#
-- Used MVC
-- Used Razor
-- Used SQLite
-- Used EF Core
-- Used .NET Core
-- Used Bootstrap
-- ...
-
 ## To-do
 
-- Use MS SQL instead of SQLite
 - Upload images instead of hard coded links
   - Or validate if an [image link is valid](https://stackoverflow.com/questions/11082804/detecting-image-url-in-c-net)
 
@@ -44,14 +32,22 @@ Run
 ```bash
 dotnet restore
 dotnet run
-# or develop
+# or develop with
 # dotnet watch run
 ```
 
-## Design choices and tradeoffs
+Migration
 
-- Used `[NotMapped]` for field like `Company` in `Game` model and manually populate that field when we need it
-  - More code complexity
-  - Less database size
-  - Can be combined with `[Bind(...)] Game` to handle form submit easier
-  - Less performance
+```bash
+dotnet ef migrations add SqlServerMigration
+dotnet ef database update
+```
+
+Generate a SQL Schema Script
+
+```bash
+dotnet ef migrations script -o migration.sql
+
+```
+
+## Design choices and tradeoffs

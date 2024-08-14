@@ -1,6 +1,3 @@
-// using System;
-// using System.Linq;
-// using Microsoft.Extensions.DependencyInjection;
 using GameManagementMvc.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,13 +14,21 @@ namespace GameManagementMvc.Models
             )
             {
                 // if any movie exists
-                if (context.Game.Any() || context.Company.Any() || context.Genre.Any())
+                if (
+                    context.Game.Any()
+                    || context.Company.Any()
+                    || context.Genre.Any()
+                    || context.GameCompany.Any()
+                    || context.GameCompany.Any()
+                )
                 {
-                    // turn on to clear database
+                    // uncomment to clear database
 
                     // context.Game.RemoveRange(context.Game);
                     // context.Company.RemoveRange(context.Company);
                     // context.Genre.RemoveRange(context.Genre);
+                    // context.GameGenre.RemoveRange(context.GameGenre);
+                    // context.GameCompany.RemoveRange(context.GameCompany);
                     // context.SaveChanges();
                     // Console.WriteLine("Database clear!");
 
@@ -39,49 +44,49 @@ namespace GameManagementMvc.Models
                     new Company
                     {
                         Title = "Meta",
-                        Body = "Meta is a very great company",
+                        Body = "Some Meta description",
                         Image = "https://images.cnbctv18.com/wp-content/uploads/2022/09/Meta.jpg",
                         FoundingDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
                     },
                     new Company
                     {
                         Title = "Apple",
-                        Body = "Apple is a very great company",
+                        Body = "Some Apple description",
                         Image =
                             "https://dm0qx8t0i9gc9.cloudfront.net/thumbnails/video/UD7CEz6/editorial-apple-inc-logo-on-glass-building_smk22zqcg_thumbnail-1080_01.png",
                         FoundingDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
                     },
                     new Company
                     {
                         Title = "Amazon",
-                        Body = "Amazon is a very great company",
+                        Body = "Some Amazon description",
                         Image =
                             "https://www.wealthandfinance-news.com/wp-content/uploads/2020/01/amazon.jpg",
                         FoundingDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
                     },
                     new Company
                     {
                         Title = "Netflix",
-                        Body = "Netflix is a very great company",
+                        Body = "Some Netflix description",
                         Image =
                             "https://s.aolcdn.com/hss/storage/midas/dae3c205f61d252afbea973ef0409803/206200911/Netflix+Media_0193+2.jpg",
                         FoundingDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
                     },
                     new Company
                     {
                         Title = "Google",
-                        Body = "Google is a very great company",
+                        Body = "Some Google description",
                         Image = "https://wallpapercave.com/wp/kmmXJbb.jpg",
                         FoundingDate = DateTime.Parse(
-                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 30)}"
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
                     }
                 };
@@ -93,12 +98,12 @@ namespace GameManagementMvc.Models
                 // seed genres
                 var genreList = new Genre[]
                 {
-                    new Genre { Title = "Action", Body = "Action is a very great genre" },
-                    new Genre { Title = "Sport", Body = "Sport is a very great genre" },
-                    new Genre { Title = "Horror", Body = "Horror is a very great genre" },
-                    new Genre { Title = "Humor", Body = "Humor is a very great genre" },
-                    new Genre { Title = "Romantic", Body = "Romantic is a very great genre" },
-                    new Genre { Title = "FPS", Body = "FPS is a very great genre" },
+                    new Genre { Title = "Action", Body = "Some Action description" },
+                    new Genre { Title = "Sport", Body = "Some Sport description" },
+                    new Genre { Title = "Horror", Body = "Some Horror description" },
+                    new Genre { Title = "Humor", Body = "Some Humor description" },
+                    new Genre { Title = "Romantic", Body = "Some Romantic description" },
+                    new Genre { Title = "FPS", Body = "Some FPS description" },
                 };
 
                 context.Genre.AddRange(genreList);
@@ -114,13 +119,11 @@ namespace GameManagementMvc.Models
                     Game currGame = new Game
                     {
                         Title = $"Game {i}",
-                        Body = $"Game {i} is a very great game",
-                        // Image= "",
+                        Body = $"Some Game {i} description",
                         Rating = ran.Next(1, 6),
                         ReleaseDate = DateTime.Parse(
                             $"{ran.Next(2000, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
-                        Company = company,
                     };
                     gameList[i] = currGame;
                 }
@@ -128,6 +131,60 @@ namespace GameManagementMvc.Models
                 context.Game.AddRange(gameList);
                 context.SaveChanges();
                 List<Game> games = context.Game.ToList();
+
+                // seed GameGenre
+                int numGameGenres = games.Count;
+                List<GameGenre> gameGenreList = new List<GameGenre>();
+                for (int i = 0; i < numGameGenres; i++)
+                {
+                    Dictionary<int, bool> trackUsedGenreIds = new Dictionary<int, bool>();
+                    for (int j = 0; j < 3; j++)
+                    {
+                        Game game = games[i];
+
+                        Genre genre = genres[ran.Next(0, genres.Count)];
+
+                        // keep generate new genre id until it's not in the dict
+                        do
+                        {
+                            genre = genres[ran.Next(0, genres.Count)];
+                        } while (trackUsedGenreIds.ContainsKey(genre.Id));
+
+                        GameGenre currGameGenre = new GameGenre { Game = game, Genre = genre };
+                        trackUsedGenreIds.Add(genre.Id, true);
+                        gameGenreList.Add(currGameGenre);
+                    }
+                }
+                context.GameGenre.AddRange(gameGenreList);
+                context.SaveChanges();
+
+                // seed GameCompany
+                int numGameCompanies = games.Count;
+                List<GameCompany> gameCompanyList = new List<GameCompany>();
+                for (int i = 0; i < numGameCompanies; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        DateTime startDate = DateTime.Parse(
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
+                        );
+                        DateTime endDate = DateTime.Parse(
+                            $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
+                        );
+                        GameCompany currGameCompany = new GameCompany
+                        {
+                            Game = games[i],
+                            Company = companies[ran.Next(0, companies.Count)],
+                            Title = $"Develop phase {j}",
+                            Body = $"Develop phase {j} description",
+                            StartDate = startDate,
+                            EndDate = endDate,
+                        };
+                        gameCompanyList.Add(currGameCompany);
+                    }
+                }
+                context.GameCompany.AddRange(gameCompanyList);
+                context.SaveChanges();
             }
         }
     }

@@ -7,50 +7,17 @@ namespace GameManagementMvc.Controllers
 {
     public class GenreController : Controller
     {
-        private readonly ILogger<GameController> _logger;
-
         private readonly GameManagementMvcContext _context;
 
-        public GenreController(GameManagementMvcContext context, ILogger<GameController> logger)
+        public GenreController(GameManagementMvcContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         // GET: Genre
-        public async Task<IActionResult> Index(string searchTitle, string sortBy)
+        public async Task<IActionResult> Index()
         {
-            if (_context.Genre == null)
-            {
-                return Problem("Entity set 'GameManagementMvc.Genre' is null.");
-            }
-
-            var genres = _context.Genre.AsQueryable();
-
-            genres = GenreSortBy(genres, sortBy);
-
-            if (!String.IsNullOrEmpty(searchTitle))
-            {
-                genres = genres.Where(genre =>
-                    genre.Title!.ToUpper().Contains(searchTitle.ToUpper())
-                );
-            }
-
-            var genreList = await genres.ToListAsync();
-
-            // foreach (var genre in genreList)
-            // {
-            //     genre.Games = await PopulateGamesInGenre(genre);
-            // }
-
-            var genreVM = new GenreViewModel
-            {
-                SearchTitle = searchTitle,
-                SortBy = sortBy,
-                Genres = genreList
-            };
-
-            return View(genreVM);
+            return View(await _context.Genre.ToListAsync());
         }
 
         // GET: Genre/Details/5
@@ -62,13 +29,10 @@ namespace GameManagementMvc.Controllers
             }
 
             var genre = await _context.Genre.FirstOrDefaultAsync(m => m.Id == id);
-
             if (genre == null)
             {
                 return NotFound();
             }
-
-            // genre.Games = await PopulateGamesInGenre(genre);
 
             return View(genre);
         }
@@ -89,12 +53,9 @@ namespace GameManagementMvc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(genre);
-
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
-
             return View(genre);
         }
 
@@ -107,14 +68,10 @@ namespace GameManagementMvc.Controllers
             }
 
             var genre = await _context.Genre.FindAsync(id);
-
             if (genre == null)
             {
                 return NotFound();
             }
-
-            // genre.Games = await PopulateGamesInGenre(genre);
-
             return View(genre);
         }
 
@@ -135,7 +92,6 @@ namespace GameManagementMvc.Controllers
                 try
                 {
                     _context.Update(genre);
-
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -151,7 +107,6 @@ namespace GameManagementMvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
             return View(genre);
         }
 
@@ -164,13 +119,10 @@ namespace GameManagementMvc.Controllers
             }
 
             var genre = await _context.Genre.FirstOrDefaultAsync(m => m.Id == id);
-
             if (genre == null)
             {
                 return NotFound();
             }
-
-            // genre.Games = await PopulateGamesInGenre(genre);
 
             return View(genre);
         }
@@ -181,55 +133,18 @@ namespace GameManagementMvc.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var genre = await _context.Genre.FindAsync(id);
-
-            if (genre != null && IsGenreDeletable(id))
+            if (genre != null)
             {
                 _context.Genre.Remove(genre);
             }
 
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
 
-        // ############################## HELPERS ##############################
-
-        // use to check if a genre exists
         private bool GenreExists(int id)
         {
             return _context.Genre.Any(e => e.Id == id);
-        }
-
-        // use to sort genres base on provided string
-        private IQueryable<Genre> GenreSortBy(IQueryable<Genre> genres, string sortBy)
-        {
-            if (sortBy == "name")
-                return genres.OrderBy(g => g.Title);
-            if (sortBy == "-name")
-                return genres.OrderByDescending(g => g.Title);
-            // if (sortBy == "date")
-            //     return genres.OrderBy(c => c.FoundingDate);
-            // if (sortBy == "-date")
-            //     return genres.OrderByDescending(c => c.FoundingDate);
-            // if (sortBy == "rating")
-            //     return genres.OrderBy(c => c.Rating);
-            // if (sortBy == "-rating")
-            //     return genres.OrderByDescending(c => c.Rating);
-            return genres;
-        }
-
-        // use to populate Games in Genre model base on current Game context
-        private async Task<List<Game>> PopulateGamesInGenre(Genre genre)
-        {
-            return await _context
-                .Game.Where(g => g.Id == 0) // FIXME:
-                .ToListAsync();
-        }
-
-        // use to check if a company can be deleted
-        private bool IsGenreDeletable(int id)
-        {
-            return _context.Game.All(g => !g.Genres.Select(g => g.Id)!.Contains(id));
         }
     }
 }

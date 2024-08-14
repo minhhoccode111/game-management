@@ -1,83 +1,46 @@
-@model GameManagementMvc.Models.CompanyViewModel
+@model IEnumerable<GameManagementMvc.Models.Company>
 
 @{
-    ViewData["Title"] = "All Companies";
-    bool isSearchTitle = !String.IsNullOrEmpty(Model.SearchTitle);
+    ViewData["Title"] = "Index";
 }
 
-<h1>
-    @if (isSearchTitle)
-    {
-        <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
-    }
-    else
-    {
-    <p>@ViewData["Title"]</p>
-    }
-</h1>
+<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-
-<form asp-controller="Company" asp-action="Index" method="get">
-    <p>
-        Sort by: 
-        <select asp-for="SortBy">
-            <option value="">All</option>
-            <option value="name">Name</option>
-            <option value="-name">-Name</option>
-            <option value="date">Date Founding</option>
-            <option value="-date">-Date Founding</option>
-        </select>
-        <!--keep the search string display with @Model.SearchTitle-->
-        Title: <input type="text" name="SearchTitle" value="@Model.SearchTitle">
-        <input type="submit" value="Filter" class="">
-    </p>
-</form>
-
 <table class="table">
     <thead>
         <tr>
             <th>
-                <!--Title-->
-                @Html.DisplayNameFor(model => model.Companies![0].Title)
+                @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                <!--Founding Date-->
-                @Html.DisplayNameFor(model => model.Companies![0].FoundingDate)
+                @Html.DisplayNameFor(model => model.Body)
             </th>
             <th>
-                <!--Games-->
-                @Html.DisplayNameFor(model => model.Companies![0].Games)
+                @Html.DisplayNameFor(model => model.FoundingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Companies!) {
+@foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Body)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.FoundingDate)
             </td>
             <td>
-                @for (var i = 0; i < item.Games!.Count; i++)
-                    {
-                    if (i != 0)
-                    {
-                    <span> | </span>
-                    }
-                    <!--
-TODO: currently escape variables with 2 @@s, change back to 1 after fix errors 
-in controllers
--->
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@@item.Games![i].Id">
-                        @@Html.DisplayFor(modelItem => item.Games![i].Title)
-                    </a>
-                    }
+                @Html.DisplayFor(modelItem => item.Image)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -85,6 +48,6 @@ in controllers
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-        }
+}
     </tbody>
 </table>

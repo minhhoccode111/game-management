@@ -2,12 +2,14 @@ namespace GameManagementMvc.Models
 {
     public class GameGenre
     {
-        // primary keys of many-to-many relationship
+        // PROPERTIES
         public int GameId { get; set; }
+
         public int GenreId { get; set; }
 
-        // navigation from join entity
+        // NAVIGATIONS
         public Genre Genre { get; set; } = null!;
+
         public Game Game { get; set; } = null!;
     }
 }

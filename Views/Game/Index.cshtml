@@ -1,95 +1,43 @@
-@model GameManagementMvc.Models.GameViewModel
+@model IEnumerable<GameManagementMvc.Models.Game>
 
 @{
-    ViewData["Title"] = "All Games";
-    bool isSearchTitle = !String.IsNullOrEmpty(Model.SearchTitle);
-    bool isSearchGenre = !String.IsNullOrEmpty(Model.SearchGenre);
-    bool isSearchCompany = !String.IsNullOrEmpty(Model.SearchCompany);
-    bool isSearchRating = !String.IsNullOrEmpty(Model.SearchRating);
+    ViewData["Title"] = "Index";
 }
 
-<h1>
-    @if (isSearchTitle || isSearchGenre || isSearchCompany || isSearchRating)
-    {
-        <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
-    }
-    else
-    {
-    <p>@ViewData["Title"]</p>
-    }
-</h1>
+<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-
-<form asp-controller="Game" asp-action="Index" method="get">
-    <p>
-        Company:
-        <select asp-for="SearchCompany" asp-items="@Model.Companies">
-            <option value="">All</option>
-        </select>
-        Genre:
-        <select asp-for="SearchGenre" asp-items="@Model.Genres">
-            <option value="">All</option>
-        </select>
-        Rating:
-        <select asp-for="SearchRating">
-            <option value="">All</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-        Sort by: 
-        <select asp-for="SortBy">
-            <option value="">All</option>
-            <option value="name">Name</option>
-            <option value="-name">-Name</option>
-            <option value="rating">Rating</option>
-            <option value="-rating">-Rating</option>
-            <option value="date">Date Release</option>
-            <option value="-date">-Date Release</option>
-        </select>
-        <!--keep the search string display with @Model.SearchTitle-->
-        Title: <input type="text" name="SearchTitle" value="@Model.SearchTitle">
-        <input type="submit" value="Filter" class="">
-    </p>
-</form>
-
 <table class="table">
     <thead>
         <tr>
             <th>
-                <!-- Name -->
-                @Html.DisplayNameFor(model => model.Games![0].Title)
+                @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                <!-- Rating -->
-                @Html.DisplayNameFor(model => model.Games![0].Rating)
+                @Html.DisplayNameFor(model => model.Body)
             </th>
             <th>
-                <!-- Release Date -->
-                @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
+                @Html.DisplayNameFor(model => model.Rating)
             </th>
             <th>
-                <!-- Company -->
-                @Html.DisplayNameFor(model => model.Games![0].Company)
+                @Html.DisplayNameFor(model => model.ReleaseDate)
             </th>
             <th>
-                <!-- Genres -->
-                @Html.DisplayNameFor(model => model.Games![0].Genres)
+                @Html.DisplayNameFor(model => model.Image)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.Games!)
-    {
+@foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Body)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Rating)
@@ -98,22 +46,7 @@
                 @Html.DisplayFor(modelItem => item.ReleaseDate)
             </td>
             <td>
-                <a asp-controller="Company" asp-action="Details" asp-route-id="@item.Company!.Id">
-                    @Html.DisplayFor(modelItem => item.Company!.Title)
-                </a>
-            </td>
-            <td>
-                @for (var i = 0; i < item.Genres!.Count; i++)
-                {
-                    <!-- item.Genres![i] -->
-                    if (i != 0)
-                    {
-                        <span> | </span>
-                    }
-                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@item.Genres![i].Id">
-                        @Html.DisplayFor(modelItem => item.Genres![i].Title)
-                    </a>
-                }
+                @Html.DisplayFor(modelItem => item.Image)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -121,6 +54,6 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-    }
+}
     </tbody>
 </table>

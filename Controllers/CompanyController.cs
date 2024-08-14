@@ -7,50 +7,17 @@ namespace GameManagementMvc.Controllers
 {
     public class CompanyController : Controller
     {
-        private readonly ILogger<GameController> _logger;
-
         private readonly GameManagementMvcContext _context;
 
-        public CompanyController(GameManagementMvcContext context, ILogger<GameController> logger)
+        public CompanyController(GameManagementMvcContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         // GET: Company
-        public async Task<IActionResult> Index(string searchTitle, string sortBy)
+        public async Task<IActionResult> Index()
         {
-            if (_context.Company == null)
-            {
-                return Problem("Entity set 'GameManagementMvc.Company' is null.");
-            }
-
-            var companies = _context.Company.AsQueryable();
-
-            companies = CompanySortBy(companies, sortBy);
-
-            if (!String.IsNullOrEmpty(searchTitle))
-            {
-                companies = companies.Where(company =>
-                    company.Title!.ToUpper().Contains(searchTitle.ToUpper())
-                );
-            }
-
-            var companyList = await companies.ToListAsync();
-
-            // foreach (var company in companyList)
-            // {
-            //     company.Games = await PopulateGamesInCompany(company);
-            // }
-
-            var companyVM = new CompanyViewModel
-            {
-                SearchTitle = searchTitle,
-                SortBy = sortBy,
-                Companies = companyList
-            };
-
-            return View(companyVM);
+            return View(await _context.Company.ToListAsync());
         }
 
         // GET: Company/Details/5
@@ -62,13 +29,10 @@ namespace GameManagementMvc.Controllers
             }
 
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
-
             if (company == null)
             {
                 return NotFound();
             }
-
-            // company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }
@@ -85,18 +49,15 @@ namespace GameManagementMvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Title,Body,Image,FoundingDate")] Company company
+            [Bind("Id,Title,Body,FoundingDate,Image")] Company company
         )
         {
             if (ModelState.IsValid)
             {
                 _context.Add(company);
-
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
-
             return View(company);
         }
 
@@ -109,14 +70,10 @@ namespace GameManagementMvc.Controllers
             }
 
             var company = await _context.Company.FindAsync(id);
-
             if (company == null)
             {
                 return NotFound();
             }
-
-            // company.Games = await PopulateGamesInCompany(company);
-
             return View(company);
         }
 
@@ -127,7 +84,7 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Title,Body,Image,FoundingDate")] Company company
+            [Bind("Id,Title,Body,FoundingDate,Image")] Company company
         )
         {
             if (id != company.Id)
@@ -140,12 +97,11 @@ namespace GameManagementMvc.Controllers
                 try
                 {
                     _context.Update(company);
-
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IsCompanyExists(company.Id))
+                    if (!CompanyExists(company.Id))
                     {
                         return NotFound();
                     }
@@ -154,10 +110,8 @@ namespace GameManagementMvc.Controllers
                         throw;
                     }
                 }
-
                 return RedirectToAction(nameof(Index));
             }
-
             return View(company);
         }
 
@@ -170,13 +124,10 @@ namespace GameManagementMvc.Controllers
             }
 
             var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
-
             if (company == null)
             {
                 return NotFound();
             }
-
-            // company.Games = await PopulateGamesInCompany(company);
 
             return View(company);
         }
@@ -187,53 +138,18 @@ namespace GameManagementMvc.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var company = await _context.Company.FindAsync(id);
-
-            if (company != null && IsCompanyDeletable(id))
+            if (company != null)
             {
                 _context.Company.Remove(company);
             }
 
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
 
-        // ############################## HELPERS ##############################
-
-        // use to sort companies base on provided string
-        private IQueryable<Company> CompanySortBy(IQueryable<Company> companies, string sortBy)
-        {
-            if (sortBy == "name")
-                return companies.OrderBy(c => c.Title);
-            if (sortBy == "-name")
-                return companies.OrderByDescending(c => c.Title);
-            if (sortBy == "date")
-                return companies.OrderBy(c => c.FoundingDate);
-            if (sortBy == "-date")
-                return companies.OrderByDescending(c => c.FoundingDate);
-            // if (sortBy == "rating")
-            //     return companies.OrderBy(c => c.Rating);
-            // if (sortBy == "-rating")
-            //     return companies.OrderByDescending(c => c.Rating);
-            return companies;
-        }
-
-        // use to check if a company can be deleted
-        private bool IsCompanyDeletable(int id)
-        {
-            return _context.Game.All(g => g.Company.Id != id);
-        }
-
-        // use to check if a company exists
-        private bool IsCompanyExists(int id)
+        private bool CompanyExists(int id)
         {
             return _context.Company.Any(e => e.Id == id);
-        }
-
-        // use to populate Games in Company model base on current Game context
-        private async Task<List<Game>> PopulateGamesInCompany(Company company)
-        {
-            return await _context.Game.Where(g => g.Company.Id == company.Id).ToListAsync();
         }
     }
 }

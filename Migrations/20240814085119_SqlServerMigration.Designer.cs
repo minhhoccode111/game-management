@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameManagementMvc.Migrations
 {
     [DbContext(typeof(GameManagementMvcContext))]
-    [Migration("20240813024750_SqlServerMigration")]
+    [Migration("20240814085119_SqlServerMigration")]
     partial class SqlServerMigration
     {
         /// <inheritdoc />
@@ -68,12 +68,6 @@ namespace GameManagementMvc.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GenreIds")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Image")
                         .HasMaxLength(2048)
                         .HasColumnType("nvarchar(2048)");
@@ -91,9 +85,46 @@ namespace GameManagementMvc.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("Game");
+                });
+
+            modelBuilder.Entity("GameManagementMvc.Models.GameCompany", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Game");
+                    b.HasIndex("GameId");
+
+                    b.ToTable("GameCompany");
                 });
 
             modelBuilder.Entity("GameManagementMvc.Models.GameGenre", b =>
@@ -134,15 +165,23 @@ namespace GameManagementMvc.Migrations
                     b.ToTable("Genre");
                 });
 
-            modelBuilder.Entity("GameManagementMvc.Models.Game", b =>
+            modelBuilder.Entity("GameManagementMvc.Models.GameCompany", b =>
                 {
                     b.HasOne("GameManagementMvc.Models.Company", "Company")
-                        .WithMany("Games")
+                        .WithMany("GameCompanies")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GameManagementMvc.Models.Game", "Game")
+                        .WithMany("GameCompanies")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Company");
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("GameManagementMvc.Models.GameGenre", b =>
@@ -166,11 +205,13 @@ namespace GameManagementMvc.Migrations
 
             modelBuilder.Entity("GameManagementMvc.Models.Company", b =>
                 {
-                    b.Navigation("Games");
+                    b.Navigation("GameCompanies");
                 });
 
             modelBuilder.Entity("GameManagementMvc.Models.Game", b =>
                 {
+                    b.Navigation("GameCompanies");
+
                     b.Navigation("GameGenres");
                 });
 

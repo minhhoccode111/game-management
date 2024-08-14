@@ -2,10 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GameManagementMvc.Models
 {
-    public class Company
+    public class GameCompany
     {
         // PROPERTIES
         public int Id { get; set; }
+
+        public int GameId { get; set; }
+
+        public int CompanyId { get; set; }
 
         [StringLength(64)]
         public required string Title { get; set; }
@@ -14,13 +18,16 @@ namespace GameManagementMvc.Models
         public required string Body { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FoundingDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         // optional
-        [StringLength(2048)]
-        public string? Image { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? EndDate { get; set; }
 
         // NAVIGATION PROPERTIES
-        public ICollection<GameCompany> GameCompanies { get; set; } = new List<GameCompany>();
+
+        public Game Game { get; set; } = null!;
+
+        public Company Company { get; set; } = null!;
     }
 }

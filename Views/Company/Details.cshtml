@@ -1,31 +1,15 @@
 @model GameManagementMvc.Models.Company
 
 @{
-ViewData["Title"] = "Company Details";
-var games = Model.Games!;
+    ViewData["Title"] = "Details";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>Details</h1>
 
 <div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<hr>
-
-<div class="row justify-content-start">
-    <div class="col-4">
-        @if (String.IsNullOrEmpty(Model.Image))
-        {
-        <img src="~/img/default.png" alt="No image" class="img-thumbnail">
-        }
-        else
-        {
-        <img src="@Model.Image" alt="Game image" class="img-thumbnail">
-        }
-    </div>
-
-    <dl class="row col-8 align-self-start">
+    <h4>Company</h4>
+    <hr />
+    <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
@@ -44,69 +28,15 @@ var games = Model.Games!;
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FoundingDate)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Image)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Image)
+        </dd>
     </dl>
 </div>
-
-<br>
-
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
-    <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-primary">Delete</a>
-    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </div>
-
-<br>
-
-<h3 class="">Games of @Model!.Title</h3>
-
-@if (games.Any())
-{
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <!--
-TODO: currently escape variables with 2 @@s, change back to 
-1 after fix errors in controllers
--->
-                <!-- Name -->
-                @@Html.DisplayNameFor(model => model.Games![0].Title)
-            </th>
-            <th>
-                <!-- Rating -->
-                @@Html.DisplayNameFor(model => model.Games![0].Rating)
-            </th>
-            <th>
-                <!-- Release Date -->
-                @@Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model!.Games!)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
-}
-else
-{
-<p class="">Company has no games. <a asp-controller="Game" asp-action="Create" class="">Create a game</a>.</p>
-}
