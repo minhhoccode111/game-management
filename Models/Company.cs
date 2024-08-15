@@ -7,12 +7,15 @@ namespace GameManagementMvc.Models
         // PROPERTIES
         public int Id { get; set; }
 
+        [Required]
         [StringLength(64)]
         public required string Title { get; set; }
 
+        [Required]
         [StringLength(2048)]
         public required string Body { get; set; }
 
+        [Display(Name = "Founding Date")]
         [DataType(DataType.Date)]
         public DateTime FoundingDate { get; set; }
 

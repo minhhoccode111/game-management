@@ -1,6 +1,7 @@
 using GameManagementMvc.Data;
 using GameManagementMvc.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameManagementMvc.Controllers
@@ -15,9 +16,68 @@ namespace GameManagementMvc.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            int? rating,
+            int? genreId,
+            int? companyId,
+            string sort,
+            string title
+        )
         {
-            return View(await _context.Game.ToListAsync());
+            if (_context.Game == null)
+            {
+                return Problem("Entity set 'GameManagementMvc.Game' is null.");
+            }
+
+            IQueryable<Game> games = _context
+                .Game
+                //
+                .Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .AsNoTracking() // improve perf, for read-only query
+                .AsQueryable(); // hold and not execute sql yet
+
+            games = GameSortBy(games, sort);
+
+            if (!String.IsNullOrEmpty(title))
+            {
+                games = games.Where(game => game.Title!.ToUpper().Contains(title.ToUpper()));
+            }
+
+            if (rating.HasValue)
+            {
+                games = games.Where(g => g.Rating == rating);
+            }
+
+            if (companyId.HasValue)
+            {
+                games = games.Where(game =>
+                    game.GameCompanies.Any(gc => gc.CompanyId == companyId)
+                );
+            }
+
+            if (genreId.HasValue)
+            {
+                games = games.Where(game => game.GameGenres.Any(gc => gc.GenreId == genreId));
+            }
+
+            var gameList = await games.ToListAsync();
+
+            var gameVM = new GameViewModel
+            {
+                Companies = await GetAllCompaniesSelectList(),
+                Genres = await GetAllGenresSelectList(),
+                Games = gameList,
+                CompanyId = companyId,
+                GenreId = genreId,
+                Rating = rating,
+                Title = title,
+                Sort = sort
+            };
+
+            return View(gameVM);
         }
 
         // GET: Game/Details/5
@@ -49,7 +109,7 @@ namespace GameManagementMvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Title,Body,Rating,ReleaseDate,Image")] Game game
+            [Bind("Title,Body,Rating,ReleaseDate,Image")] Game game
         )
         {
             if (ModelState.IsValid)
@@ -101,7 +161,7 @@ namespace GameManagementMvc.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GameExists(game.Id))
+                    if (!IsGameExists(game.Id))
                     {
                         return NotFound();
                     }
@@ -147,9 +207,63 @@ namespace GameManagementMvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GameExists(int id)
+        // ############################## HELPERS ##############################
+
+        // use to sort games base on provided string
+        private IQueryable<Game> GameSortBy(IQueryable<Game> games, string sort)
         {
-            return _context.Game.Any(e => e.Id == id);
+            if (sort == "name")
+                return games.OrderBy(g => g.Title);
+            if (sort == "-name")
+                return games.OrderByDescending(g => g.Title);
+            if (sort == "date")
+                return games.OrderBy(g => g.ReleaseDate);
+            if (sort == "-date")
+                return games.OrderByDescending(g => g.ReleaseDate);
+            if (sort == "rating")
+                return games.OrderBy(g => g.Rating);
+            if (sort == "-rating")
+                return games.OrderByDescending(g => g.Rating);
+            return games;
+        }
+
+        private bool IsGameExists(int id)
+        {
+            return false;
+        }
+
+        private bool IsValidCompanyId(int id)
+        {
+            return false;
+        }
+
+        private bool IsValidGenreIds(List<int>? genreIds = null)
+        {
+            return false;
+        }
+
+        private async Task<SelectList> GetAllGenresSelectList(int? selected = null)
+        {
+            List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
+            return new SelectList(genres, "Id", "Title", selected?.ToString());
+        }
+
+        private async Task<SelectList> GetAllCompaniesSelectList(int? selected = null)
+        {
+            List<Company> companies = await _context.Company.OrderBy(c => c.Title).ToListAsync();
+            return new SelectList(companies, "Id", "Title", selected?.ToString());
+        }
+
+        private async Task<MultiSelectList> GetAllGenresMultiSelect(List<int>? selected = null)
+        {
+            List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
+            return new MultiSelectList(genres, "Id", "Title", selected);
+        }
+
+        private async Task<MultiSelectList> GetAllCompaniesMultiSelect(List<int>? selected = null)
+        {
+            List<Company> companies = await _context.Company.OrderBy(g => g.Title).ToListAsync();
+            return new MultiSelectList(companies, "Id", "Title", selected);
         }
     }
 }

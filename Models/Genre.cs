@@ -7,9 +7,11 @@ namespace GameManagementMvc.Models
         // PROPERTIES
         public int Id { get; set; }
 
+        [Required]
         [StringLength(32)]
         public required string Title { get; set; }
 
+        [Required]
         [StringLength(2048)]
         public required string Body { get; set; }
 

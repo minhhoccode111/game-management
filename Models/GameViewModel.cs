@@ -5,13 +5,12 @@ namespace GameManagementMvc.Models
     public class GameViewModel
     {
         public List<Game>? Games { get; set; }
-        public Game? Game { get; set; }
         public SelectList? Genres { get; set; }
         public SelectList? Companies { get; set; }
-        public string? SearchTitle { get; set; }
-        public string? SearchGenre { get; set; }
-        public string? SearchRating { get; set; }
-        public string? SearchCompany { get; set; }
-        public string? SortBy { get; set; }
+        public string? Title { get; set; }
+        public string? Sort { get; set; }
+        public int? Rating { get; set; }
+        public int? GenreId { get; set; }
+        public int? CompanyId { get; set; }
     }
 }
