@@ -103,8 +103,9 @@ namespace GameManagementMvc.Controllers
         }
 
         // GET: Game/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // TODO:
             return View();
         }
 
@@ -134,11 +135,23 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game.FindAsync(id);
+            var game = await _context
+                .Game.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (game == null)
             {
                 return NotFound();
             }
+
+            List<int> genreIds = game.GameGenres.Select(gg => gg.GenreId).ToList();
+            MultiSelectList genres = await GetAllGenresMultiSelect(genreIds);
+            ViewData["Genres"] = genres;
+
             return View(game);
         }
 
@@ -188,7 +201,14 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context
+                .Game.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (game == null)
             {
                 return NotFound();
@@ -202,6 +222,8 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // TODO: work on this
+            // double check if related GameCompanies and GameGenres are also deleted
             var game = await _context.Game.FindAsync(id);
             if (game != null)
             {
