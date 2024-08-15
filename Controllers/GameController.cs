@@ -30,9 +30,7 @@ namespace GameManagementMvc.Controllers
             }
 
             IQueryable<Game> games = _context
-                .Game
-                //
-                .Include(g => g.GameGenres)
+                .Game.Include(g => g.GameGenres)
                 .ThenInclude(gg => gg.Genre)
                 .Include(g => g.GameCompanies)
                 .ThenInclude(gc => gc.Company)
@@ -88,7 +86,14 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game.FirstOrDefaultAsync(m => m.Id == id);
+            var game = await _context
+                .Game.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (game == null)
             {
                 return NotFound();

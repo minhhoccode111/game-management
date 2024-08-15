@@ -62,13 +62,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Games[0].Title)
+                @Html.DisplayNameFor(model => model.Games![0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Games[0].Rating)
+                @Html.DisplayNameFor(model => model.Games![0].Rating)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Games[0].ReleaseDate)
+                @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
             </th>
             <th>
                 Company
@@ -80,38 +80,40 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Games) {
+@foreach (var item in Model.Games!) {
+        var gameCompanies = item.GameCompanies.ToList();
+        var gameGenres = item.GameGenres.ToList();
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(_ => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Rating)
+                @Html.DisplayFor(_ => item.Rating)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
+                @Html.DisplayFor(_ => item.ReleaseDate)
             </td>
             <td>
-                @for (int i = 0; i < item.GameCompanies!.Count; i++)
+                @for (int i = 0; i < gameCompanies.Count; i++)
                     {
                     if (i != 0)
                     {
                     <span> | </span>
                     }
-                    <a asp-controller="Company" asp-action="Details" asp-route-id="@item.Genres![i].Id">
-                        @Html.DisplayFor(modelItem => item.Genres![i].Title)
+                    <a asp-controller="Company" asp-action="Details" asp-route-id="@gameCompanies[i].Company.Id">
+                        @Html.DisplayFor(_ => gameCompanies[i].Company.Title)
                     </a>
                     }
             </td>
             <td>
-                @for (int i = 0; i < item.GameGenres!.Count; i++)
+                @for (int i = 0; i < gameGenres.Count; i++)
                     {
                     if (i != 0)
                     {
                     <span> | </span>
                     }
-                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@item.Genres![i].Id">
-                        @Html.DisplayFor(modelItem => item.Genres![i].Title)
+                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@gameGenres[i].Genre.Id">
+                        @Html.DisplayFor(_ => gameGenres[i].Genre.Title)
                     </a>
                     }
             </td>
