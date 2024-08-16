@@ -175,8 +175,8 @@ namespace GameManagementMvc.Models
                         {
                             Game = games[i],
                             Company = companies[ran.Next(0, companies.Count)],
-                            Title = $"Development phase {j}",
-                            Body = $"Development phase {j} description",
+                            Title = $"Game {i}: Development phase {j}",
+                            Body = $"Game {i}: Development phase {j} description",
                             StartDate = startDate,
                             EndDate = endDate,
                         };

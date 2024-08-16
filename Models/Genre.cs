@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GameManagementMvc.Models
 {
@@ -16,6 +17,7 @@ namespace GameManagementMvc.Models
         public required string Body { get; set; }
 
         // NAVIGATION PROPERTIES
+        [JsonIgnore]
         public ICollection<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
     }
 }

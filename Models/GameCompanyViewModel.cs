@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace GameManagementMvc.Models
 {
-    public class GameCompany
+    public class GameCompanyViewModel
     {
         // PROPERTIES
         public int Id { get; set; }
@@ -28,12 +27,5 @@ namespace GameManagementMvc.Models
         [Display(Name = "End Date")]
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
-
-        // NAVIGATION PROPERTIES
-        [JsonIgnore]
-        public Game Game { get; set; } = null!;
-
-        [JsonIgnore]
-        public Company Company { get; set; } = null!;
     }
 }

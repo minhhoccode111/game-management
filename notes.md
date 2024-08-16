@@ -1,126 +1,74 @@
 # Notes
 
+<!--FIX: this docs-->
+
 ## Database design
+
 - Company
-	- ID
-	- Title
-	- Body
-	- Image
-	- Games
-	- Founding Date
+  - ID
+  - Title
+  - Body
+  - Image
+  - Games
+  - Founding Date
 - Game
-	- ID
-	- Title
-	- Body
-	- Image
-	- Rating
-	- Release Date
-	- Company
-	- CompanyId
-	- Genres
-	- GenreIds
+  - ID
+  - Title
+  - Body
+  - Image
+  - Rating
+  - Release Date
+  - Company
+  - CompanyId
+  - Genres
+  - GenreIds
 - Genre
-	- ID
-	- Title
-	- Body
-	- Games
+  - ID
+  - Title
+  - Body
+  - Games
 
 ## App flow
+
 - layout header
-	- title 
-	- home
-	- game
-	- company
-	- genre
-	- about
-	- privacy
-- home 
-	- index
-	- about
-	- privacy
+  - title
+  - home
+  - game
+  - company
+  - genre
+  - about
+  - privacy
+- home
+  - index
+  - about
+  - privacy
 - games
-	- create new
-	- filter
-		- drop down select company 
-		- drop down select genre
-		- drop down select rating
-		- drop down select sort by
-		- search bar game title
-	- table
-		- info preview
-			- title
-			- rating
-			- release date
-			- company
-			- genres
-		- links
-			- to a genre detail
-			- to a company detail
-			- to a game detail
-			- to edit game
-			- to delete game
+  - create new
+  - filter - drop down select company - drop down select genre - drop down select rating - drop down select sort by - search bar game title
+  - table - info preview - title - rating - release date - company - genres - links - to a genre detail - to a company detail - to a game detail - to edit game - to delete game
 - companies
-	- create new
-	- filter
-		- drop down select sort by
-		- search bar company title
-	- table
-		- info preview
-			- title
-			- founding date
-			- games
-		- links
-			- to a game detail
-			- to a company detail
-			- to edit company
-			- to delete company
+  - create new
+  - filter - drop down select sort by - search bar company title
+  - table - info preview - title - founding date - games - links - to a game detail - to a company detail - to edit company - to delete company
 - genres
-	- create new
-	- filter
-		- drop down select sort by
-		- search bar genre title
-	- table
-		- info preview
-			- title
-			- games
-		- links
-			- to a game detail
-			- to a genre detail
-			- to edit genre
-			- to delete genre
+  - create new
+  - filter - drop down select sort by - search bar genre title
+  - table - info preview - title - games - links - to a game detail - to a genre detail - to edit genre - to delete genre
 - game
-	- create 
-		- form
-	- detail
-		- info
-	- edit
-		- form
-	- delete
-		- confirm
+  - create - form
+  - detail - info
+  - edit - form
+  - delete - confirm
 - company
-	- create
-		- form
-	- detail
-		- info
-		- games created by this company
-	- edit
-		- form
-		- games created by this company
-	- delete
-		- confirm
-		- remove games created by this company before deleting
+  - create - form
+  - detail - info - games created by this company
+  - edit - form - games created by this company
+  - delete - confirm - remove games created by this company before deleting
 - genres
-	- create
-		- form
-	- detail
-		- info
-		- games created with this genre
-	- edit
-		- form
-		- games created with this genre
-	- delete
-		- confirm
-		- remove games created with this genre before deleting
+  - create - form
+  - detail - info - games created with this genre
+  - edit - form - games created with this genre
+  - delete - confirm - remove games created with this genre before deleting
 
 ## Create a mvc project use CLI
 
@@ -152,58 +100,21 @@ dotnet aspnet-codegenerator controller -name GenreController -m Genre -dc GameMa
 ```
 
 ## Entity Framework Core (ORM)
+
 Create and update a database to match the data models
 
 ```bash
-dotnet ef migrations add InitialCreate
+dotnet ef migrations add SqlServerMigration
 dotnet ef database update
 ```
 
-## Tell .NET to use SQLite on development and SQL Server on production
+## Embeded the variables in the View
 
 ```csharp
-var builder = WebApplication.CreateBuilder(args);
-
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDbContext<MvcMovieContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("MvcMovieContext")));
-}
-else
-{
-    builder.Services.AddDbContext<MvcMovieContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("ProductionMvcMovieContext")));
-}
+MultiSelectList companies = await GetAllCompaniesSelectList();
+ViewData["Companies"] = JsonConvert.SerializeObject(companies);
 ```
 
-
-## Relationship models
-```csharp
-// one-to-one
-public class Game
-{
-	public Company Company {get; set;}
-}
-public class Company
-{
-	public Game Game {get; set;}
-}
-// one-to-many
-public class Game
-{
-	public Company Company {get; set;}
-}
-public class Company
-{
-	public List<Game> Games {get; set;}
-}
-// many-to-many
-public class Game
-{
-	public List<Genre> Genres {get; set;}
-}
-public class Genre
-{
-	public List<Game> Games {get; set;}
-}
+```js
+const someData = @Html.Raw(ViewData["Companies"]);
 ```

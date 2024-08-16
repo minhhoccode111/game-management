@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GameManagementMvc.Models
 {
@@ -24,6 +25,7 @@ namespace GameManagementMvc.Models
         public string? Image { get; set; }
 
         // NAVIGATION PROPERTIES
+        [JsonIgnore]
         public ICollection<GameCompany> GameCompanies { get; set; } = new List<GameCompany>();
     }
 }

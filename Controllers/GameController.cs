@@ -3,6 +3,7 @@ using GameManagementMvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace GameManagementMvc.Controllers
 {
@@ -61,6 +62,8 @@ namespace GameManagementMvc.Controllers
                 games = games.Where(game => game.GameGenres.Any(gc => gc.GenreId == genreId));
             }
 
+            // TODO: Distinct Game.GameCompany.CompanyId (not display a company more than 1 time)
+
             var gameList = await games.ToListAsync();
 
             var gameVM = new GameViewModel
@@ -105,7 +108,13 @@ namespace GameManagementMvc.Controllers
         // GET: Game/Create
         public async Task<IActionResult> Create()
         {
-            // TODO:
+            var genres = await GetAllGenresMultiSelect();
+            ViewData["Genres"] = genres;
+
+            var companies = await GetAllCompaniesSelectList();
+            ViewData["Companies"] = companies;
+            ViewData["CompaniesJson"] = JsonConvert.SerializeObject(companies);
+
             return View();
         }
 
@@ -179,7 +188,7 @@ namespace GameManagementMvc.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IsGameExists(game.Id))
+                    if (!GameExist(game.Id))
                     {
                         return NotFound();
                     }
@@ -222,15 +231,15 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // TODO: work on this
-            // double check if related GameCompanies and GameGenres are also deleted
             var game = await _context.Game.FindAsync(id);
+
             if (game != null)
             {
                 _context.Game.Remove(game);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -254,21 +263,27 @@ namespace GameManagementMvc.Controllers
             return games;
         }
 
-        private bool IsGameExists(int id)
+        // CHECK EXISTENCE
+        private bool GameExist(int id)
         {
-            return false;
+            return _context.Game.Any(g => g.Id == id);
         }
 
-        private bool IsValidCompanyId(int id)
+        private bool CompanyExist(int id)
         {
-            return false;
+            return _context.Company.Any(c => c.Id == id);
         }
 
-        private bool IsValidGenreIds(List<int>? genreIds = null)
+        private bool GenreExist(List<int>? genreIds = null)
         {
-            return false;
+            if (genreIds == null || !genreIds.Any())
+            {
+                return false;
+            }
+            return genreIds.All(id => _context.Genre.Any(g => g.Id == id));
         }
 
+        // DROP DOWN SELECT FOR FILTER
         private async Task<SelectList> GetAllGenresSelectList(int? selected = null)
         {
             List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
@@ -281,12 +296,14 @@ namespace GameManagementMvc.Controllers
             return new SelectList(companies, "Id", "Title", selected?.ToString());
         }
 
+        // CHECKBOXES SELECT FOR CREATE AND EDIT
         private async Task<MultiSelectList> GetAllGenresMultiSelect(List<int>? selected = null)
         {
             List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
             return new MultiSelectList(genres, "Id", "Title", selected);
         }
 
+        // NOTE: this can't be used
         private async Task<MultiSelectList> GetAllCompaniesMultiSelect(List<int>? selected = null)
         {
             List<Company> companies = await _context.Company.OrderBy(g => g.Title).ToListAsync();

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace GameManagementMvc.Models
 {
     public class GameGenre
@@ -8,8 +10,10 @@ namespace GameManagementMvc.Models
         public int GenreId { get; set; }
 
         // NAVIGATIONS
+        [JsonIgnore]
         public Genre Genre { get; set; } = null!;
 
+        [JsonIgnore]
         public Game Game { get; set; } = null!;
     }
 }

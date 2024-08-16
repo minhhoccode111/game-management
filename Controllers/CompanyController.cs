@@ -137,13 +137,17 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // BUG: Currently allow delete Company even when DeleteBehavior is
+            // set to Restrict which is weird
             var company = await _context.Company.FindAsync(id);
+
             if (company != null)
             {
                 _context.Company.Remove(company);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
