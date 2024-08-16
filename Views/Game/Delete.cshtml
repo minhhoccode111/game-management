@@ -118,8 +118,15 @@ var gameGenres = Model.GameGenres.ToList();
                     @Html.DisplayFor(_ => item.StartDate)
                 </td>
                 <td>
+                    @if (item.EndDate == null)
+                    {
+                    <span><b>On going</b></span>
+                    }
+                    else
+                    {
                     @Html.DisplayFor(_ => item.EndDate)
-                </td>
+                    }
+                </td> 
             </tr>
             }
         </tbody>

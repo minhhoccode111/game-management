@@ -18,15 +18,15 @@
 
 <div class="row justify-content-center">
     <div class="col-md-12">
-        <form asp-action="Create">
+        <form asp-action="Create" data-Form>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <b><label asp-for="Title" class="control-label"></label></b>
+                <b><label asp-for="Title" class="control-label"></label>*</b>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <b><label asp-for="Body" class="control-label"></label></b>
+                <b><label asp-for="Body" class="control-label"></label>*</b>
                 <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
@@ -36,17 +36,17 @@
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <b><label asp-for="Rating" class="control-label"></label></b>
+                <b><label asp-for="Rating" class="control-label"></label>*</b>
                 <input asp-for="Rating" class="form-control" />
                 <span asp-validation-for="Rating" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <b><label asp-for="ReleaseDate" class="control-label">Release Date</label></b>
+                <b><label asp-for="ReleaseDate" class="control-label">Release Date</label>*</b>
                 <input asp-for="ReleaseDate" class="form-control" />
                 <span asp-validation-for="ReleaseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="GenreIds" class="control-label text-danger"><b>Game Genres*</b></label>
+                <label asp-for="GenreIds" class="control-label"><b>Game Genres*</b></label>
                 <div>
                     @foreach (var genre in genres!)
                     {
@@ -69,11 +69,9 @@
                 </p>
             </div>
 
-            <p class="text-danger"><b>Game Company Development Phases*</b></p>
+            <p class="form-group"><b>Game Companies*</b></p>
 
-            <div data-InsertHiddenInputs></div>
-
-            <table class="table">
+            <table class="table mb-0">
                 <thead>
                     <tr>
                         <th>
@@ -105,10 +103,10 @@
                             </select>
                         </td>
                         <td>
-                            <input type="text" class="" data-Title />
+                            <input type="text" class="" placeholder="Phase 0" data-Title />
                         </td>
                         <td>
-                            <input type="text" class="" data-Body />
+                            <input type="text" class="" placeholder="Collect ideas" data-Body />
                         </td>
                         <td>
                             <input type="date" class="" data-StartDate />
@@ -123,6 +121,8 @@
                 </tbody>
             </table>
 
+            <div data-InsertHiddenInputs></div>
+
             <div class="">
                 <span asp-validation-for="GameCompanies" class="text-danger"></span>
                 <p class="">
@@ -135,7 +135,9 @@
                     </span> 
                     }
                 </p>
+                <p class="text-danger d-none" data-ErrorMessage>This field is required. Please <b>add</b> at least one game company.</p>
             </div>
+
 
             <div class="form-group d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-danger">Cancel</a>
@@ -149,21 +151,31 @@
 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
 <script>
-
-// const companies = @Html.Raw(ViewData["Companies"]); 
-// console.log(companies)
-
+// get data from C# to JavaScript
 const companiesJson = @Html.Raw(ViewData["CompaniesJson"]);
 const gameCompanies = [];
 
 const add = document.querySelector("[data-Add]");
+
 const title = document.querySelector("[data-Title]");
 const body = document.querySelector("[data-Body]");
 const startDate = document.querySelector("[data-StartDate]");
 const endDate = document.querySelector("[data-EndDate]");
 const companyId = document.querySelector("[data-CompanyId]");
+
 const table = document.querySelector("[data-GameCompaniesTable]")
 const hiddenInputs = document.querySelector("[data-InsertHiddenInputs]")
+
+const form = document.querySelector("[data-Form]");
+const errorMessage = document.querySelector("[data-ErrorMessage]");
+
+// some client validation
+form.addEventListener('submit', (e) => {
+    if (gameCompanies.length === 0) {
+        e.preventDefault();
+        displayErrorMessage(true);
+    }
+})
 
 add.addEventListener("click", () => {
     const result = {
@@ -172,23 +184,27 @@ add.addEventListener("click", () => {
         StartDate: startDate.value,
         EndDate: endDate.value || null,
         CompanyId: companyId.value,
-        CompanyTitle: companiesJson.reduce((total, current) => {
-            if (current.Value === companyId.value) {
-                return current.Text;
-            }
-            return total;
-        }, "")
+        CompanyTitle: companiesJson.reduce((total, current) => current.Value === companyId.value ? current.Text : total, "")
     };
 
-    if (result.Title || result.Body || result.StartDate || result.CompanyId ) {
+    // some frontend validation
+    if (result.Title && result.Body &&result.StartDate && result.CompanyId ) {
         gameCompanies.push(result);
         renderTable();
+        displayErrorMessage(false);
     }
-
-    // console.log(result);
 
     reset();
 });
+
+function displayErrorMessage(bool) {
+    if (bool) {
+        errorMessage.classList.remove('d-none');
+    }
+    else {
+        errorMessage.classList.add('d-none');
+    }
+}
 
 function reset() {
     title.value = ""
@@ -278,14 +294,5 @@ function renderTable() {
         hiddenInputs.appendChild(hiddenCompanyId);
     });
 }
-
-// console.log(companiesJson);
-
-// console.log({
-//     add, title, body, startDate, endDate, companyId
-// })
-
-
 </script>
-
 }

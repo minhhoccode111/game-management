@@ -124,16 +124,92 @@ namespace GameManagementMvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Title,Body,Rating,ReleaseDate,Image")] Game game
+            [Bind("Title,Body,Rating,ReleaseDate,Image,GenreIds,GameCompanies")]
+                GameFormViewModel gameVM
         )
         {
+            // manually validate game form view model
+            if (!gameVM.GameCompanies.Any())
+            {
+                // <span asp-validation-for="GameCompanies" class="text-danger"></span>
+                // will be used to display error message we specify
+                ModelState.AddModelError("GameCompanies", "At least one game company is required.");
+            }
+            // in case race condition
+            if (!GenreExist(gameVM.GenreIds))
+            {
+                ModelState.AddModelError("GenreIds", "Game Genres not exist in current database.");
+            }
+            foreach (var company in gameVM.GameCompanies)
+            {
+                if (string.IsNullOrWhiteSpace(company.Title))
+                {
+                    ModelState.AddModelError("GameCompanies", "Company Title is required.");
+                }
+                if (string.IsNullOrWhiteSpace(company.Body))
+                {
+                    ModelState.AddModelError("GameCompanies", "Company Body is required.");
+                }
+                // in case race condition
+                if (!CompanyExist(company.CompanyId))
+                {
+                    ModelState.AddModelError(
+                        "GameCompanies",
+                        "A Game Company is not existed in current database."
+                    );
+                }
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(game);
+                // extract game data
+                Game game = new Game
+                {
+                    Title = gameVM.Title,
+                    Body = gameVM.Body,
+                    Rating = gameVM.Rating,
+                    Image = gameVM.Image,
+                    ReleaseDate = gameVM.ReleaseDate
+                };
+                _context.Game.Add(game);
+                // WARN: save change to generate Game.Id
+                await _context.SaveChangesAsync();
+
+                // create game genres
+                foreach (var genreId in gameVM.GenreIds)
+                {
+                    var gameGenre = new GameGenre { GameId = game.Id, GenreId = genreId };
+                    _context.GameGenre.Add(gameGenre);
+                }
+
+                // create game companies
+                foreach (var companyVM in gameVM.GameCompanies)
+                {
+                    var gameCompany = new GameCompany
+                    {
+                        GameId = game.Id,
+                        CompanyId = companyVM.CompanyId,
+                        Title = companyVM.Title,
+                        Body = companyVM.Body,
+                        StartDate = companyVM.StartDate,
+                        EndDate = companyVM.EndDate
+                    };
+                    _context.GameCompany.Add(gameCompany);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(game);
+
+            // else prepare data again
+            var genres = await GetAllGenresMultiSelect();
+            ViewData["Genres"] = genres;
+
+            var companies = await GetAllCompaniesSelectList();
+            ViewData["Companies"] = companies;
+            ViewData["CompaniesJson"] = JsonConvert.SerializeObject(companies);
+
+            return View(gameVM);
         }
 
         // GET: Game/Edit/5
@@ -282,6 +358,8 @@ namespace GameManagementMvc.Controllers
             }
             return genreIds.All(id => _context.Genre.Any(g => g.Id == id));
         }
+
+        private void ValidateGameFormViewModel(GameFormViewModel gameVM) { }
 
         // DROP DOWN SELECT FOR FILTER
         private async Task<SelectList> GetAllGenresSelectList(int? selected = null)

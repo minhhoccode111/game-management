@@ -22,6 +22,7 @@ namespace GameManagementMvc.Models
         public DateTime ReleaseDate { get; set; }
 
         // optional
+        [Url]
         [StringLength(2048)]
         public string? Image { get; set; }
 
