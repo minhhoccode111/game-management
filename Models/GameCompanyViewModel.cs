@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GameManagementMvc.Models
 {
+    // TODO: this is duplicated w/ GameCompany model, fix this
     public class GameCompanyViewModel
     {
         // PROPERTIES

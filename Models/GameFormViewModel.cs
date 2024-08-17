@@ -4,6 +4,8 @@ namespace GameManagementMvc.Models
 {
     public class GameFormViewModel
     {
+        // TODO: try to make it required instead of optional
+        // in case create
         public int? Id { get; set; }
 
         [Required]

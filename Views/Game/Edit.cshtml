@@ -142,7 +142,7 @@
 
             <div class="form-group d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Submit" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -159,11 +159,13 @@ for (const c of companiesJson) {
     companiesTable[c.Value] = c.Text;
 }
 
-// BUG: Message string = "Parameter count mismatch."
-// TODO: this can cause mismatch
 const gameCompaniesJson = @Html.Raw(ViewData["gameCompaniesJson"]);
 const gameCompanies = [];
+let foundGameId;
 for (const gc of gameCompaniesJson) {
+    if (gc.GameId) {
+        foundGameId = gc.GameId;
+    }
     const tmp = {...gc, CompanyTitle: companiesTable[gc.CompanyId] };
     gameCompanies.push(tmp);
 }
@@ -189,6 +191,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // some client validation
 form.addEventListener('submit', (e) => {
+    // e.preventDefault();
+    // console.log(`game companies belike: `, gameCompanies);
+
     if (gameCompanies.length === 0) {
         e.preventDefault();
         displayErrorMessage(true);
@@ -203,8 +208,10 @@ add.addEventListener("click", () => {
         EndDate: endDate.value || null,
         CompanyId: companyId.value,
         CompanyTitle: companiesTable[companyId.value],
-        // NOTE: try to fix mismatch
-        GameId: 0,
+        // WARN: include these to make all GameCompanies object the same or
+        // ModelState.IsValid will be false 
+        GameId: foundGameId,
+        Id: 0
     };
 
     // some frontend validation
@@ -279,7 +286,7 @@ function renderTable() {
         table.appendChild(row);
 
         // Create hidden inputs to include the gameCompany data in the form submission
-        // GameCompany.Id is optional (old ones have but new ones don't)
+        // GameCompany.Id - old ones have, new ones will be 0
         const hiddenId = document.createElement("input");
         hiddenId.type = "hidden";
         hiddenId.name = `GameCompanies[${index}].Id`;
@@ -315,6 +322,12 @@ function renderTable() {
         hiddenCompanyId.name = `GameCompanies[${index}].CompanyId`;
         hiddenCompanyId.value = gameCompany.CompanyId;
         hiddenInputs.appendChild(hiddenCompanyId);
+
+        const hiddenGameId = document.createElement("input");
+        hiddenGameId.type = "hidden";
+        hiddenGameId.name = `GameCompanies[${index}].GameId`;
+        hiddenGameId.value = gameCompany.GameId;
+        hiddenInputs.appendChild(hiddenGameId);
     });
 }
 </script>
