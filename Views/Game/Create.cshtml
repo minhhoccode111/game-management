@@ -153,7 +153,13 @@
 <script>
 // get data from C# to JavaScript
 const companiesJson = @Html.Raw(ViewData["CompaniesJson"]);
+const companiesTable = {};
+for (const c of companiesJson) {
+    // create hash table
+    companiesTable[c.Value] = c.Text;
+}
 const gameCompanies = [];
+console.log(companiesTable);
 
 const add = document.querySelector("[data-Add]");
 
@@ -184,7 +190,7 @@ add.addEventListener("click", () => {
         StartDate: startDate.value,
         EndDate: endDate.value || null,
         CompanyId: companyId.value,
-        CompanyTitle: companiesJson.reduce((total, current) => current.Value === companyId.value ? current.Text : total, "")
+        CompanyTitle: companiesTable[companyId.value]
     };
 
     // some frontend validation

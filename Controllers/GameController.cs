@@ -233,11 +233,49 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
+            // all game genres already exists
             List<int> genreIds = game.GameGenres.Select(gg => gg.GenreId).ToList();
+
+            // all genres to create new genres, checked exist ones
             MultiSelectList genres = await GetAllGenresMultiSelect(genreIds);
             ViewData["Genres"] = genres;
 
-            return View(game);
+            // all companies to create new game companies
+            var companies = await GetAllCompaniesSelectList();
+            ViewData["Companies"] = companies;
+            ViewData["CompaniesJson"] = JsonConvert.SerializeObject(companies);
+
+            // game companies already exists
+            List<GameCompanyViewModel> gameCompanies = new List<GameCompanyViewModel>();
+            foreach (var item in game.GameCompanies.ToList())
+            {
+                var gameCompany = new GameCompanyViewModel
+                {
+                    Id = item.Id,
+                    GameId = item.GameId,
+                    CompanyId = item.CompanyId,
+                    Title = item.Title,
+                    Body = item.Body,
+                    StartDate = item.StartDate,
+                    EndDate = item.EndDate,
+                };
+                gameCompanies.Add(gameCompany);
+            }
+            ViewData["GameCompaniesJson"] = JsonConvert.SerializeObject(gameCompanies);
+
+            var gameFormVM = new GameFormViewModel
+            {
+                Id = game.Id,
+                Title = game.Title,
+                Body = game.Body,
+                Rating = game.Rating,
+                ReleaseDate = game.ReleaseDate,
+                Image = game.Image,
+                GenreIds = genreIds,
+                GameCompanies = gameCompanies
+            };
+
+            return View(gameFormVM);
         }
 
         // POST: Game/Edit/5
@@ -247,24 +285,26 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Title,Body,Rating,ReleaseDate,Image")] Game game
+            [Bind("Id,Title,Body,Rating,ReleaseDate,Image,GenreIds,GameCompanies")]
+                GameFormViewModel gameVM
         )
         {
-            if (id != game.Id)
+            if (id != gameVM.Id)
             {
                 return NotFound();
             }
 
+            // BUG: Message string = "Parameter count mismatch."
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(game);
+                    _context.Update(gameVM);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GameExist(game.Id))
+                    if (!GameExist((int)gameVM.Id))
                     {
                         return NotFound();
                     }
@@ -275,7 +315,50 @@ namespace GameManagementMvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(game);
+
+            var game = await _context
+                .Game.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            // all game genres already exists
+            List<int> genreIds = game.GameGenres.Select(gg => gg.GenreId).ToList();
+
+            // all genres to create new genres, checked exist ones
+            MultiSelectList genres = await GetAllGenresMultiSelect(genreIds);
+            ViewData["Genres"] = genres;
+
+            // all companies to create new game companies
+            var companies = await GetAllCompaniesSelectList();
+            ViewData["Companies"] = companies;
+            ViewData["CompaniesJson"] = JsonConvert.SerializeObject(companies);
+
+            // game companies already exists
+            List<GameCompanyViewModel> gameCompanies = new List<GameCompanyViewModel>();
+            foreach (var item in game.GameCompanies.ToList())
+            {
+                var gameCompany = new GameCompanyViewModel
+                {
+                    Id = item.Id,
+                    GameId = item.GameId,
+                    CompanyId = item.CompanyId,
+                    Title = item.Title,
+                    Body = item.Body,
+                    StartDate = item.StartDate,
+                    EndDate = item.EndDate,
+                };
+                gameCompanies.Add(gameCompany);
+            }
+            ViewData["GameCompaniesJson"] = JsonConvert.SerializeObject(gameCompanies);
+
+            return View(gameVM);
         }
 
         // GET: Game/Delete/5

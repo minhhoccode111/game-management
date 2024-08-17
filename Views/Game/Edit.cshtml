@@ -1,54 +1,321 @@
-@model GameManagementMvc.Models.Game
+@model GameManagementMvc.Models.GameFormViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Game";
+    var genres = ViewData["Genres"] as IEnumerable<SelectListItem>;
+    var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
+    bool hasGenre = !genres!.Any();
+    bool hasCompany = !companies!.Any();
 }
 
-<h1>Edit</h1>
-
-<h4>Game</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
-                <span asp-validation-for="Body" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rating" class="control-label"></label>
-                <input asp-for="Rating" class="form-control" />
-                <span asp-validation-for="Rating" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReleaseDate" class="control-label"></label>
-                <input asp-for="ReleaseDate" class="form-control" />
-                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<h1>@ViewData["Title"]</h1>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <form asp-action="Edit" data-Form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <b><label asp-for="Title" class="control-label"></label>*</b>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <b><label asp-for="Body" class="control-label"></label>*</b>
+                <textarea asp-for="Body" class="form-control"></textarea>
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <b><label asp-for="Image" class="control-label"></label></b>
+                <input asp-for="Image" class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <b><label asp-for="Rating" class="control-label"></label>*</b>
+                <input asp-for="Rating" class="form-control" />
+                <span asp-validation-for="Rating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <b><label asp-for="ReleaseDate" class="control-label">Release Date</label>*</b>
+                <input asp-for="ReleaseDate" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GenreIds" class="control-label"><b>Game Genres*</b></label>
+                <div>
+                    @foreach (var genre in genres!)
+                    {
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" @(genre.Selected ? "checked" : "") required/>
+                        <label class="form-check-label" for="genre_@genre.Value">@genre.Text</label>
+                    </div>
+                    }
+                </div>
+                <span asp-validation-for="GenreIds" class="text-danger"></span>
+                <p class="">
+                    @if (hasGenre)
+                    {
+                    <span class="text-danger">
+                        You need to 
+                        <a asp-controller="Genre" asp-action="Create" class="">create a genre</a>
+                        before creating a game.
+                    </span>
+                    }
+                </p>
+            </div>
+
+            <p class="form-group"><b>Game Companies*</b></p>
+
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>
+                            Company*
+                        </th>
+                        <th>
+                            Title*
+                        </th>
+                        <th>
+                            Body*
+                        </th>
+                        <th>
+                            Start Date*
+                        </th>
+                        <th>
+                            End Date
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody data-GameCompaniesTable>
+                    <!--insert inputs GameCompany here-->
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select asp-items="@companies" data-CompanyId>
+                                <option value="">All</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" class="" placeholder="Phase 0" data-Title />
+                        </td>
+                        <td>
+                            <input type="text" class="" placeholder="Collect ideas" data-Body />
+                        </td>
+                        <td>
+                            <input type="date" class="" data-StartDate />
+                        </td>
+                        <td>
+                            <input type="date" class="" data-EndDate />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-success" data-Add>Add</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div data-InsertHiddenInputs></div>
+
+            <div class="">
+                <span asp-validation-for="GameCompanies" class="text-danger"></span>
+                <p class="">
+                    @if (hasCompany)
+                    {
+                    <span class="text-danger">
+                        You need to 
+                        <a asp-controller="Company" asp-action="Create" class="">create a company</a>
+                        before creating a game.
+                    </span> 
+                    }
+                </p>
+                <p class="text-danger d-none" data-ErrorMessage>This field is required. Please <b>add</b> at least one game company.</p>
+            </div>
+
+
+            <div class="form-group d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+// get data from C# to JavaScript
+const companiesJson = @Html.Raw(ViewData["CompaniesJson"]);
+const companiesTable = {};
+for (const c of companiesJson) {
+    companiesTable[c.Value] = c.Text;
+}
+
+// BUG: Message string = "Parameter count mismatch."
+// TODO: this can cause mismatch
+const gameCompaniesJson = @Html.Raw(ViewData["gameCompaniesJson"]);
+const gameCompanies = [];
+for (const gc of gameCompaniesJson) {
+    const tmp = {...gc, CompanyTitle: companiesTable[gc.CompanyId] };
+    gameCompanies.push(tmp);
+}
+
+const add = document.querySelector("[data-Add]");
+
+const title = document.querySelector("[data-Title]");
+const body = document.querySelector("[data-Body]");
+const startDate = document.querySelector("[data-StartDate]");
+const endDate = document.querySelector("[data-EndDate]");
+const companyId = document.querySelector("[data-CompanyId]");
+
+const table = document.querySelector("[data-GameCompaniesTable]")
+const hiddenInputs = document.querySelector("[data-InsertHiddenInputs]")
+
+const form = document.querySelector("[data-Form]");
+const errorMessage = document.querySelector("[data-ErrorMessage]");
+
+// load previous game companies state
+window.addEventListener("DOMContentLoaded", () => {
+    renderTable();
+})
+
+// some client validation
+form.addEventListener('submit', (e) => {
+    if (gameCompanies.length === 0) {
+        e.preventDefault();
+        displayErrorMessage(true);
+    }
+})
+
+add.addEventListener("click", () => {
+    const result = {
+        Title: title.value,
+        Body: body.value,
+        StartDate: startDate.value,
+        EndDate: endDate.value || null,
+        CompanyId: companyId.value,
+        CompanyTitle: companiesTable[companyId.value],
+        // NOTE: try to fix mismatch
+        GameId: 0,
+    };
+
+    // some frontend validation
+    if (result.Title && result.Body &&result.StartDate && result.CompanyId ) {
+        gameCompanies.push(result);
+        renderTable();
+        displayErrorMessage(false);
+    }
+
+    reset();
+});
+
+function displayErrorMessage(bool) {
+    if (bool) errorMessage.classList.remove('d-none');
+    else errorMessage.classList.add('d-none');
+}
+
+function reset() {
+    title.value = ""
+    body.value = ""
+    startDate.value = ""
+    endDate.value = ""
+    companyId.value = ""
+}
+
+function renderTable() {
+    table.innerHTML = "";
+    hiddenInputs.innerHTML = "";
+
+    gameCompanies.forEach((gameCompany, index) => {
+        // Create a new row
+        const row = document.createElement("tr");
+
+        // Create and append CompanyTitle cell
+        const companyCell = document.createElement("td");
+        companyCell.textContent = gameCompany.CompanyTitle;
+        row.appendChild(companyCell);
+
+        // Create and append Title cell
+        const titleCell = document.createElement("td");
+        titleCell.textContent = gameCompany.Title;
+        row.appendChild(titleCell);
+
+        // Create and append Body cell
+        const bodyCell = document.createElement("td");
+        bodyCell.textContent = gameCompany.Body;
+        row.appendChild(bodyCell);
+
+        // Create and append StartDate cell
+        const startDateCell = document.createElement("td");
+        startDateCell.textContent = new Date(gameCompany.StartDate).toISOString().split("T")[0];
+        row.appendChild(startDateCell);
+
+        // Create and append EndDate cell
+        const endDateCell = document.createElement("td");
+        endDateCell.textContent = gameCompany.EndDate ? new Date(gameCompany.EndDate).toISOString().split("T")[0] : "N/A";
+        row.appendChild(endDateCell);
+
+        // Create and append Remove button cell
+        const removeCell = document.createElement("td");
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Del";
+        removeButton.classList.add("btn", "btn-danger", "btn-sm");
+        removeButton.addEventListener("click", () => {
+            gameCompanies.splice(index, 1); // Remove the gameCompany from the array
+            renderTable(); // Re-render the table
+        });
+        removeCell.appendChild(removeButton);
+        row.appendChild(removeCell);
+
+        // Append the row to the table
+        table.appendChild(row);
+
+        // Create hidden inputs to include the gameCompany data in the form submission
+        // GameCompany.Id is optional (old ones have but new ones don't)
+        const hiddenId = document.createElement("input");
+        hiddenId.type = "hidden";
+        hiddenId.name = `GameCompanies[${index}].Id`;
+        hiddenId.value = gameCompany.Id;
+        hiddenInputs.appendChild(hiddenId);
+
+        const hiddenTitle = document.createElement("input");
+        hiddenTitle.type = "hidden";
+        hiddenTitle.name = `GameCompanies[${index}].Title`;
+        hiddenTitle.value = gameCompany.Title;
+        hiddenInputs.appendChild(hiddenTitle);
+
+        const hiddenBody = document.createElement("input");
+        hiddenBody.type = "hidden";
+        hiddenBody.name = `GameCompanies[${index}].Body`;
+        hiddenBody.value = gameCompany.Body;
+        hiddenInputs.appendChild(hiddenBody);
+
+        const hiddenStartDate = document.createElement("input");
+        hiddenStartDate.type = "hidden";
+        hiddenStartDate.name = `GameCompanies[${index}].StartDate`;
+        hiddenStartDate.value = gameCompany.StartDate;
+        hiddenInputs.appendChild(hiddenStartDate);
+
+        const hiddenEndDate = document.createElement("input");
+        hiddenEndDate.type = "hidden";
+        hiddenEndDate.name = `GameCompanies[${index}].EndDate`;
+        hiddenEndDate.value = gameCompany.EndDate || "";
+        hiddenInputs.appendChild(hiddenEndDate);
+
+        const hiddenCompanyId = document.createElement("input");
+        hiddenCompanyId.type = "hidden";
+        hiddenCompanyId.name = `GameCompanies[${index}].CompanyId`;
+        hiddenCompanyId.value = gameCompany.CompanyId;
+        hiddenInputs.appendChild(hiddenCompanyId);
+    });
+}
+</script>
 }
