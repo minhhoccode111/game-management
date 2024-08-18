@@ -23,7 +23,7 @@
 
 <form asp-controller="Company" asp-action="Index" method="get">
     <p>
-        Sort by:
+        Sort by: 
         <select asp-for="Sort">
             <option value="">All</option>
             <option value="name">Name</option>
@@ -67,9 +67,7 @@ companies.Count == 0-->
             <td>
                 @foreach (var gc in gameCompanies)
                 {
-                <a asp-controller="Game" asp-action="Details" asp-route-id="@gc.Id" class="">
-                    @Html.DisplayFor(_ => gc.Game.Title)
-                </a>
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@gc.Id" class="">@Html.DisplayFor(_ => gc.Game.Title)</a>
                 <span class=""> | </span>
                 }
             </td>

@@ -1,30 +1,86 @@
 @model GameManagementMvc.Models.Genre
 
 @{
-    ViewData["Title"] = "Details";
+ViewData["Title"] = "Genre Details";
+var gameGenres = Model.GameGenres.ToList();
 }
 
-<h1>Details</h1>
+<h1>@ViewData["Title"]</h1>
 
 <div>
-    <h4>Genre</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<hr>
+
+<div class="row justify-content-between">
+    <dl class="row col-8 align-self-center">
+        <dt class = "col-sm-4">
+            @Html.DisplayNameFor(_ => Model.Title)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
+        <dd class = "col-sm-8">
+            @Html.DisplayFor(_ => Model.Title)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Body)
+        <dt class = "col-sm-4">
+            @Html.DisplayNameFor(_ => Model.Body)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Body)
+        <dd class = "col-sm-8">
+            @Html.DisplayFor(_ => Model.Body)
         </dd>
     </dl>
+
+    <div class="col-4 text-end">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<br>
+<div class="">
+    <h3 class="">@Model.Title Games</h3>
+    @if (gameGenres.Any())
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(_ => gameGenres[0].Game.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(_ => gameGenres[0].Game.Rating)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(_ => gameGenres[0].Game.ReleaseDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in gameGenres)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(_ => item.Game.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(_ => item.Game.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(_ => item.Game.ReleaseDate)
+                </td>
+                <td>
+                    <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Game.Id">Edit</a> |
+                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Game.Id">Details</a> |
+                    <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Game.Id">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+    else
+    {
+    <p class="">Genre has no games. <a asp-controller="Game" asp-action="Create" class="">Create a game</a>.</p>
+    }
 </div>

@@ -55,16 +55,11 @@ var gameGenres = Model.GameGenres.ToList();
             @Html.DisplayNameFor(_ => gameGenres![0].Genre)
         </dt>
         <dd class="col-sm-8">
-            @for (int i = 0; i < gameGenres.Count; i++)
-                {
-                if (i != 0)
-                {
+            @foreach (var gg in gameGenres)
+            {
+                <a asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">@Html.DisplayFor(_ => gg.Genre.Title)</a>
                 <span> | </span>
-                }
-                <a asp-controller="Genre" asp-action="Details" asp-route-id="@gameGenres[i].Genre.Id">
-                    @Html.DisplayFor(_ => gameGenres[i].Genre.Title)
-                </a>
-                }
+            }
         </dd>
     </dl>
 

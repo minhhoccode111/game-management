@@ -1,41 +1,71 @@
-@model IEnumerable<GameManagementMvc.Models.Genre>
+@model GameManagementMvc.Models.GenreViewModel
 
 @{
-    ViewData["Title"] = "Index";
+ViewData["Title"] = "All Genres";
+var genres = Model.Genres!;
+bool hasTitle = !String.IsNullOrEmpty(Model.Title);
 }
 
-<h1>Index</h1>
+<h1>
+    @if (hasTitle)
+    {
+    <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
+    }
+    else
+    {
+    <p>@ViewData["Title"]</p>
+    }
+</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-controller="Genre" asp-action="Index" method="get">
+    <p>
+        Sort by: 
+        <select asp-for="Sort">
+            <option value="">All</option>
+            <option value="name">Name</option>
+            <option value="-name">-Name</option>
+        </select>
+        Title: <input type="text" name="Title" value="@Model.Title">
+        <input type="submit" value="Filter" class="">
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(_ => genres![0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Body)
+                @Html.DisplayNameFor(_ => genres![0].GameGenres)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in genres) {
+        var gameGenres = item.GameGenres.ToList();
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(_ => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Body)
+                @foreach (var gg in gameGenres)
+                {
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@gg.Game.Id">@Html.DisplayFor(_ => gg.Game.Title)</a>
+                <span> | </span>
+                }
             </td>
-            <td>
+            <td class="text-nowrap">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>

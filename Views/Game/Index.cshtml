@@ -26,15 +26,15 @@ var games = Model.Games!;
 
 <form asp-controller="Game" asp-action="Index" method="get">
     <p>
-        Company:
+        Company: 
         <select asp-for="CompanyId" asp-items="@Model.Companies">
             <option value="">All</option>
         </select>
-        Genre:
+        Genre: 
         <select asp-for="GenreId" asp-items="@Model.Genres">
             <option value="">All</option>
         </select>
-        Rating:
+        Rating: 
         <select asp-for="Rating">
             <option value="">All</option>
             <option value="1">1</option>
@@ -43,7 +43,7 @@ var games = Model.Games!;
             <option value="4">4</option>
             <option value="5">5</option>
         </select>
-        Sort by:
+        Sort by: 
         <select asp-for="Sort">
             <option value="">All</option>
             <option value="name">Name</option>
@@ -99,18 +99,14 @@ games.Count == 0-->
             <td>
                 @foreach (var gc in gameCompanies)
                 {
-                <a asp-controller="Company" asp-action="Details" asp-route-id="@gc.Company.Id">
-                    @Html.DisplayFor(_ => gc.Company.Title)
-                </a>
+                <a asp-controller="Company" asp-action="Details" asp-route-id="@gc.Company.Id">@Html.DisplayFor(_ => gc.Company.Title)</a>
                 <span> | </span>
                 }
             </td>
             <td>
                 @foreach (var gg in gameGenres)
                 {
-                <a asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">
-                    @Html.DisplayFor(_ => gg.Genre.Title)
-                </a>
+                <a asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">@Html.DisplayFor(_ => gg.Genre.Title)</a>
                 <span> | </span>
                 }
             </td>

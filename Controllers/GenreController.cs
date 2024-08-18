@@ -15,9 +15,36 @@ namespace GameManagementMvc.Controllers
         }
 
         // GET: Genre
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string title, string sort)
         {
-            return View(await _context.Genre.ToListAsync());
+            if (_context.Genre == null)
+            {
+                return Problem("Entity set 'GameManagementMvc.Genre' is null.");
+            }
+
+            var genres = _context
+                .Genre.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Game)
+                .AsNoTracking()
+                .AsQueryable();
+
+            genres = GenreSortBy(genres, sort);
+
+            if (!String.IsNullOrEmpty(title))
+            {
+                genres = genres.Where(genre => genre.Title.ToUpper().Contains(title.ToUpper()));
+            }
+
+            var genreList = await genres.ToListAsync();
+
+            var genreVM = new GenreViewModel
+            {
+                Genres = genreList,
+                Title = title,
+                Sort = sort,
+            };
+
+            return View(genreVM);
         }
 
         // GET: Genre/Details/5
@@ -28,7 +55,12 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre.FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await _context
+                .Genre.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Game)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (genre == null)
             {
                 return NotFound();
@@ -48,7 +80,7 @@ namespace GameManagementMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Body")] Genre genre)
+        public async Task<IActionResult> Create([Bind("Title,Body")] Genre genre)
         {
             if (ModelState.IsValid)
             {
@@ -67,11 +99,17 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre.FindAsync(id);
+            var genre = await _context
+                .Genre.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Game)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(g => g.Id == id);
+
             if (genre == null)
             {
                 return NotFound();
             }
+
             return View(genre);
         }
 
@@ -96,7 +134,7 @@ namespace GameManagementMvc.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GenreExists(genre.Id))
+                    if (!GenreExist(genre.Id))
                     {
                         return NotFound();
                     }
@@ -105,8 +143,10 @@ namespace GameManagementMvc.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(genre);
         }
 
@@ -118,7 +158,12 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre.FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await _context
+                .Genre.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Game)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (genre == null)
             {
                 return NotFound();
@@ -133,18 +178,49 @@ namespace GameManagementMvc.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var genre = await _context.Genre.FindAsync(id);
+
+            if (!IsGenreDeletable(id))
+            {
+                return RedirectToAction(nameof(Delete));
+            }
+
             if (genre != null)
             {
                 _context.Genre.Remove(genre);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GenreExists(int id)
+        // ############################## HELPERS ##############################
+
+        private bool GenreExist(int id)
         {
             return _context.Genre.Any(e => e.Id == id);
+        }
+
+        private IQueryable<Genre> GenreSortBy(IQueryable<Genre> genres, string sortBy)
+        {
+            if (sortBy == "name")
+                return genres.OrderBy(g => g.Title);
+            if (sortBy == "-name")
+                return genres.OrderByDescending(g => g.Title);
+            // if (sortBy == "date")
+            //     return genres.OrderBy(c => c.FoundingDate);
+            // if (sortBy == "-date")
+            //     return genres.OrderByDescending(c => c.FoundingDate);
+            // if (sortBy == "rating")
+            //     return genres.OrderBy(c => c.Rating);
+            // if (sortBy == "-rating")
+            //     return genres.OrderByDescending(c => c.Rating);
+            return genres;
+        }
+
+        private bool IsGenreDeletable(int id)
+        {
+            return _context.GameGenre.All(gg => gg.GenreId != id);
         }
     }
 }
