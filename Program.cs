@@ -4,13 +4,30 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// inject database context
-builder.Services.AddDbContext<GameManagementMvcContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("Connection string 'MyDb' not found.")
-    )
-);
+// add database context and cache
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<GameManagementMvcContext>(options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'MyDb' not found.")
+        )
+    );
+    builder.Services.AddDistributedMemoryCache();
+}
+else
+{
+    builder.Services.AddDbContext<GameManagementMvcContext>(options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")
+        )
+    );
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration["AZURE_REDIS_CONNECTIONSTRING"];
+        options.InstanceName = "game-management-cache";
+    });
+}
 
 builder.Services.AddControllersWithViews();
 
