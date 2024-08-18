@@ -43,11 +43,4 @@ dotnet ef migrations add SqlServerMigration
 dotnet ef database update
 ```
 
-Generate a SQL Schema Script
-
-```bash
-dotnet ef migrations script -o migration.sql
-
-```
-
 ## Design choices and tradeoffs

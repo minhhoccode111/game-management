@@ -15,9 +15,20 @@ CREATE TABLE [Company] (
     [Id] int NOT NULL IDENTITY,
     [Title] nvarchar(64) NOT NULL,
     [Body] nvarchar(2048) NOT NULL,
-    [Image] nvarchar(2048) NULL,
     [FoundingDate] datetime2 NOT NULL,
+    [Image] nvarchar(2048) NULL,
     CONSTRAINT [PK_Company] PRIMARY KEY ([Id])
+);
+GO
+
+CREATE TABLE [Game] (
+    [Id] int NOT NULL IDENTITY,
+    [Title] nvarchar(64) NOT NULL,
+    [Body] nvarchar(2048) NOT NULL,
+    [Rating] int NOT NULL,
+    [ReleaseDate] datetime2 NOT NULL,
+    [Image] nvarchar(2048) NULL,
+    CONSTRAINT [PK_Game] PRIMARY KEY ([Id])
 );
 GO
 
@@ -29,17 +40,17 @@ CREATE TABLE [Genre] (
 );
 GO
 
-CREATE TABLE [Game] (
+CREATE TABLE [GameCompany] (
     [Id] int NOT NULL IDENTITY,
+    [GameId] int NOT NULL,
     [CompanyId] int NOT NULL,
-    [GenreIds] nvarchar(max) NULL,
     [Title] nvarchar(64) NOT NULL,
     [Body] nvarchar(2048) NOT NULL,
-    [Image] nvarchar(2048) NULL,
-    [Rating] int NOT NULL,
-    [ReleaseDate] datetime2 NOT NULL,
-    CONSTRAINT [PK_Game] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_Game_Company_CompanyId] FOREIGN KEY ([CompanyId]) REFERENCES [Company] ([Id]) ON DELETE CASCADE
+    [StartDate] datetime2 NOT NULL,
+    [EndDate] datetime2 NULL,
+    CONSTRAINT [PK_GameCompany] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_GameCompany_Company_CompanyId] FOREIGN KEY ([CompanyId]) REFERENCES [Company] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_GameCompany_Game_GameId] FOREIGN KEY ([GameId]) REFERENCES [Game] ([Id]) ON DELETE CASCADE
 );
 GO
 
@@ -52,14 +63,17 @@ CREATE TABLE [GameGenre] (
 );
 GO
 
-CREATE INDEX [IX_Game_CompanyId] ON [Game] ([CompanyId]);
+CREATE INDEX [IX_GameCompany_CompanyId] ON [GameCompany] ([CompanyId]);
+GO
+
+CREATE INDEX [IX_GameCompany_GameId] ON [GameCompany] ([GameId]);
 GO
 
 CREATE INDEX [IX_GameGenre_GenreId] ON [GameGenre] ([GenreId]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20240813024750_SqlServerMigration', N'8.0.7');
+VALUES (N'20240814085119_SqlServerMigration', N'8.0.7');
 GO
 
 COMMIT;

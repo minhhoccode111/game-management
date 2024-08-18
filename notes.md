@@ -1,74 +1,43 @@
 # Notes
 
-<!--FIX: this docs-->
-
 ## Database design
 
-- Company
-  - ID
-  - Title
-  - Body
-  - Image
-  - Games
-  - Founding Date
 - Game
-  - ID
+  - Id
   - Title
   - Body
   - Image
   - Rating
   - Release Date
-  - Company
+  - GameCompanies
+  - GameGenres
+- GameCompany
+  - Id
+  - GameId
   - CompanyId
-  - Genres
-  - GenreIds
-- Genre
-  - ID
   - Title
   - Body
-  - Games
-
-## App flow
-
-- layout header
-  - title
-  - home
-  - game
-  - company
-  - genre
-  - about
-  - privacy
-- home
-  - index
-  - about
-  - privacy
-- games
-  - create new
-  - filter - drop down select company - drop down select genre - drop down select rating - drop down select sort by - search bar game title
-  - table - info preview - title - rating - release date - company - genres - links - to a genre detail - to a company detail - to a game detail - to edit game - to delete game
-- companies
-  - create new
-  - filter - drop down select sort by - search bar company title
-  - table - info preview - title - founding date - games - links - to a game detail - to a company detail - to edit company - to delete company
-- genres
-  - create new
-  - filter - drop down select sort by - search bar genre title
-  - table - info preview - title - games - links - to a game detail - to a genre detail - to edit genre - to delete genre
-- game
-  - create - form
-  - detail - info
-  - edit - form
-  - delete - confirm
-- company
-  - create - form
-  - detail - info - games created by this company
-  - edit - form - games created by this company
-  - delete - confirm - remove games created by this company before deleting
-- genres
-  - create - form
-  - detail - info - games created with this genre
-  - edit - form - games created with this genre
-  - delete - confirm - remove games created with this genre before deleting
+  - StartDate
+  - EndDate
+  - Game
+  - Company
+- Company
+  - Id
+  - Title
+  - Body
+  - Image
+  - Founding Date
+  - GameCompanies
+- GameGenre
+  - GameId
+  - GenreId
+  - Game
+  - Genre
+- Genre
+  - Id
+  - Title
+  - Body
+  - GameGenres
 
 ## Create a mvc project use CLI
 
@@ -99,13 +68,24 @@ dotnet aspnet-codegenerator controller -name CompanyController -m Company -dc Ga
 dotnet aspnet-codegenerator controller -name GenreController -m Genre -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider sqlite
 ```
 
-## Entity Framework Core (ORM)
-
-Create and update a database to match the data models
+## Migration
 
 ```bash
 dotnet ef migrations add SqlServerMigration
 dotnet ef database update
+```
+
+## Create a mvc project use CLI
+
+```bash
+dotnet new mvc -n ProjectName -o ProjectName
+dotnet new gitignore
+```
+
+## Generate a SQL Schema Script
+
+```bash
+dotnet ef migrations script -o migration.sql
 ```
 
 ## Embeded the variables in the View
