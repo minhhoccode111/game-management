@@ -15,9 +15,31 @@ namespace GameManagementMvc.Controllers
         }
 
         // GET: Company
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sort, string title)
         {
-            return View(await _context.Company.ToListAsync());
+            if (_context.Company == null)
+            {
+                return Problem("Entity set 'GameManagementMvc.Company' is null.");
+            }
+
+            var companies = _context
+                .Company.Include(c => c.GameCompanies)
+                .ThenInclude(gc => gc.Game)
+                .AsNoTracking()
+                .AsQueryable();
+
+            companies = CompanySortBy(companies, sort);
+
+            if (!String.IsNullOrEmpty(title))
+            {
+                companies = companies.Where(c => c.Title.ToUpper().Contains(title.ToUpper()));
+            }
+
+            var companyList = await companies.ToListAsync();
+
+            var companyVM = new CompanyViewModel { Companies = companyList, Title = title, };
+
+            return View(companyVM);
         }
 
         // GET: Company/Details/5
@@ -28,7 +50,12 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
+            var company = await _context
+                .Company.Include(c => c.GameCompanies)
+                .ThenInclude(gc => gc.Game)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (company == null)
             {
                 return NotFound();
@@ -49,7 +76,7 @@ namespace GameManagementMvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Title,Body,FoundingDate,Image")] Company company
+            [Bind("Title,Body,FoundingDate,Image")] Company company
         )
         {
             if (ModelState.IsValid)
@@ -69,11 +96,17 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Company.FindAsync(id);
+            var company = await _context
+                .Company.Include(c => c.GameCompanies)
+                .ThenInclude(gc => gc.Game)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+
             if (company == null)
             {
                 return NotFound();
             }
+
             return View(company);
         }
 
@@ -101,7 +134,7 @@ namespace GameManagementMvc.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CompanyExists(company.Id))
+                    if (!CompanyExist(company.Id))
                     {
                         return NotFound();
                     }
@@ -123,7 +156,12 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Company.FirstOrDefaultAsync(m => m.Id == id);
+            var company = await _context
+                .Company.Include(c => c.GameCompanies)
+                .ThenInclude(gc => gc.Game)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (company == null)
             {
                 return NotFound();
@@ -137,12 +175,19 @@ namespace GameManagementMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // BUG: Currently allow delete Company even when DeleteBehavior is
-            // set to Restrict which is weird
             var company = await _context.Company.FindAsync(id);
 
+            // BUG: Currently allow delete Company even when we set
+            // DeleteBehavior.Restrict which cause we to  manually check
+            if (!IsCompanyDeletable(id))
+            {
+                return RedirectToAction(nameof(Delete));
+            }
+
+            // company do exist and can be deleted
             if (company != null)
             {
+                // remove from current context
                 _context.Company.Remove(company);
             }
 
@@ -151,7 +196,32 @@ namespace GameManagementMvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CompanyExists(int id)
+        // ############################## HELPERS ##############################
+
+        // use to sort companies base on provided string
+        private IQueryable<Company> CompanySortBy(IQueryable<Company> companies, string sortBy)
+        {
+            if (sortBy == "name")
+                return companies.OrderBy(c => c.Title);
+            if (sortBy == "-name")
+                return companies.OrderByDescending(c => c.Title);
+            if (sortBy == "date")
+                return companies.OrderBy(c => c.FoundingDate);
+            if (sortBy == "-date")
+                return companies.OrderByDescending(c => c.FoundingDate);
+            // if (sortBy == "rating")
+            //     return companies.OrderBy(c => c.Rating);
+            // if (sortBy == "-rating")
+            //     return companies.OrderByDescending(c => c.Rating);
+            return companies;
+        }
+
+        private bool IsCompanyDeletable(int id)
+        {
+            return _context.GameCompany.All(g => g.CompanyId != id);
+        }
+
+        private bool CompanyExist(int id)
         {
             return _context.Company.Any(e => e.Id == id);
         }

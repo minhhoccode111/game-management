@@ -26,6 +26,7 @@ namespace GameManagementMvc.Models
         public string? Image { get; set; }
 
         // NAVIGATION PROPERTIES
+        [Display(Name = "Games")]
         [JsonIgnore]
         public ICollection<GameCompany> GameCompanies { get; set; } = new List<GameCompany>();
     }

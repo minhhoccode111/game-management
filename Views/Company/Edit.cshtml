@@ -1,15 +1,31 @@
 @model GameManagementMvc.Models.Company
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Company";
+    var gameCompanies = Model.GameCompanies.ToList();
 }
 
-<h1>Edit</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Company</h4>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-3">
+        @if (String.IsNullOrEmpty(Model.Image))
+        {
+        <img src="~/img/default.png" alt="No image" class="img-thumbnail">
+        }
+        else
+        {
+        <img src="@Model.Image" alt="Game image" class="img-thumbnail">
+        }
+    </div>
+
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -20,13 +36,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
+                <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FoundingDate" class="control-label"></label>
-                <input asp-for="FoundingDate" class="form-control" />
-                <span asp-validation-for="FoundingDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
@@ -34,14 +45,19 @@
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label asp-for="FoundingDate" class="control-label"></label>
+                <input asp-for="FoundingDate" class="form-control" />
+                <span asp-validation-for="FoundingDate" class="text-danger"></span>
+            </div>
+            <br>
+            <div class="form-group d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-primary">Delete</a>
+                <input type="submit" value="Save" class="btn btn-success" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

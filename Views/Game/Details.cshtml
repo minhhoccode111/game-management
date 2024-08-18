@@ -81,6 +81,9 @@ var gameGenres = Model.GameGenres.ToList();
         Development Phases
     </h3>
     <table class="table">
+        <!--TODO: check if !gameCompanies.Any() and display other <thead> and <tbody>
+with a message instead of straight gameCompanies[0] which can throw error when
+gameCompanies.Count == 0, even when a game is forced to have at least 1 gameCompany-->
         <thead>
             <tr>
                 <th>

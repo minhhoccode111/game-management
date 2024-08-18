@@ -64,7 +64,7 @@
                     <span class="text-danger">
                         You need to 
                         <a asp-controller="Genre" asp-action="Create" class="">create a genre</a>
-                        before creating a game.
+                        before editing a game.
                     </span>
                     }
                 </p>
@@ -73,6 +73,7 @@
             <p class="form-group"><b>Game Companies*</b></p>
 
             <table class="table mb-0">
+                <!--NOTE: this is hardcoded-->
                 <thead>
                     <tr>
                         <th>
@@ -132,8 +133,8 @@
                     <span class="text-danger">
                         You need to 
                         <a asp-controller="Company" asp-action="Create" class="">create a company</a>
-                        before creating a game.
-                    </span> 
+                        before editing a game.
+                    </span>
                     }
                 </p>
                 <p class="text-danger d-none" data-ErrorMessage>This field is required. Please <b>add</b> at least one game company.</p>

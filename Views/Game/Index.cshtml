@@ -1,17 +1,18 @@
 @model GameManagementMvc.Models.GameViewModel
 
 @{
-    ViewData["Title"] = "All Games";
-    bool hasTitle = !String.IsNullOrEmpty(Model.Title);
-    bool hasGenreId = Model.GenreId.HasValue;
-    bool hasCompanyId = Model.CompanyId.HasValue;
-    bool hasRating = Model.Rating.HasValue;
+ViewData["Title"] = "All Games";
+bool hasTitle = !String.IsNullOrEmpty(Model.Title);
+bool hasGenreId = Model.GenreId.HasValue;
+bool hasCompanyId = Model.CompanyId.HasValue;
+bool hasRating = Model.Rating.HasValue;
+var games = Model.Games!;
 }
 
 <h1>
     @if (hasTitle || hasGenreId || hasCompanyId || hasRating)
     {
-        <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
+    <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
     }
     else
     {
@@ -42,33 +43,35 @@
             <option value="4">4</option>
             <option value="5">5</option>
         </select>
-        Sort by: 
+        Sort by:
         <select asp-for="Sort">
             <option value="">All</option>
             <option value="name">Name</option>
             <option value="-name">-Name</option>
             <option value="rating">Rating</option>
             <option value="-rating">-Rating</option>
-            <option value="date">Date Release</option>
-            <option value="-date">-Date Release</option>
+            <option value="date">Date</option>
+            <option value="-date">-Date</option>
         </select>
-        <!--keep the search string display with @@Model.Title-->
-        Title: <input type="text" name="Title" value="@Model.Title">
+        Title: <input type="text" asp-for="Title" value="@Model.Title">
         <input type="submit" value="Filter" class="">
     </p>
 </form>
 
 <table class="table">
-    <thead>
+    <!--TODO: check if !games.Any() and display other <thead> and <tbody> 
+with a message instead of straight games[0] which can throw error when 
+games.Count == 0-->
+    <thead class="text-nowrap">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Games![0].Title)
+                @Html.DisplayNameFor(_ => games[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Games![0].Rating)
+                @Html.DisplayNameFor(_ => games[0].Rating)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Games![0].ReleaseDate)
+                @Html.DisplayNameFor(_ => games[0].ReleaseDate)
             </th>
             <th>
                 Phases
@@ -80,7 +83,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Games!) {
+        @foreach (var item in games) {
         var gameCompanies = item.GameCompanies.ToList();
         var gameGenres = item.GameGenres.ToList();
         <tr>
@@ -94,35 +97,29 @@
                 @Html.DisplayFor(_ => item.ReleaseDate)
             </td>
             <td>
-                @for (int i = 0; i < gameCompanies.Count; i++)
-                    {
-                    if (i != 0)
-                    {
-                    <span> | </span>
-                    }
-                    <a asp-controller="Company" asp-action="Details" asp-route-id="@gameCompanies[i].Company.Id">
-                        @Html.DisplayFor(_ => gameCompanies[i].Company.Title)
-                    </a>
-                    }
+                @foreach (var gc in gameCompanies)
+                {
+                <a asp-controller="Company" asp-action="Details" asp-route-id="@gc.Company.Id">
+                    @Html.DisplayFor(_ => gc.Company.Title)
+                </a>
+                <span> | </span>
+                }
             </td>
             <td>
-                @for (int i = 0; i < gameGenres.Count; i++)
-                    {
-                    if (i != 0)
-                    {
-                    <span> | </span>
-                    }
-                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@gameGenres[i].Genre.Id">
-                        @Html.DisplayFor(_ => gameGenres[i].Genre.Title)
-                    </a>
-                    }
+                @foreach (var gg in gameGenres)
+                {
+                <a asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">
+                    @Html.DisplayFor(_ => gg.Genre.Title)
+                </a>
+                <span> | </span>
+                }
             </td>
-            <td>
+            <td class="text-nowrap">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>

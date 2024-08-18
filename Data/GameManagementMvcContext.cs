@@ -30,7 +30,7 @@ namespace GameManagementMvc.Data
                 .HasOne(gg => gg.Genre)
                 .WithMany(g => g.GameGenres)
                 .HasForeignKey(gg => gg.GenreId)
-                // can't delete without removing all GameGenres first
+                // can't delete without removing all GameGenres first BUG:
                 .OnDelete(DeleteBehavior.Restrict);
 
             // optional: make delete Genre cascade (auto delete all children)
@@ -51,7 +51,7 @@ namespace GameManagementMvc.Data
                 .HasOne(gc => gc.Company)
                 .WithMany(c => c.GameCompanies)
                 .HasForeignKey(gc => gc.CompanyId)
-                // can't delete without removing all GameCompanies first
+                // can't delete without removing all GameCompanies first BUG:
                 .OnDelete(DeleteBehavior.Restrict);
 
             // optional: make delete Company cascade (auto delete all children)

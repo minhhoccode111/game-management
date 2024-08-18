@@ -1,53 +1,84 @@
-@model IEnumerable<GameManagementMvc.Models.Company>
+@model GameManagementMvc.Models.CompanyViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "All Companies";
+    var companies = Model.Companies!;
+    bool hasTitle = !String.IsNullOrEmpty(Model.Title);
 }
 
-<h1>Index</h1>
+<h1>
+    @if (hasTitle)
+    {
+        <span>&lt; </span> <a asp-action="Index" class="text-black">Back</a>
+    }
+    else
+    {
+    <p>@ViewData["Title"]</p>
+    }
+</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-controller="Company" asp-action="Index" method="get">
+    <p>
+        Sort by:
+        <select asp-for="Sort">
+            <option value="">All</option>
+            <option value="name">Name</option>
+            <option value="-name">-Name</option>
+            <option value="date">Date</option>
+            <option value="-date">-Date</option>
+        </select>
+        Title: <input type="text" asp-for="Title" value="@Model.Title">
+        <input type="submit" value="Filter" class="">
+    </p>
+</form>
+
 <table class="table">
-    <thead>
+    <!--TODO: check if !companies.Any() and display other <thead> and <tbody> 
+with a message instead of straight companies[0] which can throw error when 
+companies.Count == 0-->
+    <thead class="text-nowrap">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(_ => companies[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Body)
+                @Html.DisplayNameFor(_ => companies[0].FoundingDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FoundingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
+                @Html.DisplayNameFor(_ => companies[0].GameCompanies)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in companies) {
+        var gameCompanies = item.GameCompanies.ToList();
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(_ => item.Title)
+            </td>
+            <td class="text-nowrap">
+                @Html.DisplayFor(_ => item.FoundingDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Body)
+                @foreach (var gc in gameCompanies)
+                {
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@gc.Id" class="">
+                    @Html.DisplayFor(_ => gc.Game.Title)
+                </a>
+                <span class=""> | </span>
+                }
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FoundingDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
+            <td class="text-nowrap">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>

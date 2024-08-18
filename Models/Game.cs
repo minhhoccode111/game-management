@@ -30,9 +30,11 @@ namespace GameManagementMvc.Models
 
         // NAVIGATIONS PROPERTIES
         [JsonIgnore]
+        [Display(Name = "Genres")]
         public ICollection<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
 
         [JsonIgnore]
+        [Display(Name = "Companies")]
         public ICollection<GameCompany> GameCompanies { get; set; } = new List<GameCompany>();
     }
 }

@@ -583,9 +583,7 @@ namespace GameManagementMvc.Controllers
             return genreIds.All(id => _context.Genre.Any(g => g.Id == id));
         }
 
-        private void ValidateGameFormViewModel(GameFormViewModel gameVM) { }
-
-        // DROP DOWN SELECT FOR FILTER
+        // drop down select
         private async Task<SelectList> GetAllGenresSelectList(int? selected = null)
         {
             List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
@@ -598,18 +596,11 @@ namespace GameManagementMvc.Controllers
             return new SelectList(companies, "Id", "Title", selected?.ToString());
         }
 
-        // CHECKBOXES SELECT FOR CREATE AND EDIT
+        // checkboxes
         private async Task<MultiSelectList> GetAllGenresMultiSelect(List<int>? selected = null)
         {
             List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
             return new MultiSelectList(genres, "Id", "Title", selected);
-        }
-
-        // NOTE: this can't be used
-        private async Task<MultiSelectList> GetAllCompaniesMultiSelect(List<int>? selected = null)
-        {
-            List<Company> companies = await _context.Company.OrderBy(g => g.Title).ToListAsync();
-            return new MultiSelectList(companies, "Id", "Title", selected);
         }
     }
 }

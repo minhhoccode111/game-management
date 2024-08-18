@@ -19,7 +19,7 @@ namespace GameManagementMvc.Models
                     || context.Company.Any()
                     || context.Genre.Any()
                     || context.GameCompany.Any()
-                    || context.GameCompany.Any()
+                    || context.GameGenre.Any()
                 )
                 {
                     // uncomment to clear database
