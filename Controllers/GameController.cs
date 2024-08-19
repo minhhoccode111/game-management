@@ -30,13 +30,7 @@ namespace GameManagementMvc.Controllers
                 return Problem("Entity set 'GameManagementMvc.Game' is null.");
             }
 
-            IQueryable<Game> games = _context
-                .Game.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Genre)
-                .Include(g => g.GameCompanies)
-                .ThenInclude(gc => gc.Company)
-                .AsNoTracking() // improve perf, for read-only query
-                .AsQueryable(); // hold and not execute sql yet
+            IQueryable<Game> games = GetAll();
 
             games = GameSortBy(games, sort);
 
@@ -75,7 +69,7 @@ namespace GameManagementMvc.Controllers
                 GenreId = genreId,
                 Rating = rating,
                 Title = title,
-                Sort = sort
+                Sort = sort,
             };
 
             return View(gameVM);
@@ -89,13 +83,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context
-                .Game.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Genre)
-                .Include(g => g.GameCompanies)
-                .ThenInclude(gc => gc.Company)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Game? game = await GetById(id);
 
             if (game == null)
             {
@@ -176,7 +164,7 @@ namespace GameManagementMvc.Controllers
                     Body = gameVM.Body,
                     Rating = gameVM.Rating,
                     Image = gameVM.Image,
-                    ReleaseDate = gameVM.ReleaseDate
+                    ReleaseDate = gameVM.ReleaseDate,
                 };
                 _context.Game.Add(game);
                 // WARN: save change to generate Game.Id
@@ -199,7 +187,7 @@ namespace GameManagementMvc.Controllers
                         Title = companyVM.Title,
                         Body = companyVM.Body,
                         StartDate = companyVM.StartDate,
-                        EndDate = companyVM.EndDate
+                        EndDate = companyVM.EndDate,
                     };
                     _context.GameCompany.Add(gameCompany);
                 }
@@ -229,13 +217,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context
-                .Game.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Genre)
-                .Include(g => g.GameCompanies)
-                .ThenInclude(gc => gc.Company)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Game? game = await GetById(id);
 
             if (game == null)
             {
@@ -281,7 +263,7 @@ namespace GameManagementMvc.Controllers
                 ReleaseDate = game.ReleaseDate,
                 Image = game.Image,
                 GenreIds = genreIds,
-                GameCompanies = gameCompanies
+                GameCompanies = gameCompanies,
             };
 
             return View(gameFormVM);
@@ -368,7 +350,7 @@ namespace GameManagementMvc.Controllers
                         Body = gameVM.Body,
                         Rating = gameVM.Rating,
                         Image = gameVM.Image,
-                        ReleaseDate = gameVM.ReleaseDate
+                        ReleaseDate = gameVM.ReleaseDate,
                     };
 
                     // update game with new data (and old Game.Id)
@@ -392,7 +374,7 @@ namespace GameManagementMvc.Controllers
                             var gameGenre = new GameGenre
                             {
                                 GameId = newGame.Id,
-                                GenreId = genreId
+                                GenreId = genreId,
                             };
                             _context.GameGenre.Add(gameGenre);
                         }
@@ -426,7 +408,7 @@ namespace GameManagementMvc.Controllers
                                 Title = gameCompanyVM.Title,
                                 Body = gameCompanyVM.Body,
                                 StartDate = gameCompanyVM.StartDate,
-                                EndDate = gameCompanyVM.EndDate
+                                EndDate = gameCompanyVM.EndDate,
                             };
                             _context.GameCompany.Add(newGameCompany);
                         }
@@ -456,13 +438,7 @@ namespace GameManagementMvc.Controllers
 
             // return Redirect($"/Game/Edit/{game.Id}");
 
-            // prepare data to send back to client
-            var game = await _context
-                .Game.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Genre)
-                .Include(g => g.GameCompanies)
-                .ThenInclude(gc => gc.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Game? game = await GetById(id);
 
             if (game == null)
             {
@@ -510,13 +486,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var game = await _context
-                .Game.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Genre)
-                .Include(g => g.GameCompanies)
-                .ThenInclude(gc => gc.Company)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Game? game = await GetById(id);
 
             if (game == null)
             {
@@ -544,6 +514,28 @@ namespace GameManagementMvc.Controllers
         }
 
         // ############################## HELPERS ##############################
+
+        private async Task<Game?> GetById(int? id)
+        {
+            return await _context
+                .Game.Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(g => g.Id == id);
+        }
+
+        private IQueryable<Game> GetAll()
+        {
+            return _context
+                .Game.Include(g => g.GameCompanies)
+                .ThenInclude(gc => gc.Company)
+                .Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Genre)
+                .AsNoTracking() // improve perf, for read-only query
+                .AsQueryable(); // hold and not execute sql yet
+        }
 
         // use to sort games base on provided string
         private IQueryable<Game> GameSortBy(IQueryable<Game> games, string sort)

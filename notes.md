@@ -63,9 +63,9 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 ## Generate controller based on Models (game, company, genre)
 
 ```bash
-dotnet aspnet-codegenerator controller -name GameController -m Game -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider sqlite
-dotnet aspnet-codegenerator controller -name CompanyController -m Company -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider sqlite
-dotnet aspnet-codegenerator controller -name GenreController -m Genre -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider sqlite
+dotnet aspnet-codegenerator controller -name GameController -m Game -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider mssql-server -f
+dotnet aspnet-codegenerator controller -name CompanyController -m Company -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider mssql-server -f
+dotnet aspnet-codegenerator controller -name GenreController -m Genre -dc GameManagementMvc.Data.GameManagementMvcContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries --databaseProvider mssql-server -f
 ```
 
 ## Migration
@@ -88,12 +88,15 @@ dotnet new gitignore
 dotnet ef migrations script -o migration.sql
 ```
 
-## Embeded the variables in the View
+## Pass data to client
+
+Pass data in .Net Core
 
 ```csharp
-MultiSelectList companies = await GetAllCompaniesSelectList();
 ViewData["Companies"] = JsonConvert.SerializeObject(companies);
 ```
+
+Extract data in JavaScript
 
 ```js
 const someData = @Html.Raw(ViewData["Companies"]);

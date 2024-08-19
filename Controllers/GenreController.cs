@@ -22,11 +22,7 @@ namespace GameManagementMvc.Controllers
                 return Problem("Entity set 'GameManagementMvc.Genre' is null.");
             }
 
-            var genres = _context
-                .Genre.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Game)
-                .AsNoTracking()
-                .AsQueryable();
+            IQueryable<Genre> genres = GetAll();
 
             genres = GenreSortBy(genres, sort);
 
@@ -55,11 +51,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var genre = await _context
-                .Genre.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Genre? genre = await GetById(id);
 
             if (genre == null)
             {
@@ -99,11 +91,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var genre = await _context
-                .Genre.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(g => g.Id == id);
+            Genre? genre = await GetById(id);
 
             if (genre == null)
             {
@@ -158,11 +146,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var genre = await _context
-                .Genre.Include(g => g.GameGenres)
-                .ThenInclude(gg => gg.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Genre? genre = await GetById(id);
 
             if (genre == null)
             {
@@ -195,6 +179,24 @@ namespace GameManagementMvc.Controllers
         }
 
         // ############################## HELPERS ##############################
+
+        private async Task<Genre?> GetById(int? id)
+        {
+            return await _context
+                .Genre.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Game)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(g => g.Id == id);
+        }
+
+        private IQueryable<Genre> GetAll()
+        {
+            return _context
+                .Genre.Include(g => g.GameGenres)
+                .ThenInclude(gg => gg.Game)
+                .AsNoTracking()
+                .AsQueryable();
+        }
 
         private bool GenreExist(int id)
         {

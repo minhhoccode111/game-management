@@ -22,11 +22,7 @@ namespace GameManagementMvc.Controllers
                 return Problem("Entity set 'GameManagementMvc.Company' is null.");
             }
 
-            var companies = _context
-                .Company.Include(c => c.GameCompanies)
-                .ThenInclude(gc => gc.Game)
-                .AsNoTracking()
-                .AsQueryable();
+            IQueryable<Company> companies = GetAll();
 
             companies = CompanySortBy(companies, sort);
 
@@ -37,7 +33,7 @@ namespace GameManagementMvc.Controllers
 
             var companyList = await companies.ToListAsync();
 
-            var companyVM = new CompanyViewModel { Companies = companyList, Title = title, };
+            var companyVM = new CompanyViewModel { Companies = companyList, Title = title };
 
             return View(companyVM);
         }
@@ -50,11 +46,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var company = await _context
-                .Company.Include(c => c.GameCompanies)
-                .ThenInclude(gc => gc.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Company? company = await GetById(id);
 
             if (company == null)
             {
@@ -96,11 +88,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var company = await _context
-                .Company.Include(c => c.GameCompanies)
-                .ThenInclude(gc => gc.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+            Company? company = await GetById(id);
 
             if (company == null)
             {
@@ -156,11 +144,7 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            var company = await _context
-                .Company.Include(c => c.GameCompanies)
-                .ThenInclude(gc => gc.Game)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Company? company = await GetById(id);
 
             if (company == null)
             {
@@ -197,6 +181,24 @@ namespace GameManagementMvc.Controllers
         }
 
         // ############################## HELPERS ##############################
+
+        private async Task<Company?> GetById(int? id)
+        {
+            return await _context
+                .Company.Include(c => c.GameCompanies)
+                .ThenInclude(gc => gc.Game)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(c => c.Id == id);
+        }
+
+        private IQueryable<Company> GetAll()
+        {
+            return _context
+                .Company.Include(c => c.GameCompanies)
+                .ThenInclude(gc => gc.Game)
+                .AsNoTracking()
+                .AsQueryable();
+        }
 
         // use to sort companies base on provided string
         private IQueryable<Company> CompanySortBy(IQueryable<Company> companies, string sortBy)
