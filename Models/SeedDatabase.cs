@@ -88,7 +88,7 @@ namespace GameManagementMvc.Models
                         FoundingDate = DateTime.Parse(
                             $"{ran.Next(1990, 2024)}-{ran.Next(1, 12)}-{ran.Next(1, 28)}"
                         ),
-                    }
+                    },
                 };
 
                 context.Company.AddRange(companyList);

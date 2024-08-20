@@ -26,8 +26,8 @@ bool hasTitle = !String.IsNullOrEmpty(Model.Title);
         Sort by: 
         <select asp-for="Sort">
             <option value="">All</option>
-            <option value="name">Name</option>
-            <option value="-name">-Name</option>
+            <option value="name">Name Increase</option>
+            <option value="-name">Name Decrease</option>
         </select>
         Title: <input type="text" name="Title" value="@Model.Title">
         <input type="submit" value="Filter" class="">
@@ -54,11 +54,7 @@ bool hasTitle = !String.IsNullOrEmpty(Model.Title);
                 @Html.DisplayFor(_ => item.Title)
             </td>
             <td>
-                @foreach (var gg in gameGenres)
-                {
-                <a asp-controller="Game" asp-action="Details" asp-route-id="@gg.Game.Id">@Html.DisplayFor(_ => gg.Game.Title)</a>
-                <span> | </span>
-                }
+                <a asp-action="Details" asp-route-id="@item.Id">@gameGenres.Count</a>
             </td>
             <td class="text-nowrap">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -26,10 +26,10 @@
         Sort by: 
         <select asp-for="Sort">
             <option value="">All</option>
-            <option value="name">Name</option>
-            <option value="-name">-Name</option>
-            <option value="date">Date</option>
-            <option value="-date">-Date</option>
+            <option value="name">Name Increase</option>
+            <option value="-name">Name Decrease</option>
+            <option value="date">Date Increase</option>
+            <option value="-date">Date Decrease</option>
         </select>
         Title: <input type="text" asp-for="Title" value="@Model.Title">
         <input type="submit" value="Filter" class="">
@@ -49,7 +49,7 @@ companies.Count == 0-->
                 @Html.DisplayNameFor(_ => companies[0].FoundingDate)
             </th>
             <th>
-                @Html.DisplayNameFor(_ => companies[0].GameCompanies)
+                Phases
             </th>
             <th></th>
         </tr>
@@ -65,11 +65,7 @@ companies.Count == 0-->
                 @Html.DisplayFor(_ => item.FoundingDate)
             </td>
             <td>
-                @foreach (var gc in gameCompanies)
-                {
-                <a asp-controller="Game" asp-action="Details" asp-route-id="@gc.Id" class="">@Html.DisplayFor(_ => gc.Game.Title)</a>
-                <span class=""> | </span>
-                }
+                <a asp-action="Details" asp-route-id="@item.Id" class="">@gameCompanies.Count</a>
             </td>
             <td class="text-nowrap">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

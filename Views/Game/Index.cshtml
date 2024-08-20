@@ -46,12 +46,12 @@ var games = Model.Games!;
         Sort by: 
         <select asp-for="Sort">
             <option value="">All</option>
-            <option value="name">Name</option>
-            <option value="-name">-Name</option>
-            <option value="rating">Rating</option>
-            <option value="-rating">-Rating</option>
-            <option value="date">Date</option>
-            <option value="-date">-Date</option>
+            <option value="name">Name Increase</option>
+            <option value="-name">Name Decrease</option>
+            <option value="rating">Rating Increase</option>
+            <option value="-rating">Rating Decrease</option>
+            <option value="date">Date Increase</option>
+            <option value="-date">Date Decrease</option>
         </select>
         Title: <input type="text" asp-for="Title" value="@Model.Title">
         <input type="submit" value="Filter" class="">
