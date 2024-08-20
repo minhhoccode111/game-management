@@ -18,16 +18,19 @@ ViewData["Title"] = "Edit Genre";
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id">
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Title*</span>
+                    <input asp-for="Title" class="form-control" />
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="Body" class="control-label"></label>
-                <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Body*</span>
+                    <textarea asp-for="Body" class="form-control"></textarea>
+                </div>
             </div>
-            <br>
             <div class="form-group d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-danger">Cancel</a>
                 <input type="submit" value="Save" class="btn btn-primary" />

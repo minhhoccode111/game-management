@@ -21,47 +21,51 @@ bool hasTitle = !String.IsNullOrEmpty(Model.Title);
     <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
 
-<form asp-controller="Genre" asp-action="Index" method="get">
-    <p>
-        Sort by: 
-        <select asp-for="Sort">
-            <option value="">All</option>
-            <option value="name">Name Increase</option>
-            <option value="-name">Name Decrease</option>
-        </select>
-        Title: <input type="text" name="Title" value="@Model.Title">
-        <input type="submit" value="Filter" class="">
-    </p>
+<form asp-controller="Genre" asp-action="Index" method="get" class="d-flex gap-2 justify-content-start">
+    <div><select class="form-select" asp-for="Sort">
+        <option value="">Sort</option>
+        <option value="name">Name Increase</option>
+        <option value="-name">Name Decrease</option>
+    </select></div>
+
+    <div><input asp-for="Title" value="@Model.Title" type="text" class="form-control" aria-label="Title" aria-describedby="inputGroup-sizing-default" placeholder="Title"></div>
+
+    <div><input type="submit" value="Filter" class="btn btn-primary"></div>
 </form>
 
+@if (genres.Any())
+{
+<hr>
 <table class="table">
-    <thead>
+    <thead class="text-nowrap table-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(_ => genres![0].Title)
             </th>
-            <th>
-                @Html.DisplayNameFor(_ => genres![0].GameGenres)
-            </th>
-            <th></th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in genres) {
         var gameGenres = item.GameGenres.ToList();
-        <tr>
+        <tr class="align-middle">
             <td>
-                @Html.DisplayFor(_ => item.Title)
-            </td>
-            <td>
+                <b>
+                    @Html.DisplayFor(_ => item.Title)
+                </b>
                 <a asp-action="Details" asp-route-id="@item.Id">@gameGenres.Count</a>
             </td>
-            <td class="text-nowrap">
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <td class="text-nowrap text-end">
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
         }
     </tbody>
 </table>
+}
+else
+{
+<p>No Genres yet.</p>
+}

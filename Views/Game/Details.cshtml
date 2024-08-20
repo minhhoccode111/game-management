@@ -72,14 +72,11 @@ var gameGenres = Model.GameGenres.ToList();
 
 <br>
 <div class="">
-    <h3 class="">
-        Development Phases
-    </h3>
+    <h3 class="">Development Phases - @gameCompanies.Count items</h3>
+    @if (gameCompanies.Any())
+    {
     <table class="table">
-        <!--TODO: check if !gameCompanies.Any() and display other <thead> and <tbody>
-with a message instead of straight gameCompanies[0] which can throw error when
-gameCompanies.Count == 0, even when a game is forced to have at least 1 gameCompany-->
-        <thead>
+        <thead class="text-nowrap table-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies![0].Company)
@@ -93,7 +90,7 @@ gameCompanies.Count == 0, even when a game is forced to have at least 1 gameComp
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies![0].StartDate)
                 </th>
-                <th>
+                <th class="text-end">
                     @Html.DisplayNameFor(_ => gameCompanies![0].EndDate)
                 </th>
             </tr>
@@ -115,7 +112,7 @@ gameCompanies.Count == 0, even when a game is forced to have at least 1 gameComp
                 <td>
                     @Html.DisplayFor(_ => item.StartDate)
                 </td>
-                <td>
+                <td class="text-end">
                     @if (item.EndDate == null)
                     {
                     <span><b>On going</b></span>
@@ -129,4 +126,9 @@ gameCompanies.Count == 0, even when a game is forced to have at least 1 gameComp
             }
         </tbody>
     </table>
+    }
+    else
+    {
+    <p>No development phases.</p>
+    }
 </div>

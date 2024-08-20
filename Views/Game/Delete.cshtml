@@ -72,11 +72,11 @@ var gameGenres = Model.GameGenres.ToList();
 
 <br>
 <div class="">
-    <h3 class="">
-        Development Phases
-    </h3>
+    <h3 class="">Development Phases - @gameCompanies.Count items</h3>
+    @if (gameCompanies.Any())
+    {
     <table class="table">
-        <thead>
+        <thead class="text-nowrap table-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies![0].Company)
@@ -90,7 +90,7 @@ var gameGenres = Model.GameGenres.ToList();
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies![0].StartDate)
                 </th>
-                <th>
+                <th class="text-end">
                     @Html.DisplayNameFor(_ => gameCompanies![0].EndDate)
                 </th>
             </tr>
@@ -112,7 +112,7 @@ var gameGenres = Model.GameGenres.ToList();
                 <td>
                     @Html.DisplayFor(_ => item.StartDate)
                 </td>
-                <td>
+                <td class="text-end">
                     @if (item.EndDate == null)
                     {
                     <span><b>On going</b></span>
@@ -126,9 +126,13 @@ var gameGenres = Model.GameGenres.ToList();
             }
         </tbody>
     </table>
+    }
+    else
+    {
+    <p>No development phase</p>
+    }
 </div>
 
-<br>
 <form class="float-right" asp-action="Delete">
     <h3 class="text-danger d-flex justify-content-between">
         <span class="text-start">Delete this game and related information?</span>

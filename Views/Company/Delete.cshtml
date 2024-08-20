@@ -61,10 +61,7 @@ var gameCompanies = Model.GameCompanies.ToList();
         Please remove the following Development Phases before trying to delete this Company
     </h3>
     <table class="table">
-        <thead>
-            <!--TODO: check if !gameCompanies.Any() and display other <thead> and <tbody> 
-with a message instead of straight gameCompanies[0] which can throw error when 
-gameCompanies.Count == 0-->
+        <thead class="text-nowrap table-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies[0]!.Game)
@@ -78,7 +75,7 @@ gameCompanies.Count == 0-->
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies[0]!.StartDate)
                 </th>
-                <th>
+                <th class="text-end">
                     @Html.DisplayNameFor(_ => gameCompanies[0]!.EndDate)
                 </th>
             </tr>
@@ -100,7 +97,7 @@ gameCompanies.Count == 0-->
                 <td>
                     @Html.DisplayFor(_ => gc.StartDate)
                 </td>
-                <td>
+                <td class="text-end">
                     @if (gc.EndDate == null)
                     {
                     <span><b>On going</b></span>

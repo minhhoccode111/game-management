@@ -1,7 +1,7 @@
 @model GameManagementMvc.Models.Company
 
 @{
-ViewData["Title"] = "Company Details";
+ViewData["Title"] = "Details Company";
 var gameCompanies = Model.GameCompanies.ToList();
 }
 
@@ -55,14 +55,11 @@ var gameCompanies = Model.GameCompanies.ToList();
 
 <br>
 <div class="">
-    <h3 class="">@Model.Title development phases</h3>
+    <h3 class="">@Model.Title development phases - @gameCompanies.Count items</h3>
     @if (gameCompanies.Any())
     {
     <table class="table">
-        <thead>
-            <!--TODO: check if !gameCompanies.Any() and display other <thead> and <tbody> 
-with a message instead of straight gameCompanies[0] which can throw error when 
-gameCompanies.Count == 0-->
+        <thead class="text-nowrap table-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies[0]!.Game)
@@ -76,7 +73,7 @@ gameCompanies.Count == 0-->
                 <th>
                     @Html.DisplayNameFor(_ => gameCompanies[0]!.StartDate)
                 </th>
-                <th>
+                <th class="text-end">
                     @Html.DisplayNameFor(_ => gameCompanies[0]!.EndDate)
                 </th>
             </tr>
@@ -98,7 +95,7 @@ gameCompanies.Count == 0-->
                 <td>
                     @Html.DisplayFor(_ => gc.StartDate)
                 </td>
-                <td>
+                <td class="text-end">
                     @if (gc.EndDate == null)
                     {
                     <span><b>On going</b></span>
@@ -115,7 +112,7 @@ gameCompanies.Count == 0-->
     }
     else
     {
-    <p class="">Company has no development phases. <a asp-controller="Game" asp-action="Create" class="">Create a game</a>.</p>
+    <p>Company has no development phases.</p>
     }
 </div>
 

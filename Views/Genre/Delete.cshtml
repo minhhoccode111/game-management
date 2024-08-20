@@ -44,7 +44,7 @@ var gameGenres = Model.GameGenres.ToList();
         Please remove the following Games before trying to delete this Genre
     </h3>
     <table class="table">
-        <thead>
+        <thead class="text-nowrap table-dark">
             <tr>
                 <th>
                     @Html.DisplayNameFor(_ => gameGenres[0].Game.Title)
@@ -55,15 +55,17 @@ var gameGenres = Model.GameGenres.ToList();
                 <th>
                     @Html.DisplayNameFor(_ => gameGenres[0].Game.ReleaseDate)
                 </th>
-                <th></th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in gameGenres)
             {
-            <tr>
+            <tr class="align-middle">
                 <td>
-                    @Html.DisplayFor(_ => item.Game.Title)
+                    <b>
+                        @Html.DisplayFor(_ => item.Game.Title)
+                    </b>
                 </td>
                 <td>
                     @Html.DisplayFor(_ => item.Game.Rating)
@@ -71,10 +73,10 @@ var gameGenres = Model.GameGenres.ToList();
                 <td>
                     @Html.DisplayFor(_ => item.Game.ReleaseDate)
                 </td>
-                <td>
-                    <a asp-controller="Game" asp-action="Edit" asp-route-id="@item.Game.Id">Edit</a> |
-                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Game.Id">Details</a> |
-                    <a asp-controller="Game" asp-action="Delete" asp-route-id="@item.Game.Id">Delete</a>
+                <td class="text-nowrap text-end">
+                    <a class="btn btn-primary" asp-controller="Game" asp-action="Edit" asp-route-id="@item.Game.Id">Edit</a>
+                    <a class="btn btn-primary" asp-controller="Game" asp-action="Details" asp-route-id="@item.Game.Id">Details</a>
+                    <a class="btn btn-danger" asp-controller="Game" asp-action="Delete" asp-route-id="@item.Game.Id">Delete</a>
                 </td>
             </tr>
             }
