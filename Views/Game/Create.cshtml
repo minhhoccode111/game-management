@@ -1,11 +1,11 @@
 @model GameManagementMvc.Models.GameFormViewModel
 
 @{
-    ViewData["Title"] = "Create Game";
-    var genres = ViewData["Genres"] as IEnumerable<SelectListItem>;
-    var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
-    bool hasGenre = !genres!.Any();
-    bool hasCompany = !companies!.Any();
+ViewData["Title"] = "Create Game";
+var genres = ViewData["Genres"] as IEnumerable<SelectListItem>;
+var companies = ViewData["Companies"] as IEnumerable<SelectListItem>;
+bool hasGenre = !genres!.Any();
+bool hasCompany = !companies!.Any();
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -21,103 +21,100 @@
         <form asp-action="Create" data-Form>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <b><label asp-for="Title" class="control-label"></label>*</b>
-                <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <b><label asp-for="Body" class="control-label"></label>*</b>
-                <textarea asp-for="Body" class="form-control"></textarea>
-                <span asp-validation-for="Body" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <b><label asp-for="Image" class="control-label"></label></b>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <b><label asp-for="Rating" class="control-label"></label>*</b>
-                <input asp-for="Rating" class="form-control" />
-                <span asp-validation-for="Rating" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <b><label asp-for="ReleaseDate" class="control-label">Release Date</label>*</b>
-                <input asp-for="ReleaseDate" class="form-control" />
-                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GenreIds" class="control-label"><b>Game Genres*</b></label>
-                <div>
-                    @foreach (var genre in genres!)
-                    {
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" class="form-check-input" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" required/>
-                        <label class="form-check-label" for="genre_@genre.Value">@genre.Text</label>
-                    </div>
-                    }
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Title*</span>
+                    <input asp-for="Title" class="form-control" />
                 </div>
+            </div>
+            <div class="form-group">
+                <span asp-validation-for="Body" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Body*</span>
+                    <textarea asp-for="Body" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <span asp-validation-for="Image" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Image</span>
+                    <input asp-for="Image" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span asp-validation-for="Rating" class="text-danger"> </span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Rating*</span>
+                    <input asp-for="Rating" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Release Date*</span>
+                    <input asp-for="ReleaseDate" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
                 <span asp-validation-for="GenreIds" class="text-danger"></span>
+                <div class="input-group mb-3 d-flex align-items-center">
+                    <span class="input-group-text">Game Genres*</span>
+                    <div class="form-control">
+                        @foreach (var genre in genres!)
+                        {
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="GenreIds" value="@genre.Value" id="genre_@genre.Value" required>
+                            <label class="form-check-label" for="inlineCheckbox1">@genre.Text</label>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                @if (hasGenre)
+                {
                 <p class="">
-                    @if (hasGenre)
-                    {
                     <span class="text-danger">
                         You need to 
                         <a asp-controller="Genre" asp-action="Create" class="">create a genre</a>
                         before creating a game.
                     </span>
-                    }
                 </p>
+                }
             </div>
 
-            <p class="form-group"><b>Game Companies*</b></p>
-
+            <hr>
+            <p>
+                <b>
+                    Game Companies (Company, Title, Body, StartDate, EndDate)*
+                </b>
+            </p>
             <table class="table mb-0">
                 <thead>
                     <tr>
                         <th>
-                            Company*
+                            <select class="form-select" asp-items="@companies" data-CompanyId>
+                                <option value="">Company*</option>
+                            </select>
                         </th>
                         <th>
-                            Title*
+                            <input type="text" class="form-control" aria-label="Title" aria-describedby="inputGroup-sizing-default" placeholder="Title*" data-Title>
                         </th>
                         <th>
-                            Body*
+                            <input type="text" class="form-control" aria-label="Body" aria-describedby="inputGroup-sizing-default" placeholder="Body*" data-Body>
                         </th>
                         <th>
-                            Start Date*
+                            <input type="date" class="form-control" data-StartDate/>
                         </th>
                         <th>
-                            End Date
+                            <input type="date" class="form-control" data-EndDate />
                         </th>
-                        <th></th>
+                        <th class="text-end">
+                            <button type="button" class="btn btn-success" data-Add>Add</button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody data-GameCompaniesTable>
                     <!--insert inputs GameCompany here-->
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td>
-                            <select asp-items="@companies" data-CompanyId>
-                                <option value="">All</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" class="" placeholder="Phase 0" data-Title />
-                        </td>
-                        <td>
-                            <input type="text" class="" placeholder="Collect ideas" data-Body />
-                        </td>
-                        <td>
-                            <input type="date" class="" data-StartDate />
-                        </td>
-                        <td>
-                            <input type="date" class="" data-EndDate />
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-success" data-Add>Add</button>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
 
@@ -257,7 +254,7 @@ function renderTable() {
         const removeCell = document.createElement("td");
         const removeButton = document.createElement("button");
         removeButton.textContent = "Del";
-        removeButton.classList.add("btn", "btn-danger", "btn-sm");
+        removeButton.classList.add("btn", "btn-danger");
         removeButton.addEventListener("click", () => {
             gameCompanies.splice(index, 1); // Remove the gameCompany from the array
             renderTable(); // Re-render the table
