@@ -6,9 +6,9 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<p>
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+</p>
 
 <hr />
 
@@ -29,26 +29,33 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Title*</span>
+                    <input asp-for="Title" class="form-control" />
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="Body" class="control-label"></label>
-                <textarea asp-for="Body" class="form-control"></textarea>
                 <span asp-validation-for="Body" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Body*</span>
+                    <textarea asp-for="Body" class="form-control"></textarea>
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
                 <span asp-validation-for="Image" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Image</span>
+                    <input asp-for="Image" class="form-control" />
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="FoundingDate" class="control-label"></label>
-                <input asp-for="FoundingDate" class="form-control" />
                 <span asp-validation-for="FoundingDate" class="text-danger"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Founding Date*</span>
+                    <input asp-for="FoundingDate" class="form-control" />
+                </div>
             </div>
-            <br>
             <div class="form-group d-flex justify-content-between">
                 <a asp-action="Index" class="btn btn-danger">Cancel</a>
                 <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">Details</a>

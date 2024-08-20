@@ -44,7 +44,7 @@ else
         <option value="5">5</option>
     </select></div>
 
-    <div><select class="form-select"asp-for="Sort">
+    <div><select class="form-select" asp-for="Sort">
         <option value="">Sort</option>
         <option value="name">Name Increase</option>
         <option value="-name">Name Decrease</option>
@@ -59,11 +59,10 @@ else
     <div><input type="submit" value="Filter" class="btn btn-primary"></div>
 </form>
 
+@if (games.Any())
+{
 <hr>
 <table class="table">
-    <!--TODO: check if !games.Any() and display other <thead> and <tbody> 
-with a message instead of straight games[0] which can throw error when 
-games.Count == 0-->
     <thead class="text-nowrap table-dark">
         <tr>
             <th>
@@ -121,3 +120,8 @@ games.Count == 0-->
         }
     </tbody>
 </table>
+}
+else
+{
+<p>No Games yet.</p>
+}
