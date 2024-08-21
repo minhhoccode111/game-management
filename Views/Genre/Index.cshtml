@@ -47,6 +47,8 @@ bool hasTitle = !String.IsNullOrEmpty(Model.Title);
     </thead>
     <tbody>
         @foreach (var item in genres) {
+        if (item.IsActive)
+        {
         var gameGenres = item.GameGenres.ToList();
         <tr class="align-middle">
             <td>
@@ -61,6 +63,7 @@ bool hasTitle = !String.IsNullOrEmpty(Model.Title);
                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
+        }
         }
     </tbody>
 </table>

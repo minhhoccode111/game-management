@@ -8,6 +8,8 @@ namespace GameManagementMvc.Models
         // PROPERTIES
         public int Id { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
         [Required]
         [StringLength(64)]
         public required string Title { get; set; }

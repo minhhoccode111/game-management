@@ -85,7 +85,7 @@ namespace GameManagementMvc.Controllers
 
             Game? game = await GetById(id);
 
-            if (game == null)
+            if (game == null || !game.IsActive)
             {
                 return NotFound();
             }
@@ -219,7 +219,7 @@ namespace GameManagementMvc.Controllers
 
             Game? game = await GetById(id);
 
-            if (game == null)
+            if (game == null || !game.IsActive)
             {
                 return NotFound();
             }
@@ -281,6 +281,13 @@ namespace GameManagementMvc.Controllers
         )
         {
             if (id != gameVM.Id)
+            {
+                return NotFound();
+            }
+
+            Game? game = await GetById(id);
+
+            if (game == null || !game.IsActive)
             {
                 return NotFound();
             }
@@ -438,13 +445,6 @@ namespace GameManagementMvc.Controllers
 
             // return Redirect($"/Game/Edit/{game.Id}");
 
-            Game? game = await GetById(id);
-
-            if (game == null)
-            {
-                return NotFound();
-            }
-
             // all game genres already exists
             List<int> genreIds = game.GameGenres.Select(gg => gg.GenreId).ToList();
 
@@ -488,7 +488,7 @@ namespace GameManagementMvc.Controllers
 
             Game? game = await GetById(id);
 
-            if (game == null)
+            if (game == null || !game.IsActive)
             {
                 return NotFound();
             }
@@ -505,7 +505,8 @@ namespace GameManagementMvc.Controllers
 
             if (game != null)
             {
-                _context.Game.Remove(game);
+                game.IsActive = false;
+                // _context.Game.Remove(game);
             }
 
             await _context.SaveChangesAsync();
@@ -558,12 +559,12 @@ namespace GameManagementMvc.Controllers
         // CHECK EXISTENCE
         private bool GameExist(int id)
         {
-            return _context.Game.Any(g => g.Id == id);
+            return _context.Game.Any(g => g.Id == id || g.IsActive);
         }
 
         private bool CompanyExist(int id)
         {
-            return _context.Company.Any(c => c.Id == id);
+            return _context.Company.Any(c => c.Id == id || c.IsActive);
         }
 
         private bool GenreExist(List<int>? genreIds = null)
@@ -572,26 +573,35 @@ namespace GameManagementMvc.Controllers
             {
                 return false;
             }
-            return genreIds.All(id => _context.Genre.Any(g => g.Id == id));
+            return genreIds.All(id => _context.Genre.Any(g => g.Id == id && g.IsActive));
         }
 
         // drop down select
         private async Task<SelectList> GetAllGenresSelectList(int? selected = null)
         {
-            List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
+            List<Genre> genres = await _context
+                .Genre.Where(g => g.IsActive)
+                .OrderBy(g => g.Title)
+                .ToListAsync();
             return new SelectList(genres, "Id", "Title", selected?.ToString());
         }
 
         private async Task<SelectList> GetAllCompaniesSelectList(int? selected = null)
         {
-            List<Company> companies = await _context.Company.OrderBy(c => c.Title).ToListAsync();
+            List<Company> companies = await _context
+                .Company.Where(c => c.IsActive)
+                .OrderBy(c => c.Title)
+                .ToListAsync();
             return new SelectList(companies, "Id", "Title", selected?.ToString());
         }
 
         // checkboxes
         private async Task<MultiSelectList> GetAllGenresMultiSelect(List<int>? selected = null)
         {
-            List<Genre> genres = await _context.Genre.OrderBy(g => g.Title).ToListAsync();
+            List<Genre> genres = await _context
+                .Genre.Where(g => g.IsActive)
+                .OrderBy(g => g.Title)
+                .ToListAsync();
             return new MultiSelectList(genres, "Id", "Title", selected);
         }
     }

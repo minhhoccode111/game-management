@@ -55,11 +55,18 @@ var gameCompanies = Model.GameCompanies.ToList();
 
 <br>
 <div class="">
+    <form class="" asp-action="Delete">
+        <h3 class="text-danger d-flex justify-content-between">
+            <span class="text-start">Delete this Company?</span>
+            <input type="submit" value="Confirm" class="btn btn-danger text-end">
+        </h3>
+        <input type="hidden" asp-for="Id">
+    </form>
     @if (gameCompanies.Any())
     {
-    <h3 class="text-danger">
-        Please remove the following Development Phases before trying to delete this Company
-    </h3>
+    <!-- <h3 class="text-danger"> -->
+    <!--     Please remove the following Development Phases before trying to delete this Company -->
+    <!-- </h3> -->
     <table class="table">
         <thead class="text-nowrap table-dark">
             <tr>
@@ -84,9 +91,16 @@ var gameCompanies = Model.GameCompanies.ToList();
             @foreach (var gc in gameCompanies!) {
             <tr>
                 <td>
+                    @if (gc.Game.IsActive)
+                    {
                     <a asp-controller="Game" asp-action="Details" asp-route-id="@gc.Game.Id">
                         @Html.DisplayFor(_ => gc.Game.Title)
                     </a>
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(_ => gc.Game.Title)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(_ => gc.Title)
@@ -114,13 +128,13 @@ var gameCompanies = Model.GameCompanies.ToList();
     }
     else
     {
-    <form class="" asp-action="Delete">
-        <h3 class="text-danger d-flex justify-content-between">
-            <span class="text-start">Delete this Company?</span>
-            <input type="submit" value="Confirm" class="btn btn-danger text-end">
-        </h3>
-        <input type="hidden" asp-for="Id">
-    </form>
+    <!-- <form class="" asp-action="Delete"> -->
+    <!--     <h3 class="text-danger d-flex justify-content-between"> -->
+    <!--         <span class="text-start">Delete this Company?</span> -->
+    <!--         <input type="submit" value="Confirm" class="btn btn-danger text-end"> -->
+    <!--     </h3> -->
+    <!--     <input type="hidden" asp-for="Id"> -->
+    <!-- </form> -->
     }
 </div>
 

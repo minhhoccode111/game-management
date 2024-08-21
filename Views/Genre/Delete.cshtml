@@ -38,11 +38,18 @@ var gameGenres = Model.GameGenres.ToList();
 
 <br>
 <div class="">
+    <form class="" asp-action="Delete">
+        <h3 class="text-danger d-flex justify-content-between">
+            <span class="text-start">Delete this Genre?</span>
+            <input type="submit" value="Confirm" class="btn btn-danger text-end">
+        </h3>
+        <input type="hidden" asp-for="Id">
+    </form>
     @if (gameGenres.Any())
     {
-    <h3 class="text-danger">
-        Please remove the following Games before trying to delete this Genre
-    </h3>
+    <!-- <h3 class="text-danger"> -->
+    <!--     Please remove the following Games before trying to delete this Genre -->
+    <!-- </h3> -->
     <table class="table">
         <thead class="text-nowrap table-dark">
             <tr>
@@ -63,9 +70,16 @@ var gameGenres = Model.GameGenres.ToList();
             {
             <tr class="align-middle">
                 <td>
-                    <b>
+                    @if (item.Game.IsActive)
+                    {
+                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Game.Id">
                         @Html.DisplayFor(_ => item.Game.Title)
-                    </b>
+                    </a>
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(_ => item.Game.Title)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(_ => item.Game.Rating)
@@ -85,11 +99,12 @@ var gameGenres = Model.GameGenres.ToList();
     }
     else
     {
-    <form class="" asp-action="Delete">
-        <h3 class="text-danger d-flex justify-content-between">
-            <span class="text-start">Delete this Genre?</span>
-            <input type="submit" value="Confirm" class="btn btn-danger text-end">
-        </h3>
-        <input type="hidden" asp-for="Id">
-    </form>}
+    <!-- <form class="" asp-action="Delete"> -->
+    <!--     <h3 class="text-danger d-flex justify-content-between"> -->
+    <!--         <span class="text-start">Delete this Genre?</span> -->
+    <!--         <input type="submit" value="Confirm" class="btn btn-danger text-end"> -->
+    <!--     </h3> -->
+    <!--     <input type="hidden" asp-for="Id"> -->
+    <!-- </form> -->
+    }
 </div>

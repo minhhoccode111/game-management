@@ -57,8 +57,15 @@ var gameGenres = Model.GameGenres.ToList();
         <dd class="col-sm-8">
             @foreach (var gg in gameGenres)
             {
-                <a asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">@Html.DisplayFor(_ => gg.Genre.Title)</a>
-                <span> | </span>
+            if (gg.Genre.IsActive)
+            {
+            <a asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">@Html.DisplayFor(_ => gg.Genre.Title)</a>
+            }
+            else
+            {
+            @Html.DisplayFor(_ => gg.Genre.Title)
+            }
+            <span> | </span>
             }
         </dd>
     </dl>
@@ -99,9 +106,16 @@ var gameGenres = Model.GameGenres.ToList();
             @foreach (var item in gameCompanies!) {
             <tr>
                 <td>
+                    @if (item.Company.IsActive)
+                    {
                     <a asp-controller="Company" asp-action="Details" asp-route-id="@item.Company.Id">
                         @Html.DisplayFor(_ => item.Company.Title)
                     </a>
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(_ => item.Company.Title)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(_ => item.Title)

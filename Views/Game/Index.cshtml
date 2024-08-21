@@ -85,6 +85,8 @@ else
     </thead>
     <tbody>
         @foreach (var item in games) {
+        if (item.IsActive)
+        {
         var gameCompanies = item.GameCompanies.ToList();
         var gameGenres = item.GameGenres.ToList();
         <tr class="align-middle">
@@ -102,13 +104,19 @@ else
             <td>
                 @foreach (var gc in gameCompanies)
                 {
+                if (gc.Company.IsActive)
+                {
                 <a class="btn btn-sm btn-primary" asp-controller="Company" asp-action="Details" asp-route-id="@gc.Company.Id">@Html.DisplayFor(_ => gc.Company.Title)</a>
+                }
                 }
             </td>
             <td>
                 @foreach (var gg in gameGenres)
                 {
+                if (gg.Genre.IsActive)
+                {
                 <a class="btn btn-sm btn-primary" asp-controller="Genre" asp-action="Details" asp-route-id="@gg.Genre.Id">@Html.DisplayFor(_ => gg.Genre.Title)</a>
+                }
                 }
             </td>
             <td class="text-nowrap text-end">
@@ -117,6 +125,7 @@ else
                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
+        }
         }
     </tbody>
 </table>

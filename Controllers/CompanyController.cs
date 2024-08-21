@@ -48,7 +48,7 @@ namespace GameManagementMvc.Controllers
 
             Company? company = await GetById(id);
 
-            if (company == null)
+            if (company == null || !company.IsActive)
             {
                 return NotFound();
             }
@@ -90,7 +90,7 @@ namespace GameManagementMvc.Controllers
 
             Company? company = await GetById(id);
 
-            if (company == null)
+            if (company == null || !company.IsActive)
             {
                 return NotFound();
             }
@@ -146,7 +146,7 @@ namespace GameManagementMvc.Controllers
 
             Company? company = await GetById(id);
 
-            if (company == null)
+            if (company == null || !company.IsActive)
             {
                 return NotFound();
             }
@@ -163,16 +163,15 @@ namespace GameManagementMvc.Controllers
 
             // BUG: Currently allow delete Company even when we set
             // DeleteBehavior.Restrict which cause we to  manually check
-            if (!IsCompanyDeletable(id))
-            {
-                return RedirectToAction(nameof(Delete));
-            }
+            // if (!IsCompanyDeletable(id))
+            // {
+            //     return RedirectToAction(nameof(Delete));
+            // }
 
-            // company do exist and can be deleted
             if (company != null)
             {
-                // remove from current context
-                _context.Company.Remove(company);
+                company.IsActive = false;
+                // _context.Company.Remove(company);
             }
 
             await _context.SaveChangesAsync();
@@ -225,7 +224,7 @@ namespace GameManagementMvc.Controllers
 
         private bool CompanyExist(int id)
         {
-            return _context.Company.Any(e => e.Id == id);
+            return _context.Company.Any(c => c.Id == id && c.IsActive);
         }
     }
 }

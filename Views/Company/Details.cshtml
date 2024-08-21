@@ -82,9 +82,16 @@ var gameCompanies = Model.GameCompanies.ToList();
             @foreach (var gc in gameCompanies!) {
             <tr>
                 <td>
+                    @if (gc.Game.IsActive)
+                    {
                     <a asp-controller="Game" asp-action="Details" asp-route-id="@gc.Game.Id">
                         @Html.DisplayFor(_ => gc.Game.Title)
                     </a>
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(_ => gc.Game.Title)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(_ => gc.Title)

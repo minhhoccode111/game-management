@@ -61,9 +61,16 @@ var gameGenres = Model.GameGenres.ToList();
             {
             <tr class="align-middle">
                 <td>
-                    <b>
+                    @if (item.Game.IsActive)
+                    {
+                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.Game.Id">
                         @Html.DisplayFor(_ => item.Game.Title)
-                    </b>
+                    </a>
+                    }
+                    else
+                    {
+                    @Html.DisplayFor(_ => item.Game.Title)
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(_ => item.Game.Rating)

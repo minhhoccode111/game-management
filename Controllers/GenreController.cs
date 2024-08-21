@@ -53,7 +53,7 @@ namespace GameManagementMvc.Controllers
 
             Genre? genre = await GetById(id);
 
-            if (genre == null)
+            if (genre == null || !genre.IsActive)
             {
                 return NotFound();
             }
@@ -93,7 +93,7 @@ namespace GameManagementMvc.Controllers
 
             Genre? genre = await GetById(id);
 
-            if (genre == null)
+            if (genre == null || !genre.IsActive)
             {
                 return NotFound();
             }
@@ -148,7 +148,7 @@ namespace GameManagementMvc.Controllers
 
             Genre? genre = await GetById(id);
 
-            if (genre == null)
+            if (genre == null || !genre.IsActive)
             {
                 return NotFound();
             }
@@ -163,14 +163,15 @@ namespace GameManagementMvc.Controllers
         {
             var genre = await _context.Genre.FindAsync(id);
 
-            if (!IsGenreDeletable(id))
-            {
-                return RedirectToAction(nameof(Delete));
-            }
+            // if (!IsGenreDeletable(id))
+            // {
+            //     return RedirectToAction(nameof(Delete));
+            // }
 
             if (genre != null)
             {
-                _context.Genre.Remove(genre);
+                genre.IsActive = false;
+                // _context.Genre.Remove(genre);
             }
 
             await _context.SaveChangesAsync();
@@ -200,7 +201,7 @@ namespace GameManagementMvc.Controllers
 
         private bool GenreExist(int id)
         {
-            return _context.Genre.Any(e => e.Id == id);
+            return _context.Genre.Any(e => e.Id == id && e.IsActive);
         }
 
         private IQueryable<Genre> GenreSortBy(IQueryable<Genre> genres, string sortBy)
