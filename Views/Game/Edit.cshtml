@@ -91,16 +91,24 @@ bool hasCompany = !companies!.Any();
             <table class="table mb-0">
                 <thead>
                     <tr>
+                        <th>Company*</th>
+                        <th>Phase title*</th>
+                        <th>Phase description*</th>
+                        <th>Start date*</th>
+                        <th>End date</th>
+                        <th></th>
+                    </tr>
+                    <tr>
                         <th>
                             <select class="form-select" asp-items="@companies" data-CompanyId>
-                                <option value="">Company*</option>
+                                <option value="">All</option>
                             </select>
                         </th>
                         <th>
-                            <input type="text" class="form-control" aria-label="Title" aria-describedby="inputGroup-sizing-default" placeholder="Title*" data-Title>
+                            <input type="text" class="form-control" aria-label="Title" aria-describedby="inputGroup-sizing-default" placeholder="Phase 0" data-Title>
                         </th>
                         <th>
-                            <input type="text" class="form-control" aria-label="Body" aria-describedby="inputGroup-sizing-default" placeholder="Body*" data-Body>
+                            <input type="text" class="form-control" aria-label="Body" aria-describedby="inputGroup-sizing-default" placeholder="Collect ideas" data-Body>
                         </th>
                         <th>
                             <input type="date" class="form-control" data-StartDate/>
@@ -108,7 +116,7 @@ bool hasCompany = !companies!.Any();
                         <th>
                             <input type="date" class="form-control" data-EndDate />
                         </th>
-                        <th class="text-end">
+                        <th>
                             <button type="button" class="btn btn-success" data-Add>Add</button>
                         </th>
                     </tr>
