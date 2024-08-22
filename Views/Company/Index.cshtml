@@ -57,12 +57,20 @@ else
         if (item.IsActive)
         {
         var gameCompanies = item.GameCompanies.ToList();
+        int activeGames = 0;
+        foreach (var gc in gameCompanies)
+        {
+        if (gc.Game.IsActive)
+        {
+        activeGames++;
+        }
+        }
         <tr class="align-middle">
             <td>
                 <b>
                     @Html.DisplayFor(_ => item.Title)
                 </b>
-                <a asp-action="Details" asp-route-id="@item.Id" class="">@gameCompanies.Count</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="">@activeGames</a>
             </td>
             <td class="text-nowrap">
                 @Html.DisplayFor(_ => item.FoundingDate)

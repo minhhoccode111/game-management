@@ -33,6 +33,8 @@ namespace GameManagementMvc.Models
                     // Console.WriteLine("Database clear!");
 
                     return;
+
+                    //
                 }
 
                 var ran = new Random();
