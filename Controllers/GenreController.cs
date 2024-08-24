@@ -163,15 +163,10 @@ namespace GameManagementMvc.Controllers
         {
             var genre = await _context.Genre.FindAsync(id);
 
-            // if (!IsGenreDeletable(id))
-            // {
-            //     return RedirectToAction(nameof(Delete));
-            // }
-
             if (genre != null)
             {
+                // not delete
                 genre.IsActive = false;
-                // _context.Genre.Remove(genre);
             }
 
             await _context.SaveChangesAsync();
@@ -210,14 +205,6 @@ namespace GameManagementMvc.Controllers
                 return genres.OrderBy(g => g.Title);
             if (sortBy == "-name")
                 return genres.OrderByDescending(g => g.Title);
-            // if (sortBy == "date")
-            //     return genres.OrderBy(c => c.FoundingDate);
-            // if (sortBy == "-date")
-            //     return genres.OrderByDescending(c => c.FoundingDate);
-            // if (sortBy == "rating")
-            //     return genres.OrderBy(c => c.Rating);
-            // if (sortBy == "-rating")
-            //     return genres.OrderByDescending(c => c.Rating);
             return genres;
         }
 

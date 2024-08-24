@@ -24,8 +24,8 @@ bool hasTitle = !String.IsNullOrEmpty(Model.Title);
 <form asp-controller="Genre" asp-action="Index" method="get" class="d-flex gap-2 justify-content-start">
     <div><select class="form-select" asp-for="Sort">
         <option value="">Sort</option>
-        <option value="name">Name Increase</option>
-        <option value="-name">Name Decrease</option>
+        <option value="name">Title: A-Z</option>
+        <option value="-name">Title: Z-A</option>
     </select></div>
 
     <div><input asp-for="Title" value="@Model.Title" type="text" class="form-control" aria-label="Title" aria-describedby="inputGroup-sizing-default" placeholder="Title"></div>

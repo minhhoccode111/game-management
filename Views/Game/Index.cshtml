@@ -46,12 +46,12 @@ else
 
     <div><select class="form-select" asp-for="Sort">
         <option value="">Sort</option>
-        <option value="name">Name Increase</option>
-        <option value="-name">Name Decrease</option>
-        <option value="rating">Rating Increase</option>
-        <option value="-rating">Rating Decrease</option>
-        <option value="date">Date Increase</option>
-        <option value="-date">Date Decrease</option>
+        <option value="name">Title: A-Z</option>
+        <option value="-name">Title: Z-A</option>
+        <option value="rating">Rating: Lowest to Highest</option>
+        <option value="-rating">Rating: Highest to Lowest</option>
+        <option value="date">Date: Newest to Oldest</option>
+        <option value="-date">Date: Oldest to Newest</option>
     </select></div>
 
     <div><input asp-for="Title" value="@Model.Title" type="text" class="form-control" aria-label="Title" aria-describedby="inputGroup-sizing-default" placeholder="Title"></div>

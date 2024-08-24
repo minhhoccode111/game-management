@@ -56,8 +56,6 @@ namespace GameManagementMvc.Controllers
                 games = games.Where(game => game.GameGenres.Any(gc => gc.GenreId == genreId));
             }
 
-            // TODO: Distinct Game.GameCompany.CompanyId (not display a company more than 1 time)
-
             var gameList = await games.ToListAsync();
 
             var gameVM = new GameViewModel
@@ -116,18 +114,17 @@ namespace GameManagementMvc.Controllers
                 GameFormViewModel gameVM
         )
         {
-            // manually validate game form view model
             if (!gameVM.GameCompanies.Any())
             {
-                // <span asp-validation-for="GameCompanies" class="text-danger"></span>
-                // will be used to display error message we specify
                 ModelState.AddModelError("GameCompanies", "At least one game company is required.");
             }
+
             if (!gameVM.GenreIds.Any())
             {
                 ModelState.AddModelError("GenreIds", "At least one game genre is required.");
             }
-            // in case race condition
+
+            // race condition
             if (!GenreExist(gameVM.GenreIds))
             {
                 ModelState.AddModelError(
@@ -135,18 +132,21 @@ namespace GameManagementMvc.Controllers
                     "Some game genres not exist in current database."
                 );
             }
-            foreach (var company in gameVM.GameCompanies)
+
+            foreach (var c in gameVM.GameCompanies)
             {
-                if (string.IsNullOrWhiteSpace(company.Title))
+                if (string.IsNullOrWhiteSpace(c.Title))
                 {
                     ModelState.AddModelError("GameCompanies", "Company Title is required.");
                 }
-                if (string.IsNullOrWhiteSpace(company.Body))
+
+                if (string.IsNullOrWhiteSpace(c.Body))
                 {
                     ModelState.AddModelError("GameCompanies", "Company Body is required.");
                 }
-                // in case race condition
-                if (!CompanyExist(company.CompanyId))
+
+                // race condition
+                if (!CompanyExist(c.CompanyId))
                 {
                     ModelState.AddModelError(
                         "GameCompanies",
@@ -157,7 +157,6 @@ namespace GameManagementMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                // extract game data
                 Game game = new Game
                 {
                     Title = gameVM.Title,
@@ -166,11 +165,10 @@ namespace GameManagementMvc.Controllers
                     Image = gameVM.Image,
                     ReleaseDate = gameVM.ReleaseDate,
                 };
-                _context.Game.Add(game);
-                // WARN: save change to generate Game.Id
-                await _context.SaveChangesAsync();
 
-                // create game genres
+                _context.Game.Add(game);
+                await _context.SaveChangesAsync(); // generate game.Id
+
                 foreach (var genreId in gameVM.GenreIds)
                 {
                     var gameGenre = new GameGenre { GameId = game.Id, GenreId = genreId };
@@ -191,8 +189,6 @@ namespace GameManagementMvc.Controllers
                     };
                     _context.GameCompany.Add(gameCompany);
                 }
-
-                // NOTE: because this is CREATE, no need to check for concurrency?
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -292,21 +288,17 @@ namespace GameManagementMvc.Controllers
                 return NotFound();
             }
 
-            // NOTE: this is duplicate validation with above POST /Game/Create
-            // because current don't know how to interact with ModelState object
-            // using abstract methods
-            // manually validate game form view model
             if (!gameVM.GameCompanies.Any())
             {
-                // <span asp-validation-for="GameCompanies" class="text-danger"></span>
-                // will be used to display error message we specify
                 ModelState.AddModelError("GameCompanies", "At least one game company is required.");
             }
+
             if (!gameVM.GenreIds.Any())
             {
                 ModelState.AddModelError("GenreIds", "At least one game genre is required.");
             }
-            // in case race condition
+
+            // race condition
             if (!GenreExist(gameVM.GenreIds))
             {
                 ModelState.AddModelError(
@@ -314,18 +306,21 @@ namespace GameManagementMvc.Controllers
                     "Some game genres not exist in current database."
                 );
             }
-            foreach (var company in gameVM.GameCompanies)
+
+            foreach (var c in gameVM.GameCompanies)
             {
-                if (string.IsNullOrWhiteSpace(company.Title))
+                if (string.IsNullOrWhiteSpace(c.Title))
                 {
                     ModelState.AddModelError("GameCompanies", "Company Title is required.");
                 }
-                if (string.IsNullOrWhiteSpace(company.Body))
+
+                if (string.IsNullOrWhiteSpace(c.Body))
                 {
                     ModelState.AddModelError("GameCompanies", "Company Body is required.");
                 }
-                // in case race condition
-                if (!CompanyExist(company.CompanyId))
+
+                // race condition
+                if (!CompanyExist(c.CompanyId))
                 {
                     ModelState.AddModelError(
                         "GameCompanies",
@@ -334,34 +329,19 @@ namespace GameManagementMvc.Controllers
                 }
             }
 
-            // NOTE: this is how to debug ModelState validation
-            // foreach (var state in ModelState)
-            // {
-            //     var key = state.Key;
-            //     var errors = state.Value.Errors;
-            //     foreach (var error in errors)
-            //     {
-            //         Console.WriteLine($"Error in {key}: {error.ErrorMessage}");
-            //     }
-            // }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // extract game data
-                    Game newGame = new Game
-                    {
-                        Id = (int)gameVM.Id,
-                        Title = gameVM.Title,
-                        Body = gameVM.Body,
-                        Rating = gameVM.Rating,
-                        Image = gameVM.Image,
-                        ReleaseDate = gameVM.ReleaseDate,
-                    };
+                    game.Id = (int)gameVM.Id;
+                    game.Title = gameVM.Title;
+                    game.Body = gameVM.Body;
+                    game.Rating = gameVM.Rating;
+                    game.Image = gameVM.Image;
+                    game.ReleaseDate = gameVM.ReleaseDate;
 
                     // update game with new data (and old Game.Id)
-                    _context.Game.Update(newGame);
+                    _context.Game.Update(game);
 
                     // first remove old ones that we not use anymore in database
                     IQueryable<GameGenre> removeGameGenres = _context.GameGenre.Where(gg =>
@@ -378,11 +358,7 @@ namespace GameManagementMvc.Controllers
 
                         if (gameGenreNotInDatabase)
                         {
-                            var gameGenre = new GameGenre
-                            {
-                                GameId = newGame.Id,
-                                GenreId = genreId,
-                            };
+                            var gameGenre = new GameGenre { GameId = game.Id, GenreId = genreId };
                             _context.GameGenre.Add(gameGenre);
                         }
                     }
@@ -410,7 +386,7 @@ namespace GameManagementMvc.Controllers
                         {
                             var newGameCompany = new GameCompany
                             {
-                                GameId = newGame.Id,
+                                GameId = game.Id,
                                 CompanyId = gameCompanyVM.CompanyId,
                                 Title = gameCompanyVM.Title,
                                 Body = gameCompanyVM.Body,
@@ -423,7 +399,6 @@ namespace GameManagementMvc.Controllers
 
                     await _context.SaveChangesAsync();
                 }
-                // unlike create new Game, we have to check for race condition when edit
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!GameExist((int)gameVM.Id))
@@ -438,26 +413,15 @@ namespace GameManagementMvc.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // NOTE: what happens if we redirect to GET /Game/Edit/{Id}
-            // so that we don't have to manually prepare data like below
-            // are the changes we made to ModelState above presist?
-            // and error messages will be display on the client?
-
-            // return Redirect($"/Game/Edit/{game.Id}");
-
-            // all game genres already exists
             List<int> genreIds = game.GameGenres.Select(gg => gg.GenreId).ToList();
 
-            // all genres to create new genres, checked exist ones
             MultiSelectList genres = await GetAllGenresMultiSelect(genreIds);
             ViewData["Genres"] = genres;
 
-            // all companies to create new game companies
             var companies = await GetAllCompaniesSelectList();
             ViewData["Companies"] = companies;
             ViewData["CompaniesJson"] = JsonConvert.SerializeObject(companies);
 
-            // game companies already exists
             List<GameCompanyViewModel> gameCompanies = new List<GameCompanyViewModel>();
             foreach (var item in game.GameCompanies.ToList())
             {
@@ -505,8 +469,8 @@ namespace GameManagementMvc.Controllers
 
             if (game != null)
             {
+                // not delete
                 game.IsActive = false;
-                // _context.Game.Remove(game);
             }
 
             await _context.SaveChangesAsync();

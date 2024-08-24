@@ -79,3 +79,46 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [GameCompany] DROP CONSTRAINT [FK_GameCompany_Company_CompanyId];
+GO
+
+ALTER TABLE [GameGenre] DROP CONSTRAINT [FK_GameGenre_Genre_GenreId];
+GO
+
+ALTER TABLE [GameGenre] DROP CONSTRAINT [PK_GameGenre];
+GO
+
+DROP INDEX [IX_GameGenre_GenreId] ON [GameGenre];
+GO
+
+ALTER TABLE [Genre] ADD [IsActive] bit NOT NULL DEFAULT CAST(0 AS bit);
+GO
+
+ALTER TABLE [Game] ADD [IsActive] bit NOT NULL DEFAULT CAST(0 AS bit);
+GO
+
+ALTER TABLE [Company] ADD [IsActive] bit NOT NULL DEFAULT CAST(0 AS bit);
+GO
+
+ALTER TABLE [GameGenre] ADD CONSTRAINT [PK_GameGenre] PRIMARY KEY ([GenreId], [GameId]);
+GO
+
+CREATE INDEX [IX_GameGenre_GameId] ON [GameGenre] ([GameId]);
+GO
+
+ALTER TABLE [GameCompany] ADD CONSTRAINT [FK_GameCompany_Company_CompanyId] FOREIGN KEY ([CompanyId]) REFERENCES [Company] ([Id]) ON DELETE NO ACTION;
+GO
+
+ALTER TABLE [GameGenre] ADD CONSTRAINT [FK_GameGenre_Genre_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [Genre] ([Id]) ON DELETE NO ACTION;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240821155256_AddIsActiveColumn', N'8.0.7');
+GO
+
+COMMIT;
+GO
+

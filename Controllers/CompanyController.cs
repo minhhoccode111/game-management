@@ -161,17 +161,10 @@ namespace GameManagementMvc.Controllers
         {
             var company = await _context.Company.FindAsync(id);
 
-            // BUG: Currently allow delete Company even when we set
-            // DeleteBehavior.Restrict which cause we to  manually check
-            // if (!IsCompanyDeletable(id))
-            // {
-            //     return RedirectToAction(nameof(Delete));
-            // }
-
             if (company != null)
             {
+                // not delete
                 company.IsActive = false;
-                // _context.Company.Remove(company);
             }
 
             await _context.SaveChangesAsync();
@@ -210,10 +203,6 @@ namespace GameManagementMvc.Controllers
                 return companies.OrderBy(c => c.FoundingDate);
             if (sortBy == "-date")
                 return companies.OrderByDescending(c => c.FoundingDate);
-            // if (sortBy == "rating")
-            //     return companies.OrderBy(c => c.Rating);
-            // if (sortBy == "-rating")
-            //     return companies.OrderByDescending(c => c.Rating);
             return companies;
         }
 
