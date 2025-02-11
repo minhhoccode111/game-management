@@ -1,14 +1,6 @@
 # Game Management MVC
 
-Learn ASP.NET Core MVC
-
-## Screenshots
-
-<details>
-    <summary>Click me</summary>
-</details>
-
-## [Demo]()
+Try ASP.NET Core MVC
 
 ## Features
 
@@ -27,13 +19,21 @@ Clone the repo
 git clone git@github.com:minhhoccode111/game-management.git
 ```
 
-Run
+Install packages
 
 ```bash
 dotnet restore
-dotnet run
-# or develop with
-# dotnet watch run
+```
+
+Install Microsoft SQL Server Docker (optional)
+
+```bash
+# pull image
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+# run container
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrong!Passw0rd" \
+   -p 1433:1433 --name sql_server_container \
+   -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 Migration
@@ -43,4 +43,8 @@ dotnet ef migrations add SqlServerMigration
 dotnet ef database update
 ```
 
-## Design choices and tradeoffs
+Run
+
+```bash
+dotnet run
+```
