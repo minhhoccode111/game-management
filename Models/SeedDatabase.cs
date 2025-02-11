@@ -5,6 +5,17 @@ namespace GameManagementMvc.Models
 {
     public static class SeedDatabase
     {
+        private static void Clear(GameManagementMvcContext context)
+        {
+            context.Game.RemoveRange(context.Game);
+            context.Company.RemoveRange(context.Company);
+            context.Genre.RemoveRange(context.Genre);
+            context.GameGenre.RemoveRange(context.GameGenre);
+            context.GameCompany.RemoveRange(context.GameCompany);
+            context.SaveChanges();
+            Console.WriteLine("Database clear!");
+        }
+
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (
@@ -13,29 +24,15 @@ namespace GameManagementMvc.Models
                 )
             )
             {
-                // if any movie exists
-                if (
-                    context.Game.Any()
-                    || context.Company.Any()
-                    || context.Genre.Any()
-                    || context.GameCompany.Any()
-                    || context.GameGenre.Any()
-                )
+                // change to false to skip seeding the db and keep old data
+                bool willClear = true;
+
+                if (!willClear)
                 {
-                    // uncomment to clear database
-
-                    // context.Game.RemoveRange(context.Game);
-                    // context.Company.RemoveRange(context.Company);
-                    // context.Genre.RemoveRange(context.Genre);
-                    // context.GameGenre.RemoveRange(context.GameGenre);
-                    // context.GameCompany.RemoveRange(context.GameCompany);
-                    // context.SaveChanges();
-                    // Console.WriteLine("Database clear!");
-
                     return;
-
-                    //
                 }
+
+                Clear(context);
 
                 var ran = new Random();
 
