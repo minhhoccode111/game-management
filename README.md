@@ -19,32 +19,34 @@ Clone the repo
 git clone git@github.com:minhhoccode111/game-management.git
 ```
 
-Install packages
+Build the Docker Image
 
 ```bash
-dotnet restore
+docker build -t game-management .
 ```
 
-Install Microsoft SQL Server Docker (optional)
+Install MSSQL Server Image
 
 ```bash
-# pull image
 docker pull mcr.microsoft.com/mssql/server:2022-latest
-# run container
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrong!Passw0rd" \
+```
+
+Run the MSSQL Server Container
+
+```bash
+# escape the password because it contains `!`, which is a special character in shell
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" \
    -p 1433:1433 --name sql_server_container \
    -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-Migration
+Run the application container
 
 ```bash
-dotnet ef migrations add SqlServerMigration
-dotnet ef database update
+docker run -p 8080:80 --name game-management \
+   --link sql_server_container \
+   -e "ConnectionStrings__DefaultConnection=Server=sql_server_container;Database=GameManagement;User Id=sa;Password=P@ssw0rd;TrustServerCertificate=True;" \
+   game-management
 ```
 
-Run
-
-```bash
-dotnet run
-```
+Access the application at `http://localhost:8080` to check the app

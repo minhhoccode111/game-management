@@ -1,0 +1,25 @@
+services:
+  sql_server_container:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Bruh0!0!
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  app:
+    image: game-management
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sql_server_container;Database=GameManagement;User Id=sa;Password=Bruh0!0!;TrustServerCertificate=True;
+    depends_on:
+      - sql_server_container
+
+volumes:
+  mssql_data:
