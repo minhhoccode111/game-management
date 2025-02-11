@@ -87,11 +87,18 @@ var gameGenres = Model.GameGenres.ToList();
                 <td>
                     @Html.DisplayFor(_ => item.Game.ReleaseDate)
                 </td>
+                @if (item.Game.IsActive)
+                {
                 <td class="text-nowrap text-end">
                     <a class="btn btn-primary" asp-controller="Game" asp-action="Edit" asp-route-id="@item.Game.Id">Edit</a>
                     <a class="btn btn-primary" asp-controller="Game" asp-action="Details" asp-route-id="@item.Game.Id">Details</a>
                     <a class="btn btn-danger" asp-controller="Game" asp-action="Delete" asp-route-id="@item.Game.Id">Delete</a>
                 </td>
+                }
+                else
+                {
+                <td class="text-nowrap text-end">Game is not active</td>
+                }
             </tr>
             }
         </tbody>

@@ -103,16 +103,41 @@ var gameCompanies = Model.GameCompanies.ToList();
                     }
                 </td>
                 <td>
+                    @if (!gc.Game.IsActive)
+                    {
+                    <span>-</span>
+                    }
+                    else
+                    {
                     @Html.DisplayFor(_ => gc.Title)
+                    }
                 </td>
                 <td>
+                    @if (!gc.Game.IsActive)
+                    {
+                    <span>-</span>
+                    }
+                    else
+                    {
                     @Html.DisplayFor(_ => gc.Body)
+                    }
                 </td>
                 <td>
+                    @if (!gc.Game.IsActive)
+                    {
+                    <span>-</span>
+                    }
+                    else
+                    {
                     @Html.DisplayFor(_ => gc.StartDate)
+                    }
                 </td>
                 <td class="text-end">
-                    @if (gc.EndDate == null)
+                    @if (!gc.Game.IsActive)
+                    {
+                    <span>-</span>
+                    }
+                    else if (gc.EndDate == null)
                     {
                     <span><b>On going</b></span>
                     }
